@@ -48,10 +48,9 @@ body, html {
     background: rgba(255, 255, 255, 0.8); /* 半透明背景 */
     color: #333;
     padding: 20px;
-    border-radius: 15px;
+    border-radius: 15px; /* 圆润的边角 */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    flex: 1;
     min-width: 300px;
     min-height: 200px;
     margin: 10px;
