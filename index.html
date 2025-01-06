@@ -3,23 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nebula</title>
+    <title>个人博客</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="background">
-        
-    </div>
+    <div class="background"></div>
     <div class="content">
-        <h1>My blog</h1>
-        <p>分享所見所思所得</p>
-        <div class="grid" id="grid">
-            <div class="grid-item" onclick="window.location.href='history.html'">历史介绍</div>
-            <div class="grid-item">格子2</div>
-            <div class="grid-item">格子3</div>
-            <div class="grid-item">格子4</div>
-            <div class="grid-item">格子5</div>
-            <div class="grid-item">格子6</div>
+        <h1 class="fade-in-element">欢迎来到我的博客</h1>
+        <p class="fade-in-element">这里是我的个人博客，分享我的想法和经验。</p>
+        <div class="grid">
+            <article class="grid-item fade-in-element">
+                <h2 onclick="window.location.href='post1.html'">标题1</h2>
+                <p>这里是文章的内容...</p>
+            </article>
+            <article class="grid-item fade-in-element">
+                <h2 onclick="window.location.href='post2.html'">标题2</h2>
+                <p>这里是文章的内容...</p>
+            </article>
+            <article class="grid-item fade-in-element">
+                <h2 onclick="window.location.href='post3.html'">标题3</h2>
+                <p>这里是文章的内容...</p>
+            </article>
+            <article class="grid-item fade-in-element">
+                <h2 onclick="window.location.href='post4.html'">标题4</h2>
+                <p>这里是文章的内容...</p>
+            </article>
         </div>
     </div>
     <script src="script.js"></script>
