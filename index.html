@@ -10,49 +10,71 @@
 </head>
 
 <body>
+    <div class="search-bar">
+        <img src="your-logo.png" alt="Logo" class="logo"> <!-- 替换为你的logo URL -->
+        <input type="text" class="search-input" placeholder="搜索文章...">
+    </div>
     <div class="container">
+        <aside class="left-sidebar">
+            <div class="widget">
+                <h3 class="widget-title">留言板【开发中】</h3>
+                <a href="#disqus_thread" class="comment-count">留言数</a>
+                <div id="disqus_thread"></div> <!-- Disqus 评论区 -->
+                <script>
+                    /**
+                    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+                    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+
+                    var disqus_config = function () {
+                        this.page.url = window.location.href;  // Replace PAGE_URL with your page's canonical URL variable
+                        this.page.identifier = 'blog-home'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+                    };
+
+                    (function () { // DON'T EDIT BELOW THIS LINE
+                        var d = document, s = d.createElement('script');
+                        s.src = 'https://nebulablog-1.disqus.com/embed.js'; // 更新为提供的 Disqus URL
+                        s.setAttribute('data-timestamp', +new Date());
+                        (d.head || d.body).appendChild(s);
+                    })();
+                </script>
+            </div>
+        </aside>
         <main>
             <div class="posts-container">
-                <!-- 动态生成的文章卡片 -->
-                <article class="post-card">
-                    <h2 class="post-title">好痛苦...</h2>
-                    <div class="post-meta">
-                        <span><i class="far fa-calendar"></i> 2025年3月9日</span>
-                        <div class="post-tags">
-                            <span class="tag">明日方舟</span>
-                        </div>
-                    </div>
-                    <p class="post-excerpt">之后还有周年庆啊TT</p>
-                    <img src="m.PNG" alt="" class="img">
-                </article>
-
-                <article class="post-card">
-                    <h2 class="post-title">oiiaioiiiai</h2>
-                    <div class="post-meta">
-                        <span><i class="far fa-calendar"></i> 2025年3月8日</span>
-                        <div class="post-tags">
-                            <span class="tag">生活</span>
-                        </div>
-                    </div>
-                    <p class="post-excerpt">喵</p>
-                </article>
-                <!-- 更多文章卡片将动态生成在这里 -->
+                <!-- 动态生成的文章卡片将在这里 -->
             </div>
-            <div class="pagination">
-                <a href="#" class="page-link active">1</a>
-            </div>
+            <!-- 无限滚动，无分页 -->
         </main>
-        <aside>
+        <aside class="right-sidebar">
             <div class="widget">
                 <h3 class="widget-title">标签</h3>
                 <div class="tag-cloud">
-                    <span class="tag">生活</span>
-                    <span class="tag">明日方舟</span>
+                    <!-- 动态生成的标签将在这里 -->
                 </div>
+            </div>
+            <div class="widget">
+                <h3 class="widget-title">社交媒体</h3>
+                <ul class="social-links">
+                    <li><a href="开发中" target="_blank"><i
+                                class="fab fa-instagram"></i> Instagram</a></li>
+                    <li><a href="https://music.163.com/#/user/home?id=284385980" target="_blank"><i
+                                class="fas fa-music"></i> 网易云音乐</a></li>
+                    <li><a href="https://steamcommunity.com/profiles/76561199175537689/" target="_blank"><i class="fab fa-steam"></i>
+                            Steam</a></li>
+                    <!-- 添加更多社交链接 -->
+                </ul>
+            </div>
+            <div class="widget">
+                <h3 class="widget-title">友情链接【开发中】</h3>
+                <ul>
+                    <li><a href="#">链接1</a></li>
+                    <li><a href="#">链接2</a></li>
+                </ul>
             </div>
         </aside>
     </div>
     <script src="scripts.js"></script>
+    <script id="dsq-count-scr" src="//nebulablog-1.disqus.com/count.js" async></script>
 </body>
 
 </html>
