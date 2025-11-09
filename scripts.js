@@ -54,6 +54,8 @@ let hasMore = true; // 是否还有更多文章
 const postsContainer = document.querySelector('.posts-container');
 const tagCloud = document.querySelector('.tag-cloud');
 const searchInput = document.querySelector('.search-input');
+const commentForm = document.getElementById('comment-form');
+const commentsList = document.getElementById('comments-list');
 
 // 获取所有唯一标签
 function getUniqueTags() {
@@ -203,6 +205,54 @@ window.addEventListener('scroll', () => {
     }
 });
 
+// 本地评论功能
+function loadComments() {
+    const comments = JSON.parse(localStorage.getItem('blogComments')) || [];
+    commentsList.innerHTML = '';
+    comments.forEach((comment, index) => {
+        const div = document.createElement('div');
+        div.classList.add('comment');
+        div.innerHTML = `
+            <div class="comment-name">${comment.name}</div>
+            <div class="comment-date">${new Date(comment.date).toLocaleString()}</div>
+            <p>${comment.content}</p>
+            <button class="comment-delete" data-index="${index}">删除</button>
+        `;
+        commentsList.appendChild(div);
+    });
+
+    // 添加删除事件
+    document.querySelectorAll('.comment-delete').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const index = parseInt(e.target.dataset.index);
+            deleteComment(index);
+        });
+    });
+}
+
+function addComment(e) {
+    e.preventDefault();
+    const name = document.getElementById('comment-name').value.trim();
+    const content = document.getElementById('comment-content').value.trim();
+    if (name && content) {
+        const comments = JSON.parse(localStorage.getItem('blogComments')) || [];
+        comments.push({ name, content, date: new Date().toISOString() });
+        localStorage.setItem('blogComments', JSON.stringify(comments));
+        loadComments();
+        commentForm.reset();
+    }
+}
+
+function deleteComment(index) {
+    let comments = JSON.parse(localStorage.getItem('blogComments')) || [];
+    comments.splice(index, 1);
+    localStorage.setItem('blogComments', JSON.stringify(comments));
+    loadComments();
+}
+
+commentForm.addEventListener('submit', addComment);
+
 // 初始化
 renderTags();
 resetAndLoad();
+loadComments();
