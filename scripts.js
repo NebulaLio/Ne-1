@@ -9,64 +9,39 @@ const posts = [
         image: "m.PNG"
     },
     {
-        title: "oiiaioiiiai",
-        date: "2025-03-08",
-        tags: ["生活"],
+        title: "Gretsch Guitar",
+        date: "2023-06-12",
+        tags: ["生活", "音乐"],
         excerpt: "喵",
-        content: "喵。开发中功能。"
+        content: "Gretsch G5422TG Limited Edition Electromatic Double-Cut Hollowbody w/Bigsby Sapphire Blue",
+        image: "m1.JPG"
     },
     {
-        title: "新的一天",
-        date: "2025-03-07",
-        tags: ["生活", "游戏"], // 改为"游戏"
+        title: "咩",
+        date: "2023-11-23",
+        tags: ["生活"], // 改为"游戏"
         excerpt: "开发中功能！",
-        content: "开发中功能。"
+        content: "咩。",
+        image: "m2.JPG"
     },
     {
-        title: "游戏更新",
-        date: "2025-03-06",
+        title: "Fire",
+        date: "2023-12-22",
         tags: ["游戏"], // 改为"游戏"
         excerpt: "开发中功能",
-        content: "开发中功能。"
+        content: "六国论",
+        image: "m3.jpg"
     },
     {
-        title: "日常分享",
-        date: "2025-03-05",
+        title: "重构",
+        date: "2021-03-05",
         tags: ["生活"],
         excerpt: "开发中功能。",
-        content: "开发中功能。"
+        content: "链接",
+        image: "m4.jpg"
     },
     // 新增文章以加入"音乐"和"电子产品"标签
-    {
-        title: "音乐推荐",
-        date: "2025-03-04",
-        tags: ["音乐"],
-        excerpt: "分享一些好听的音乐。",
-        content: "分享一些好听的音乐。开发中。"
-    },
-    {
-        title: "电子产品评测",
-        date: "2025-03-03",
-        tags: ["电子产品"],
-        excerpt: "最新电子产品体验。",
-        content: "最新电子产品体验。开发中。"
-    },
-    // 新增文章以加入"乐理"和"Adobe"标签
-    {
-        title: "乐理基础",
-        date: "2025-03-02",
-        tags: ["乐理"],
-        excerpt: "乐理知识分享。",
-        content: "乐理知识分享。开发中。"
-    },
-    {
-        title: "Adobe教程",
-        date: "2025-03-01",
-        tags: ["Adobe"],
-        excerpt: "Adobe软件使用指南。",
-        content: "Adobe软件使用指南。开发中。"
-    },
-    // 可以继续添加更多文章以测试无限滚动（假设有更多数据）
+
 ];
 // 按日期降序排序
 posts.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -83,13 +58,21 @@ const tagCloud = document.querySelector('.tag-cloud');
 const searchInput = document.querySelector('.search-input');
 const commentForm = document.getElementById('comment-form');
 const commentsList = document.getElementById('comments-list');
-// 获取所有唯一标签
+// 计算标签计数
+const tagCounts = {};
+posts.forEach(post => {
+    post.tags.forEach(tag => {
+        if (!tagCounts[tag]) tagCounts[tag] = 0;
+        tagCounts[tag]++;
+    });
+});
+// 获取所有唯一标签，并排序
 function getUniqueTags() {
     const allTags = new Set();
     posts.forEach(post => {
         post.tags.forEach(tag => allTags.add(tag));
     });
-    return Array.from(allTags);
+    return Array.from(allTags).sort();
 }
 // 渲染标签云
 function renderTags() {
@@ -98,7 +81,7 @@ function renderTags() {
     tags.forEach(tag => {
         const span = document.createElement('span');
         span.classList.add('tag');
-        span.textContent = tag;
+        span.textContent = `${tag} (${tagCounts[tag] || 0})`;
         if (tag === selectedTag) {
             span.classList.add('active');
         }
@@ -153,23 +136,9 @@ function renderPosts(append = true) {
         });
         meta.appendChild(dateSpan);
         meta.appendChild(tagsDiv);
-        const excerpt = document.createElement('p');
-        excerpt.classList.add('post-excerpt');
-        excerpt.textContent = post.excerpt; // 初始显示摘要
-        const readMore = document.createElement('a');
-        readMore.classList.add('read-more');
-        readMore.href = '#';
-        readMore.textContent = '阅读更多';
-        readMore.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (excerpt.textContent === post.excerpt) {
-                excerpt.textContent = post.content; // 展开完整内容
-                readMore.textContent = '收起';
-            } else {
-                excerpt.textContent = post.excerpt; // 收起
-                readMore.textContent = '阅读更多';
-            }
-        });
+        const contentP = document.createElement('p');
+        contentP.classList.add('post-excerpt');
+        contentP.textContent = post.content; // 显示完整内容
         if (post.image) {
             const img = document.createElement('img');
             img.src = post.image;
@@ -179,8 +148,7 @@ function renderPosts(append = true) {
         }
         article.appendChild(title);
         article.appendChild(meta);
-        article.appendChild(excerpt);
-        article.appendChild(readMore);
+        article.appendChild(contentP);
         postsContainer.appendChild(article);
     });
     currentPage++;
@@ -217,7 +185,7 @@ function loadComments() {
         const div = document.createElement('div');
         div.classList.add('comment');
         div.innerHTML = `
-            <div class="comment-name">${comment.name}</div>
+            <div class="comment-name">匿名</div>
             <div class="comment-date">${new Date(comment.date).toLocaleString()}</div>
             <p>${comment.content}</p>
             <button class="comment-delete" data-index="${index}">删除</button>
@@ -234,11 +202,10 @@ function loadComments() {
 }
 function addComment(e) {
     e.preventDefault();
-    const name = document.getElementById('comment-name').value.trim();
     const content = document.getElementById('comment-content').value.trim();
-    if (name && content) {
+    if (content) {
         const comments = JSON.parse(localStorage.getItem('blogComments')) || [];
-        comments.push({ name, content, date: new Date().toISOString() });
+        comments.push({ name: '匿名', content, date: new Date().toISOString() });
         localStorage.setItem('blogComments', JSON.stringify(comments));
         loadComments();
         commentForm.reset();

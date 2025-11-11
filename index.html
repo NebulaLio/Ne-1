@@ -12,22 +12,18 @@
 <body>
     <div class="header">
         <img src="logo.jpg" alt="Logo" class="logo">
-        <div class="search-bar">
-            <audio id="music-player" controls>
-                <source src="music.mp3" type="audio/mpeg"> <!-- 替换为实际音乐文件 -->
-                Your browser does not support the audio element.
-            </audio>
-            <input type="text" class="search-input" placeholder="搜索文章...">
-        </div>
     </div>
     <div class="container">
         <aside class="left-sidebar">
             <div class="weather"><i class="fas fa-cloud-sun"></i> Loading...</div>
             <div id="current-time">Loading time...</div> <!-- 新增实时时间 -->
+            <audio id="music-player" controls>
+                <source src="music.mp3" type="audio/mpeg"> <!-- 替换为实际音乐文件 -->
+                Your browser does not support the audio element.
+            </audio>
             <div class="widget">
                 <h3 class="widget-title">留言板</h3>
                 <form id="comment-form">
-                    <input type="text" id="comment-name" placeholder="姓名" required>
                     <textarea id="comment-content" placeholder="留言内容" required></textarea>
                     <button type="submit">提交</button>
                 </form>
@@ -37,6 +33,7 @@
             </div>
         </aside>
         <main>
+            <input type="text" class="search-input" placeholder="搜索文章...">
             <div class="posts-container">
                 <!-- 动态生成的文章卡片将在这里 -->
             </div>
@@ -59,7 +56,8 @@
                                 class="fas fa-music"></i> 网易云音乐</a></li>
                     <li><a href="https://steamcommunity.com/profiles/76561199175537689/" target="_blank"><i
                                 class="fab fa-steam"></i> Steam</a></li>
-                    <li><a href="https://space.bilibili.com/19424377?spm_id_from=333.1007.0.0" target="_blank"><i class="fab fa-bilibili"></i>
+                    <li><a href="https://space.bilibili.com/19424377?spm_id_from=333.1007.0.0" target="_blank"><i
+                                class="fab fa-bilibili"></i>
                             Bilibili</a></li> <!-- 添加Bilibili，替换为实际链接 -->
                     <!-- 添加更多社交链接 -->
                 </ul>
