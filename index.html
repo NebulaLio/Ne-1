@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>乐理与和弦词典</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar" aria-label="主导航">
+        <div class="brand">
+          <span class="brand-mark">M</span>
+          <div>
+            <h1>乐理词典</h1>
+            <p>和弦 / 乐句 / 谱例</p>
+          </div>
+        </div>
+
+        <nav class="nav-list" aria-label="功能区">
+          <button class="nav-button active" data-view="dictionary" type="button">和弦词典</button>
+          <button class="nav-button" data-view="theory" type="button">乐理知识</button>
+          <button class="nav-button" data-view="phrases" type="button">乐句工坊</button>
+          <button class="nav-button" data-view="scores" type="button">谱例编辑</button>
+        </nav>
+
+        <section class="quick-panel" aria-label="当前选择">
+          <p class="eyebrow">当前主音</p>
+          <strong id="currentRootLabel">C</strong>
+          <span id="currentRootHint">自然音 / 可切换升降号</span>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">选择主音即可生成所有常用和弦构成音</p>
+            <h2 id="viewTitle">和弦词典</h2>
+          </div>
+          <div class="topbar-actions" aria-label="显示设置">
+            <label class="switch">
+              <input id="notationToggle" type="checkbox" />
+              <span>降号显示</span>
+            </label>
+            <label class="select-label">
+              <span>调式</span>
+              <select id="modeSelect">
+                <option value="major">大调</option>
+                <option value="minor">自然小调</option>
+                <option value="harmonicMinor">和声小调</option>
+                <option value="melodicMinor">旋律小调</option>
+                <option value="dorian">Dorian</option>
+                <option value="mixolydian">Mixolydian</option>
+              </select>
+            </label>
+          </div>
+        </header>
+
+        <section id="dictionary" class="view active" aria-labelledby="viewTitle">
+          <div class="root-strip" id="rootStrip" aria-label="主音选择"></div>
+
+          <section class="hero-tool">
+            <div class="chord-focus">
+              <div class="focus-header">
+                <div>
+                  <p class="eyebrow">当前和弦</p>
+                  <h3 id="selectedChordName">Cmaj7</h3>
+                </div>
+                <button id="favoriteChordBtn" class="ghost-button" type="button">收藏</button>
+              </div>
+              <div class="tone-row" id="selectedChordTones"></div>
+              <p id="selectedChordAnalysis" class="analysis-text"></p>
+              <dl class="detail-grid" id="selectedChordDetails"></dl>
+            </div>
+
+            <div class="instrument-map">
+              <div class="piano-visual" id="pianoVisual" aria-label="钢琴键盘"></div>
+              <div class="fretboard-visual" id="fretboardVisual" aria-label="吉他指板"></div>
+            </div>
+          </section>
+
+          <div class="toolbar">
+            <label class="search-box">
+              <span>搜索</span>
+              <input id="chordSearch" type="search" placeholder="maj7 / altered / sus / add9" />
+            </label>
+            <div class="segmented" role="tablist" aria-label="和弦分类">
+              <button class="segment active" data-category="all" type="button">全部</button>
+              <button class="segment" data-category="triad" type="button">三和弦</button>
+              <button class="segment" data-category="seventh" type="button">七和弦</button>
+              <button class="segment" data-category="extended" type="button">扩展</button>
+              <button class="segment" data-category="altered" type="button">变化</button>
+              <button class="segment" data-category="guitar" type="button">吉他</button>
+            </div>
+          </div>
+
+          <section class="chord-grid" id="chordGrid" aria-label="和弦列表"></section>
+        </section>
+
+        <section id="theory" class="view" aria-labelledby="viewTitle">
+          <div class="theory-layout">
+            <section class="scale-panel">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">调式音阶</p>
+                  <h3 id="scaleTitle">C 大调</h3>
+                </div>
+              </div>
+              <div class="tone-row" id="scaleTones"></div>
+              <div class="degree-table" id="degreeTable"></div>
+            </section>
+
+            <section class="knowledge-grid" id="knowledgeGrid" aria-label="知识卡片"></section>
+          </div>
+        </section>
+
+        <section id="phrases" class="view" aria-labelledby="viewTitle">
+          <div class="split-layout">
+            <section class="library-panel">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">内置乐句</p>
+                  <h3>古典钢琴与爵士吉他语汇</h3>
+                </div>
+              </div>
+              <div class="phrase-filters" id="phraseFilters"></div>
+              <div id="phraseList" class="phrase-list"></div>
+            </section>
+
+            <section class="creator-panel">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">创建乐句</p>
+                  <h3>保存到本机</h3>
+                </div>
+              </div>
+              <form id="phraseForm" class="composer-form">
+                <label>
+                  <span>标题</span>
+                  <input id="phraseTitle" required placeholder="例如：ii-V-I 句尾" />
+                </label>
+                <label>
+                  <span>风格</span>
+                  <select id="phraseStyle">
+                    <option>爵士吉他</option>
+                    <option>古典钢琴</option>
+                    <option>流行键盘</option>
+                    <option>练习素材</option>
+                  </select>
+                </label>
+                <label>
+                  <span>和声进行</span>
+                  <input id="phraseProgression" placeholder="Dm7 - G7 - Cmaj7" />
+                </label>
+                <label>
+                  <span>音符 / 指法 / 节奏</span>
+                  <textarea id="phraseNotes" rows="6" placeholder="D F A C | B D F A | E G B D"></textarea>
+                </label>
+                <button class="primary-button" type="submit">保存乐句</button>
+              </form>
+              <div id="customPhraseList" class="custom-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="scores" class="view" aria-labelledby="viewTitle">
+          <div class="score-layout">
+            <section class="score-panel">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">吉他谱</p>
+                  <h3>六线谱编辑</h3>
+                </div>
+                <button id="clearTabBtn" class="ghost-button" type="button">清空</button>
+              </div>
+              <div class="tab-editor" id="tabEditor"></div>
+              <div class="score-actions">
+                <button id="addTabBeatBtn" class="secondary-button" type="button">增加小节格</button>
+                <button id="saveTabBtn" class="primary-button" type="button">保存吉他谱</button>
+              </div>
+              <pre id="tabPreview" class="score-preview"></pre>
+            </section>
+
+            <section class="score-panel">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">钢琴谱</p>
+                  <h3>高低音声部草稿</h3>
+                </div>
+                <button id="clearPianoBtn" class="ghost-button" type="button">清空</button>
+              </div>
+              <div class="piano-score-editor">
+                <label>
+                  <span>右手</span>
+                  <textarea id="rightHandInput" rows="5" placeholder="C5 E5 G5 | D5 F5 A5"></textarea>
+                </label>
+                <label>
+                  <span>左手</span>
+                  <textarea id="leftHandInput" rows="5" placeholder="C3 G3 | F2 C3 | G2 D3"></textarea>
+                </label>
+                <label>
+                  <span>说明</span>
+                  <input id="scoreMemoInput" placeholder="分解和弦、踏板、把位或练习目标" />
+                </label>
+              </div>
+              <div class="score-actions">
+                <button id="savePianoBtn" class="primary-button" type="button">保存钢琴谱</button>
+              </div>
+              <div id="savedScores" class="saved-score-list"></div>
+            </section>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
