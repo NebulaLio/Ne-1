@@ -19,8 +19,13 @@
 
         <nav class="nav-list" aria-label="功能区">
           <button class="nav-button active" data-view="dictionary" type="button">和弦词典</button>
-          <button class="nav-button" data-view="theory" type="button">乐理知识</button>
+          <button class="nav-button" data-view="theory" type="button">乐理解说</button>
+          <button class="nav-button" data-view="intervals" type="button">音程词典</button>
+          <button class="nav-button" data-view="progressions" type="button">功能和声</button>
+          <button class="nav-button" data-view="modes" type="button">调式大全</button>
+          <button class="nav-button" data-view="voice" type="button">声部进行</button>
           <button class="nav-button" data-view="phrases" type="button">乐句工坊</button>
+          <button class="nav-button" data-view="quiz" type="button">测验模式</button>
           <button class="nav-button" data-view="scores" type="button">谱例编辑</button>
         </nav>
 
@@ -42,6 +47,11 @@
               <input id="notationToggle" type="checkbox" />
               <span>降号显示</span>
             </label>
+            <div class="style-switch" id="styleSwitch" aria-label="风格切换">
+              <button class="segment active" data-style-mode="jazz" type="button">爵士</button>
+              <button class="segment" data-style-mode="classical" type="button">古典</button>
+              <button class="segment" data-style-mode="pop" type="button">流行</button>
+            </div>
             <label class="select-label">
               <span>调式</span>
               <select id="modeSelect">
@@ -69,6 +79,7 @@
                 <button id="favoriteChordBtn" class="ghost-button" type="button">收藏</button>
               </div>
               <div class="tone-row" id="selectedChordTones"></div>
+              <div class="construction-strip" id="constructionStrip"></div>
               <p id="selectedChordAnalysis" class="analysis-text"></p>
               <dl class="detail-grid" id="selectedChordDetails"></dl>
             </div>
@@ -76,7 +87,30 @@
             <div class="instrument-map">
               <div class="piano-visual" id="pianoVisual" aria-label="钢琴键盘"></div>
               <div class="fretboard-visual" id="fretboardVisual" aria-label="吉他指板"></div>
+              <div class="voicing-strip" id="voicingStrip" aria-label="常用把位"></div>
             </div>
+
+            <aside class="theory-sidebar">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">乐理解说</p>
+                  <h3>理論註解</h3>
+                </div>
+              </div>
+              <div class="theory-tabs" id="theoryTabs">
+                <button class="segment active" data-theory-focus="chord" type="button">和弦</button>
+                <button class="segment" data-theory-focus="scale" type="button">音阶</button>
+                <button class="segment" data-theory-focus="progression" type="button">进行</button>
+                <button class="segment" data-theory-focus="voice" type="button">声部</button>
+              </div>
+              <article id="theoryPanel" class="theory-panel"></article>
+              <div class="audio-actions">
+                <button id="playChordBtn" class="secondary-button" type="button">▶ 和弦</button>
+                <button id="playArpBtn" class="secondary-button" type="button">♪ 琶音</button>
+                <button id="playScaleUpBtn" class="secondary-button" type="button">↗ 音阶</button>
+                <button id="playScaleDownBtn" class="secondary-button" type="button">↘ 音阶</button>
+              </div>
+            </aside>
           </section>
 
           <div class="toolbar">
@@ -111,6 +145,110 @@
             </section>
 
             <section class="knowledge-grid" id="knowledgeGrid" aria-label="知识卡片"></section>
+          </div>
+        </section>
+
+        <section id="intervals" class="view" aria-labelledby="viewTitle">
+          <div class="split-layout">
+            <section class="calculator-panel">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">音程词典</p>
+                  <h3>音程计算器</h3>
+                </div>
+              </div>
+              <div class="interval-inputs">
+                <label>
+                  <span>音 1</span>
+                  <select id="intervalNoteA"></select>
+                </label>
+                <label>
+                  <span>音 2</span>
+                  <select id="intervalNoteB"></select>
+                </label>
+              </div>
+              <article id="intervalResult" class="theory-panel"></article>
+              <div class="audio-actions">
+                <button id="playIntervalBtn" class="secondary-button" type="button">▶ 播放音程</button>
+              </div>
+            </section>
+            <section class="reference-panel" id="intervalReference"></section>
+          </div>
+        </section>
+
+        <section id="progressions" class="view" aria-labelledby="viewTitle">
+          <div class="progression-layout">
+            <section class="progression-library">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">功能和声</p>
+                  <h3>进行库</h3>
+                </div>
+              </div>
+              <div id="progressionLibrary" class="progression-cards"></div>
+            </section>
+            <section class="progression-builder">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">拖拉建立进行</p>
+                  <h3>罗马数字与评分</h3>
+                </div>
+                <div class="builder-actions">
+                  <button id="addCurrentChordBtn" class="secondary-button" type="button">加入当前和弦</button>
+                  <button id="clearProgressionBtn" class="ghost-button" type="button">清空</button>
+                  <button id="loadProgressionBtn" class="secondary-button" type="button">载入示例</button>
+                </div>
+              </div>
+              <div id="progressionPalette" class="progression-palette" aria-label="和弦素材"></div>
+              <div id="progressionLane" class="progression-lane" aria-label="进行轨道"></div>
+              <article id="progressionAnalysis" class="theory-panel"></article>
+            </section>
+          </div>
+        </section>
+
+        <section id="modes" class="view" aria-labelledby="viewTitle">
+          <div class="modes-layout">
+            <section>
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">调式大全</p>
+                  <h3>七个常用调式</h3>
+                </div>
+              </div>
+              <div id="modeGallery" class="mode-gallery"></div>
+            </section>
+            <section id="modeDetail" class="mode-detail theory-panel"></section>
+          </div>
+        </section>
+
+        <section id="voice" class="view" aria-labelledby="viewTitle">
+          <div class="split-layout">
+            <section class="voice-controls">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">声部进行视觉化</p>
+                  <h3>和弦移动轨迹</h3>
+                </div>
+              </div>
+              <div class="voice-selects">
+                <label>
+                  <span>起始和弦</span>
+                  <select id="voiceChordA"></select>
+                </label>
+                <label>
+                  <span>目标和弦</span>
+                  <select id="voiceChordB"></select>
+                </label>
+              </div>
+              <div class="audio-actions">
+                <button id="visualizeVoiceBtn" class="primary-button" type="button">更新轨迹</button>
+                <button id="playVoiceBtn" class="secondary-button" type="button">▶ 播放前后对比</button>
+              </div>
+              <article id="voiceWarnings" class="theory-panel"></article>
+            </section>
+            <section class="voice-visual-wrap">
+              <svg id="voiceVisual" viewBox="0 0 860 360" preserveAspectRatio="none" aria-label="声部轨迹图"></svg>
+            </section>
           </div>
         </section>
 
@@ -158,8 +296,29 @@
                 </label>
                 <button class="primary-button" type="submit">保存乐句</button>
               </form>
+              <article id="phraseGuide" class="theory-panel"></article>
               <div id="customPhraseList" class="custom-list"></div>
             </section>
+          </div>
+        </section>
+
+        <section id="quiz" class="view" aria-labelledby="viewTitle">
+          <div class="quiz-layout">
+            <section class="quiz-card">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">测验模式</p>
+                  <h3>快速记忆</h3>
+                </div>
+                <div class="score-chip" id="quizScore">0 / 0</div>
+              </div>
+              <article id="quizPrompt" class="theory-panel"></article>
+              <div id="quizOptions" class="quiz-options"></div>
+              <div class="audio-actions">
+                <button id="nextQuizBtn" class="secondary-button" type="button">下一题</button>
+              </div>
+            </section>
+            <section id="quizNotes" class="theory-panel"></section>
           </div>
         </section>
 
@@ -206,6 +365,7 @@
               <div class="score-actions">
                 <button id="savePianoBtn" class="primary-button" type="button">保存钢琴谱</button>
               </div>
+              <article id="voiceCheck" class="theory-panel"></article>
               <div id="savedScores" class="saved-score-list"></div>
             </section>
           </div>
