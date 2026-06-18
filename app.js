@@ -749,6 +749,7 @@ const els = {
   nextQuizBtn: document.getElementById("nextQuizBtn"),
   quizNotes: document.getElementById("quizNotes"),
   favoriteChordBtn: document.getElementById("favoriteChordBtn"),
+  toastRegion: document.getElementById("toastRegion"),
 };
 
 function noteName(index, useFlats = state.useFlats) {
@@ -781,6 +782,19 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function showToast(message, tone = "success") {
+  if (!els.toastRegion) return;
+  const toast = document.createElement("div");
+  toast.className = `toast ${tone}`;
+  toast.textContent = message;
+  els.toastRegion.appendChild(toast);
+  window.setTimeout(() => toast.classList.add("visible"), 20);
+  window.setTimeout(() => {
+    toast.classList.remove("visible");
+    window.setTimeout(() => toast.remove(), 240);
+  }, 2300);
 }
 
 function mod(n, m) {
@@ -1718,6 +1732,7 @@ function renderChordGrid() {
         .join("");
       return `
         <button class="chord-card ${active ? "active" : ""}" data-chord="${chord.id}" type="button">
+          ${state.favorites.has(chord.id) ? '<span class="favorite-badge">已收藏</span>' : ""}
           <h4>${getChordDisplayName(chord)}</h4>
           <div class="tone-row">${tones}</div>
           <p>${chord.theory}</p>
@@ -2465,9 +2480,15 @@ function bindEvents() {
 
   els.favoriteChordBtn.addEventListener("click", () => {
     const chord = getSelectedChord();
-    if (state.favorites.has(chord.id)) state.favorites.delete(chord.id);
-    else state.favorites.add(chord.id);
+    if (state.favorites.has(chord.id)) {
+      state.favorites.delete(chord.id);
+      showToast(`${getChordDisplayName(chord)} 已移出收藏`, "info");
+    } else {
+      state.favorites.add(chord.id);
+      showToast(`${getChordDisplayName(chord)} 已收藏`, "success");
+    }
     renderChordDetails(chord);
+    renderChordGrid();
     persist();
   });
 
@@ -2532,6 +2553,7 @@ function bindEvents() {
     const b = chordById(els.voiceChordB.value || "7");
     optimizeVoiceLeadingAdjustments(a, b);
     renderVoiceVisual();
+    showToast("声部轨迹已自动优化", "success");
     persist();
   });
   els.voiceAdjusters.addEventListener("change", (event) => {
