@@ -3,17 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>乐理与和弦词典</title>
+    <title>Nebula · 乐理与创作的星际地图</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <main class="app-shell">
       <aside class="sidebar" aria-label="主导航">
         <div class="brand">
-          <span class="brand-mark">M</span>
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48" role="img">
+              <circle cx="24" cy="24" r="15"></circle>
+              <path d="M11 27c7-13 20-17 27-10M10 30c10 4 24 1 29-9"></path>
+              <path d="M28 15v16a4 4 0 1 1-3-3.9"></path>
+              <circle cx="35" cy="12" r="2"></circle>
+            </svg>
+          </span>
           <div>
-            <h1>乐理词典</h1>
-            <p>和弦 / 乐句 / 谱例</p>
+            <h1>Nebula</h1>
+            <p>樂理與創作的星際地圖</p>
           </div>
         </div>
 
@@ -39,13 +46,17 @@
       <section class="workspace">
         <header class="topbar">
           <div>
-            <p class="eyebrow">选择主音即可生成所有常用和弦构成音</p>
+            <p class="eyebrow">探索和聲的無限可能</p>
             <h2 id="viewTitle">和弦词典</h2>
           </div>
           <div class="topbar-actions" aria-label="显示设置">
             <label class="switch">
               <input id="notationToggle" type="checkbox" />
               <span>降号显示</span>
+            </label>
+            <label class="switch">
+              <input id="darkModeToggle" type="checkbox" />
+              <span>深色沉浸</span>
             </label>
             <div class="style-switch" id="styleSwitch" aria-label="风格切换">
               <button class="segment active" data-style-mode="jazz" type="button">爵士</button>
@@ -104,6 +115,33 @@
                 <button class="segment" data-theory-focus="voice" type="button">声部</button>
               </div>
               <article id="theoryPanel" class="theory-panel"></article>
+              <div class="playback-controls" aria-label="播放控制">
+                <label>
+                  <span>播放</span>
+                  <select id="playbackModeSelect">
+                    <option value="block">Block</option>
+                    <option value="arp">Arpeggio</option>
+                    <option value="strum">Strum</option>
+                  </select>
+                </label>
+                <label>
+                  <span>音色</span>
+                  <select id="audioToneSelect">
+                    <option value="piano">Acoustic Piano</option>
+                    <option value="rhodes">Rhodes</option>
+                    <option value="guitar">Clean Guitar</option>
+                    <option value="synth">Modern Synth</option>
+                  </select>
+                </label>
+                <label class="compact-check">
+                  <input id="swingToggle" type="checkbox" />
+                  <span>Swing</span>
+                </label>
+                <label class="compact-check">
+                  <input id="humanizeToggle" type="checkbox" />
+                  <span>Humanize</span>
+                </label>
+              </div>
               <div class="audio-actions">
                 <button id="playChordBtn" class="secondary-button" type="button">▶ 和弦</button>
                 <button id="playArpBtn" class="secondary-button" type="button">♪ 琶音</button>
@@ -243,7 +281,13 @@
               <div class="audio-actions">
                 <button id="visualizeVoiceBtn" class="primary-button" type="button">更新轨迹</button>
                 <button id="playVoiceBtn" class="secondary-button" type="button">▶ 播放前后对比</button>
+                <button id="optimizeVoiceBtn" class="secondary-button" type="button">自动优化</button>
               </div>
+              <div class="theory-tabs" id="voiceExampleTabs" aria-label="示例切换">
+                <button class="segment active" data-voice-example="good" type="button">好例子</button>
+                <button class="segment" data-voice-example="bad" type="button">坏例子</button>
+              </div>
+              <div id="voiceAdjusters" class="voice-adjusters" aria-label="单声部微调"></div>
               <article id="voiceWarnings" class="theory-panel"></article>
             </section>
             <section class="voice-visual-wrap">

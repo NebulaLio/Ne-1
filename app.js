@@ -596,12 +596,16 @@ const PROGRESSION_PALETTE = [
   { degree: "I", quality: "maj7", function: "T", label: "主功能" },
   { degree: "i", quality: "m7", function: "T", label: "小调主功能" },
   { degree: "ii7", quality: "m7", function: "S", label: "前属/下属" },
+  { degree: "iv", quality: "m7", function: "S", label: "小下属借用" },
   { degree: "IV", quality: "maj7", function: "S", label: "下属功能" },
   { degree: "V7", quality: "7", function: "D", label: "属功能" },
   { degree: "V7alt", quality: "alt", function: "D", label: "变化属" },
+  { degree: "V7/ii", quality: "7", function: "D", label: "次属到 ii" },
+  { degree: "V7/V", quality: "7", function: "D", label: "次属到 V" },
   { degree: "vi", quality: "m7", function: "T", label: "替代主功能" },
   { degree: "iiø7", quality: "halfDim", function: "S", label: "小调前属" },
   { degree: "bII7", quality: "7", function: "D", label: "三全音替代" },
+  { degree: "bIIImaj7", quality: "maj7", function: "color", label: "同主小调借用" },
   { degree: "bVImaj7", quality: "maj7", function: "color", label: "借用色彩" },
   { degree: "bVII7", quality: "7", function: "color", label: "借用/摇摆" },
 ];
@@ -646,9 +650,16 @@ const state = {
   chordSearch: "",
   phraseStyle: "all",
   styleMode: "jazz",
+  darkMode: true,
+  playbackMode: "block",
+  audioTone: "piano",
+  swing: false,
+  humanize: true,
   theoryFocus: "chord",
   selectedModeId: "ionian",
   progression: ["ii7", "V7", "Imaj7"],
+  voiceAdjustments: [0, 0, 0, 0],
+  voiceExample: "good",
   quiz: { total: 0, correct: 0, answer: "", type: "chord" },
   customPhrases: [],
   scores: [],
@@ -662,6 +673,11 @@ const els = {
   currentRootLabel: document.getElementById("currentRootLabel"),
   currentRootHint: document.getElementById("currentRootHint"),
   notationToggle: document.getElementById("notationToggle"),
+  darkModeToggle: document.getElementById("darkModeToggle"),
+  playbackModeSelect: document.getElementById("playbackModeSelect"),
+  audioToneSelect: document.getElementById("audioToneSelect"),
+  swingToggle: document.getElementById("swingToggle"),
+  humanizeToggle: document.getElementById("humanizeToggle"),
   modeSelect: document.getElementById("modeSelect"),
   rootStrip: document.getElementById("rootStrip"),
   selectedChordName: document.getElementById("selectedChordName"),
@@ -702,8 +718,10 @@ const els = {
   voiceChordB: document.getElementById("voiceChordB"),
   voiceWarnings: document.getElementById("voiceWarnings"),
   voiceVisual: document.getElementById("voiceVisual"),
+  voiceAdjusters: document.getElementById("voiceAdjusters"),
   visualizeVoiceBtn: document.getElementById("visualizeVoiceBtn"),
   playVoiceBtn: document.getElementById("playVoiceBtn"),
+  optimizeVoiceBtn: document.getElementById("optimizeVoiceBtn"),
   phraseFilters: document.getElementById("phraseFilters"),
   phraseList: document.getElementById("phraseList"),
   phraseGuide: document.getElementById("phraseGuide"),
@@ -783,6 +801,45 @@ function getAudioContext() {
   return audioContext;
 }
 
+function getAudioProfile() {
+  const profiles = {
+    piano: { osc: "triangle", attack: 0.015, decay: 1.05, filter: 2400, velocity: 0.36 },
+    rhodes: { osc: "sine", attack: 0.025, decay: 1.3, filter: 1700, velocity: 0.34 },
+    guitar: { osc: "sawtooth", attack: 0.006, decay: 0.62, filter: 1150, velocity: 0.24 },
+    synth: { osc: "square", attack: 0.018, decay: 0.85, filter: 1800, velocity: 0.22 },
+  };
+  return profiles[state.audioTone] || profiles.piano;
+}
+
+function noteStartOffset(index, mode, duration, gap) {
+  const base = mode === "arp" ? index * (duration + gap) : mode === "strum" ? index * 0.028 : 0;
+  const swing = state.swing && mode === "arp" && index % 2 === 1 ? duration * 0.32 : 0;
+  const humanize = state.humanize ? (Math.random() - 0.5) * 0.018 : 0;
+  return Math.max(0, base + swing + humanize);
+}
+
+function triggerMidi(midi, at, duration, velocity = 0.7) {
+  const ctx = getAudioContext();
+  const profile = getAudioProfile();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const filter = ctx.createBiquadFilter();
+  osc.type = profile.osc;
+  osc.frequency.value = pitchToFrequency(midi);
+  filter.type = "lowpass";
+  filter.frequency.setValueAtTime(profile.filter, at);
+  filter.frequency.exponentialRampToValueAtTime(Math.max(420, profile.filter * 0.45), at + duration);
+  const peak = Math.max(0.03, Math.min(0.9, velocity * profile.velocity));
+  gain.gain.setValueAtTime(0.0001, at);
+  gain.gain.exponentialRampToValueAtTime(peak, at + profile.attack);
+  gain.gain.exponentialRampToValueAtTime(0.0001, at + Math.max(profile.attack + 0.05, duration * profile.decay));
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(masterGain);
+  osc.start(at);
+  osc.stop(at + duration * profile.decay + 0.08);
+}
+
 function midiToNoteName(midi) {
   const pitchClassNames = state.useFlats ? NOTE_NAMES.flat : NOTE_NAMES.sharp;
   const octave = Math.floor(midi / 12) - 1;
@@ -803,46 +860,18 @@ function playNotes(sequence, { duration = 0.34, gap = 0.05, mode = "block", velo
   sequence.forEach((item, index) => {
     const midi = typeof item === "number" ? item : noteToPitch(item);
     if (midi === null || Number.isNaN(midi)) return;
-    const at = now + index * (mode === "arp" ? duration + gap : 0);
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "sine";
-    osc.frequency.value = pitchToFrequency(midi);
-    gain.gain.setValueAtTime(0.0001, at);
-    gain.gain.exponentialRampToValueAtTime(velocity, at + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, at + duration);
-    osc.connect(gain);
-    gain.connect(masterGain);
-    osc.start(at);
-    osc.stop(at + duration + 0.05);
+    const at = now + noteStartOffset(index, mode, duration, gap);
+    triggerMidi(midi, at, duration, velocity);
   });
 }
 
 function playChordNotes(notes, { arpeggio = false, octave = 4, octaveLift = 0 } = {}) {
-  const ctx = getAudioContext();
   const baseMidi = notes.map((note) => {
     const midi = noteToPitch(note, octave);
     return midi === null ? null : midi + octaveLift * 12;
   }).filter((value) => value !== null);
   if (!baseMidi.length) return;
-  if (arpeggio) {
-    baseMidi.forEach((midi, index) => playNotes([midi], { mode: "arp", duration: 0.32, startAt: index * 0.08 }));
-  } else {
-    const now = ctx.currentTime + 0.05;
-    baseMidi.forEach((midi) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "triangle";
-      osc.frequency.value = pitchToFrequency(midi);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.38, now + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.1);
-      osc.connect(gain);
-      gain.connect(masterGain);
-      osc.start(now);
-      osc.stop(now + 1.2);
-    });
-  }
+  playNotes(baseMidi, { mode: arpeggio ? "arp" : state.playbackMode, duration: arpeggio ? 0.32 : 0.9, gap: 0.06, velocity: 0.85 });
 }
 
 function playSequence(noteNames, { ascending = true, tempo = 0.26 } = {}) {
@@ -852,17 +881,8 @@ function playSequence(noteNames, { ascending = true, tempo = 0.26 } = {}) {
   seq.forEach((note, index) => {
     const midi = noteToPitch(`${note}4`);
     if (midi === null) return;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "sine";
-    osc.frequency.value = pitchToFrequency(midi);
-    gain.gain.setValueAtTime(0.0001, now + index * tempo);
-    gain.gain.exponentialRampToValueAtTime(0.34, now + index * tempo + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + index * tempo + tempo * 0.9);
-    osc.connect(gain);
-    gain.connect(masterGain);
-    osc.start(now + index * tempo);
-    osc.stop(now + index * tempo + tempo);
+    const at = now + index * tempo + (state.swing && index % 2 === 1 ? tempo * 0.22 : 0);
+    triggerMidi(midi, at, tempo * 0.9, 0.78);
   });
 }
 
@@ -953,35 +973,81 @@ function getChordMidi(chord, baseOctave = 4) {
 }
 
 function getChordScaleRecommendation(chord) {
+  return getChordScaleRecommendations(chord)[0];
+}
+
+function buildScaleChoice(scale, notes, why, characteristic = [], avoid = [], use = "") {
+  return { scale, notes, why, characteristic, avoid, use };
+}
+
+function noteListFromSteps(steps) {
+  return steps.map((step) => noteName(state.root + step)).join(" ");
+}
+
+function getChordScaleRecommendations(chord) {
   const id = chord.id;
   if (["maj", "6", "69", "maj7", "maj9"].includes(id)) {
-    return { scale: "Ionian / Major", notes: [0, 2, 4, 5, 7, 9, 11], why: "包含大三、大七与自然九音，主功能稳定。" };
+    return [
+      buildScaleChoice("Ionian / Major", [0, 2, 4, 5, 7, 9, 11], "最稳的大调主功能选择。", ["3", "6", "maj7"], ["11"], "标准主和弦、古典/流行落点"),
+      buildScaleChoice("Lydian", [0, 2, 4, 6, 7, 9, 11], "#11 避开自然 11 与大三度的冲突，现代感更强。", ["#11", "maj7"], [], "现代爵士、电影配乐、静态大和弦"),
+      buildScaleChoice("Major Pentatonic", [0, 2, 4, 7, 9], "少掉 4 与 7，旋律更干净。", ["6/13", "9"], [], "流行旋律、初学即兴"),
+    ];
   }
   if (["maj13"].includes(id)) {
-    return { scale: "Lydian 或 Ionian", notes: [0, 2, 4, 6, 7, 9, 11], why: "#11 避开自然 11 与大三度的冲突，现代感更强。" };
+    return [
+      buildScaleChoice("Lydian", [0, 2, 4, 6, 7, 9, 11], "13 与 #11 同时出现时，Lydian 最不拥挤。", ["#11", "13", "maj7"], [], "大十三、上方结构、现代开放 voicing"),
+      buildScaleChoice("Ionian", [0, 2, 4, 5, 7, 9, 11], "保留传统大调语法。", ["6/13", "maj7"], ["11"], "古典或流行语境"),
+    ];
   }
   if (["min", "m7", "m9", "m11", "m6"].includes(id)) {
-    return { scale: "Dorian / Aeolian", notes: [0, 2, 3, 5, 7, 9, 10], why: "小三、小七稳定，自然六度让小和弦更有爵士感。" };
+    return [
+      buildScaleChoice("Dorian", [0, 2, 3, 5, 7, 9, 10], "自然六度让小和弦更有爵士和 funk 感。", ["m3", "6", "b7"], ["b6"], "ii7、m9、modal vamp"),
+      buildScaleChoice("Aeolian / Natural Minor", [0, 2, 3, 5, 7, 8, 10], "b6 更暗，适合自然小调或流行小调。", ["b6", "b7"], [], "小调主和弦、抒情段落"),
+      buildScaleChoice("Minor Pentatonic", [0, 3, 5, 7, 10], "只保留最稳的骨架音，句子容易唱。", ["m3", "b7"], [], "blues、rock、入门即兴"),
+    ];
   }
   if (["7", "9", "13", "7sus4", "9sus4"].includes(id)) {
-    return { scale: "Mixolydian", notes: [0, 2, 4, 5, 7, 9, 10], why: "大三加小七构成属功能，9 与 13 是常用自然张力。" };
+    return [
+      buildScaleChoice("Mixolydian", [0, 2, 4, 5, 7, 9, 10], "大三加小七构成属功能，9 与 13 是常用自然张力。", ["3", "b7", "13"], ["11"], "基础属七、blues、流行 dominant"),
+      buildScaleChoice("Bebop Dominant", [0, 2, 4, 5, 7, 9, 10, 11], "加入经过大七，让八分音符线条落点更顺。", ["3", "b7", "M7 passing"], ["11"], "swing、bebop 线条"),
+      buildScaleChoice("Lydian Dominant", [0, 2, 4, 6, 7, 9, 10], "#11 让属和弦更现代，也常用于三全音替代。", ["#11", "b7", "13"], [], "subV7、fusion、非解决属"),
+    ];
   }
   if (["7b9", "7b13"].includes(id)) {
-    return { scale: "Phrygian Dominant / Harmonic Minor V", notes: [0, 1, 4, 5, 7, 8, 10], why: "b9 与 b13 指向小调解决，色彩集中。" };
+    return [
+      buildScaleChoice("Phrygian Dominant / Harmonic Minor V", [0, 1, 4, 5, 7, 8, 10], "b9 与 b13 指向小调解决，色彩集中。", ["b9", "3", "b13", "b7"], [], "小调 V7b9、古典和声小调属"),
+      buildScaleChoice("Half-Whole Diminished", [0, 1, 3, 4, 6, 7, 9, 10], "对称张力覆盖 b9、#9、#11、13。", ["b9", "#9", "#11", "13"], [], "强属解决、big band 句法"),
+    ];
   }
   if (["7sharp9", "alt"].includes(id)) {
-    return { scale: "Altered Scale / Super Locrian", notes: [0, 1, 3, 4, 6, 8, 10], why: "包含 b9、#9、b5、#5，适合强解决到目标和弦。" };
+    return [
+      buildScaleChoice("Altered Scale / Super Locrian", [0, 1, 3, 4, 6, 8, 10], "包含 b9、#9、b5、#5，适合强解决到目标和弦。", ["b9", "#9", "b5", "#5", "b7"], [], "V7alt → I / i"),
+      buildScaleChoice("Half-Whole Diminished", [0, 1, 3, 4, 6, 7, 9, 10], "保留自然 5 与 13，张力更对称。", ["b9", "#9", "#11", "13"], [], "dominant diminished lick"),
+      buildScaleChoice("Blues Dominant", [0, 3, 4, 6, 7, 10], "#9 可听成蓝调小三度。", ["#9/m3", "3", "b7"], [], "funk、blues、fusion"),
+    ];
   }
   if (["halfDim"].includes(id)) {
-    return { scale: "Locrian ♮2", notes: [0, 2, 3, 5, 6, 8, 10], why: "适合小调 iiø，保留 b5 且二度更柔和。" };
+    return [
+      buildScaleChoice("Locrian natural 2", [0, 2, 3, 5, 6, 8, 10], "适合小调 iiø，保留 b5 且二度更柔和。", ["m3", "b5", "b7", "natural 2"], [], "iiø-V-i"),
+      buildScaleChoice("Locrian", [0, 1, 3, 5, 6, 8, 10], "b2 更紧张，适合短暂经过。", ["b2", "b5"], [], "强烈暗色、经过功能"),
+    ];
   }
   if (["dim", "dim7"].includes(id)) {
-    return { scale: "Whole-Half Diminished", notes: [0, 2, 3, 5, 6, 8, 9, 11], why: "对称减音阶能覆盖减七和弦与经过功能。" };
+    return [
+      buildScaleChoice("Whole-Half Diminished", [0, 2, 3, 5, 6, 8, 9, 11], "对称减音阶能覆盖减七和弦与经过功能。", ["m3", "b5", "bb7", "M7 color"], [], "vii°7、经过减七"),
+      buildScaleChoice("Diminished Arpeggio Cell", [0, 3, 6, 9], "先练四个对称和弦音，最容易听清功能。", ["m3 cycle"], [], "技术练习、转位连接"),
+    ];
   }
   if (["aug"].includes(id)) {
-    return { scale: "Whole Tone", notes: [0, 2, 4, 6, 8, 10], why: "全音阶与增三和弦同样对称，悬浮感强。" };
+    return [
+      buildScaleChoice("Whole Tone", [0, 2, 4, 6, 8, 10], "全音阶与增三和弦同样对称，悬浮感强。", ["3", "#5", "b7 color"], [], "增和弦、非功能色彩"),
+      buildScaleChoice("Lydian Augmented", [0, 2, 4, 6, 8, 9, 11], "旋律小调第三调式，适合 maj7#5。", ["#5", "#11", "maj7"], [], "电影感、现代大和弦"),
+    ];
   }
-  return { scale: "Major Pentatonic / Chord Tones", notes: [0, 2, 4, 7, 9], why: "先锁定和弦音，再用五声音阶补旋律。" };
+  return [
+    buildScaleChoice("Major Pentatonic / Chord Tones", [0, 2, 4, 7, 9], "先锁定和弦音，再用五声音阶补旋律。", ["1", "3", "5"], [], "入门即兴与旋律写作"),
+    buildScaleChoice("Current Key Scale", SCALE_LIBRARY[state.mode] || SCALE_LIBRARY.major, "与当前调式保持一致，适合调内旋律。", ["scale degrees"], [], "功能和声语境"),
+  ];
 }
 
 function getFunctionClass(chord) {
@@ -1026,8 +1092,17 @@ function getVoiceLeadingAdvice(chord) {
 }
 
 function getTheoryHtml(chord = getSelectedChord()) {
-  const chordScale = getChordScaleRecommendation(chord);
-  const scaleNames = chordScale.notes.map((step) => noteName(state.root + step)).join(" ");
+  const chordScales = getChordScaleRecommendations(chord);
+  const scaleRows = chordScales
+    .map((choice) => `
+      <article class="scale-choice">
+        <strong>${choice.scale}</strong>
+        <span>${noteListFromSteps(choice.notes)}</span>
+        <p>${choice.why}</p>
+        <small>特徵音：${choice.characteristic.join("、") || "和弦音"} · Avoid notes：${choice.avoid.join("、") || "无明显禁忌"} · 用途：${choice.use}</small>
+      </article>
+    `)
+    .join("");
   const functionClass = getFunctionClass(chord);
   const styleAdvice = {
     jazz: "爵士模式：优先看三音、七音、张力音与可替代属，允许省略五音。",
@@ -1040,10 +1115,13 @@ function getTheoryHtml(chord = getSelectedChord()) {
       <li><strong>功能：</strong>${functionClass} / ${chord.function}</li>
       <li><strong>常见解决：</strong>${getResolutionAdvice(chord)}</li>
       <li><strong>张力音与色彩：</strong>${getTensionSummary(chord)}</li>
-      <li><strong>Chord-Scale：</strong>${chordScale.scale}（${scaleNames}）。${chordScale.why}</li>
       <li><strong>声部进行：</strong>${getVoiceLeadingAdvice(chord)}</li>
       <li><strong>风格提示：</strong>${styleAdvice}</li>
     </ul>
+    <div class="scale-choice-list">
+      <h4>Chord-Scale 推荐</h4>
+      ${scaleRows}
+    </div>
   `;
 }
 
@@ -1067,9 +1145,11 @@ function getProgressionTheoryHtml() {
     <ul>
       <li><strong>罗马数字：</strong>${analysis.roman}</li>
       <li><strong>功能链：</strong>${analysis.functions}</li>
-      <li><strong>好听度评分：</strong>${analysis.score}/100</li>
+      <li><strong>专业评分：</strong>${renderScoreLine(analysis.scores)}</li>
       <li><strong>替代建议：</strong>${analysis.suggestion}</li>
+      <li><strong>下一和弦：</strong>${analysis.nextSuggestions.join("、")}</li>
     </ul>
+    ${analysis.events.length ? `<div class="analysis-tags">${analysis.events.map((event) => `<span>${event}</span>`).join("")}</div>` : ""}
   `;
 }
 
@@ -1089,30 +1169,96 @@ function chordById(id) {
 function degreeFunction(degree) {
   const token = String(degree);
   const lower = token.toLowerCase();
-  if (/^i(?!v|ii|vi|vii)/.test(token)) {
-    const suffix = lower.slice(1);
-    if (suffix.includes("7") || suffix.includes("alt") || suffix.includes("b9") || suffix.includes("#9") || suffix.includes("b13")) return "D";
-    if (suffix.includes("m7b5") || suffix.includes("dim")) return "S";
-    if (suffix.includes("sus")) return "S";
-    return "T";
-  }
+  if (/^v7\//i.test(token)) return "D";
+  if (/^bii/.test(lower) || /^v(?!i|ii)/.test(lower) || /^vii/.test(lower) || lower.startsWith("alt")) return "D";
+  if (/^ii/.test(lower) || /^iv/.test(lower) || lower.startsWith("sus")) return "S";
   if (lower.startsWith("bii") || lower.startsWith("v7") || lower.startsWith("vii") || lower.startsWith("alt") || lower === "v") return "D";
-  if (lower.startsWith("ii") || lower.startsWith("iv") || lower.startsWith("sus")) return "S";
   if (lower.startsWith("vi") || lower.startsWith("bvi") || lower.startsWith("biii")) return "T";
+  if (/^i(?!i|v)/.test(lower) || /^im/.test(lower) || /^imaj/.test(lower)) return "T";
   return "color";
+}
+
+function detectProgressionEvents(degrees, functions) {
+  const events = [];
+  degrees.forEach((degree, index) => {
+    const token = String(degree);
+    if (/V7\//.test(token)) events.push(`${token}: secondary dominant，临时强化目标级。`);
+    if (token === "bII7") events.push("bII7: tritone substitution，替代 V7，常半音下行到 I。");
+    if (["bVImaj7", "bVII7", "bIIImaj7", "iv"].includes(token)) events.push(`${token}: modal interchange，常从同主小调借用。`);
+    if (/alt|b9|#9|b13/.test(token)) events.push(`${token}: altered dominant，张力音应半音解决。`);
+    const next = degrees[index + 1];
+    if (token === "V7/V" && next && String(next).startsWith("V")) events.push("V7/V → V: extended dominant chain。");
+    if (functions[index] === "D" && functions[index + 1] === "D") events.push("连续属功能：可形成 extended dominant 或转调推进。");
+  });
+  if (degrees.includes("I") && degrees.includes("bVImaj7") && degrees.includes("bVII7")) {
+    events.push("I-bVI-bVII-I: 大调中借用小调色彩，电影感/neo-soul 常见。");
+  }
+  return [...new Set(events)];
+}
+
+function progressionVoiceSmoothness(degrees) {
+  if (degrees.length < 2) return 50;
+  let total = 0;
+  let pairs = 0;
+  for (let i = 0; i < degrees.length - 1; i++) {
+    const a = chordNameToMidiSet(degreeToChordName(degrees[i]));
+    const b = chordNameToMidiSet(degreeToChordName(degrees[i + 1]));
+    if (!a.length || !b.length) continue;
+    const avg = a.slice(0, 4).reduce((sum, from, index) => {
+      let to = b[index % b.length];
+      while (to - from > 6) to -= 12;
+      while (from - to > 6) to += 12;
+      return sum + Math.abs(to - from);
+    }, 0) / Math.min(4, a.length);
+    total += avg;
+    pairs += 1;
+  }
+  if (!pairs) return 50;
+  return Math.max(15, Math.min(100, Math.round(100 - (total / pairs) * 10)));
+}
+
+function renderScoreLine(scores) {
+  return [
+    `VL ${scores.voiceLeading}`,
+    `功能 ${scores.functionalStrength}`,
+    `张放 ${scores.tensionRelease}`,
+    `风格 ${scores.styleUsage}`,
+  ].join(" / ");
+}
+
+function getNextChordSuggestions(degrees, functions) {
+  const lastFn = functions.at(-1);
+  const lastDegree = degrees.at(-1) || "";
+  if (!degrees.length) return ["I", "ii7", "V7"];
+  if (lastFn === "T") return state.styleMode === "classical" ? ["IV", "ii7", "V7"] : ["ii7", "IV", "bVImaj7"];
+  if (lastFn === "S") return ["V7", "V7alt", "bII7"];
+  if (lastFn === "D") return /V7\/ii/.test(lastDegree) ? ["ii7"] : /V7\/V/.test(lastDegree) ? ["V7"] : ["Imaj7", "i", "vi"];
+  return ["ii7", "V7", "Imaj7"];
 }
 
 function analyzeProgression(degrees = []) {
   const functions = degrees.map((degree) => degreeFunction(degree));
-  let score = 52;
   const chain = functions.join("-");
-  if (chain.includes("S-D-T")) score += 28;
-  if (chain.includes("T-S-D-T")) score += 24;
-  if (chain.includes("D-T")) score += 18;
-  if (degrees.some((degree) => degree.includes("alt") || degree.includes("bII"))) score += 8;
-  if (degrees.length >= 4) score += 6;
-  if (functions.filter((fn) => fn === "T").length >= 2) score += 4;
-  score = Math.max(20, Math.min(100, score));
+  const events = detectProgressionEvents(degrees, functions);
+  const scores = {
+    voiceLeading: progressionVoiceSmoothness(degrees),
+    functionalStrength: 45,
+    tensionRelease: 42,
+    styleUsage: 48,
+  };
+  if (chain.includes("S-D-T")) scores.functionalStrength += 34;
+  if (chain.includes("T-S-D-T")) scores.functionalStrength += 26;
+  if (chain.includes("D-T")) scores.tensionRelease += 30;
+  if (degrees.some((degree) => /alt|b9|#9|b13|bII/.test(degree))) scores.tensionRelease += 14;
+  if (degrees.length >= 4) scores.styleUsage += 10;
+  if (events.some((event) => event.includes("secondary"))) scores.functionalStrength += 10;
+  if (events.some((event) => event.includes("modal interchange"))) scores.styleUsage += 10;
+  if (state.styleMode === "jazz" && degrees.some((degree) => /ii|V7|bII|alt/.test(degree))) scores.styleUsage += 18;
+  if (state.styleMode === "classical" && !degrees.some((degree) => /alt|#9|b13|bII/.test(degree))) scores.styleUsage += 14;
+  Object.keys(scores).forEach((key) => {
+    scores[key] = Math.max(20, Math.min(100, Math.round(scores[key])));
+  });
+  const score = Math.round((scores.voiceLeading + scores.functionalStrength + scores.tensionRelease + scores.styleUsage) / 4);
   const suggestion = (() => {
     if (!functions.includes("D")) return "加入 V7 或 tritone sub bII7，進行會更有解決感。";
     if (!functions.includes("S")) return "在屬和弦前加入 ii7 或 IV，可讓推進更自然。";
@@ -1123,6 +1269,9 @@ function analyzeProgression(degrees = []) {
     roman: degrees.join(" - ") || "尚未建立",
     functions: functions.map((fn) => ({ T: "Tonic", S: "Subdominant", D: "Dominant", color: "Color" })[fn]).join(" → ") || "尚未建立",
     score,
+    scores,
+    events,
+    nextSuggestions: getNextChordSuggestions(degrees, functions),
     suggestion,
   };
 }
@@ -1140,10 +1289,14 @@ function degreeToChordName(degree) {
     V: [7, ""],
     V7: [7, "7"],
     V7alt: [7, "alt"],
+    "V7/ii": [9, "7"],
+    "V7/V": [2, "7"],
     vi: [9, "m"],
     bII7: [1, "7"],
+    bIIImaj7: [3, "maj7"],
     bVImaj7: [8, "maj7"],
     bVII7: [10, "7"],
+    iv: [5, "m"],
     "iø7": [0, "m7b5"],
     "ii7": [2, "m7"],
     "bVI7": [8, "7"],
@@ -1194,20 +1347,133 @@ function degreeToChordName(degree) {
   return `${noteName(root + offset)}${suffix}`;
 }
 
-function compareVoiceLeading(chordA, chordB) {
-  const source = getChordMidi(chordA).slice(0, 4).sort((a, b) => a - b);
-  const targetRaw = getChordMidi(chordB).slice(0, 4).sort((a, b) => a - b);
+function chordNameToMidiSet(name) {
+  const match = String(name).match(/^([A-G](?:#|b)?)(.*)$/);
+  if (!match) return [];
+  const rootMidi = noteToPitch(`${match[1]}4`);
+  if (rootMidi === null) return [];
+  const suffix = match[2] || "";
+  const quality = CHORD_QUALITY_LIBRARY.find((chord) => {
+    const suffixes = [chord.name, ...chord.symbols].filter(Boolean);
+    return suffixes.includes(suffix) || (suffix === "" && chord.id === "maj");
+  }) || CHORD_QUALITY_LIBRARY.find((chord) => chord.id === "maj");
+  return quality.intervals.map((interval) => {
+    const midi = rootMidi + interval;
+    return midi < 60 ? midi + 12 : midi;
+  }).sort((a, b) => a - b);
+}
+
+function getCompactVoicing(chord, root = state.root, baseOctave = 4) {
+  return chord.intervals.map((interval) => {
+    const midi = 12 * (baseOctave + 1) + root + interval;
+    return midi < 60 ? midi + 12 : midi;
+  }).slice(0, 4).sort((a, b) => a - b);
+}
+
+function normalizeVoiceAdjustments(length = 4) {
+  while (state.voiceAdjustments.length < length) state.voiceAdjustments.push(0);
+  state.voiceAdjustments = state.voiceAdjustments.slice(0, length).map((value) => Number(value) || 0);
+}
+
+function buildVoiceMoves(source, targetRaw, adjustments = []) {
   const moves = source.map((from, index) => {
     const raw = targetRaw[index % targetRaw.length] || targetRaw[0];
     let to = raw;
     while (to - from > 6) to -= 12;
     while (from - to > 6) to += 12;
+    to += adjustments[index] || 0;
     return { from, to, distance: to - from };
   });
+  return moves;
+}
+
+function detectParallelPerfects(moves, hidden = false) {
+  const issues = [];
+  for (let i = 0; i < moves.length; i++) {
+    for (let j = i + 1; j < moves.length; j++) {
+      const startInterval = mod(moves[j].from - moves[i].from, 12);
+      const endInterval = mod(moves[j].to - moves[i].to, 12);
+      const sameDirection = Math.sign(moves[i].distance) === Math.sign(moves[j].distance) && Math.sign(moves[i].distance) !== 0;
+      const perfectEnd = endInterval === 0 || endInterval === 7;
+      if (!sameDirection || !perfectEnd) continue;
+      if (!hidden && startInterval === endInterval) issues.push(`声部 ${i + 1}-${j + 1} 可能形成平行${endInterval === 7 ? "五度" : "八度"}。`);
+      if (hidden && startInterval !== endInterval && (Math.abs(moves[i].distance) > 2 || Math.abs(moves[j].distance) > 2)) {
+        issues.push(`声部 ${i + 1}-${j + 1} 有隐藏${endInterval === 7 ? "五度" : "八度"}倾向。`);
+      }
+    }
+  }
+  return issues;
+}
+
+function evaluateVoiceLeading(chordA, chordB, moves) {
   const maxMove = Math.max(...moves.map((move) => Math.abs(move.distance)));
-  const parallelRisk = moves.filter((move) => Math.abs(move.distance) === 7 || Math.abs(move.distance) === 12).length >= 2;
-  const summary = `最大移動 ${maxMove} 半音；${maxMove <= 3 ? "聲部非常平滑" : maxMove <= 6 ? "可接受，但可再找共同音" : "跳進偏大"}。${parallelRisk ? "注意可能有平行五度/八度。" : "未見明顯平行五八度風險。"}`;
-  return { source, target: moves.map((m) => m.to), moves, summary, parallelRisk };
+  const commonTones = moves.filter((move) => mod(move.from, 12) === mod(move.to, 12)).length;
+  const stepwise = moves.filter((move) => Math.abs(move.distance) <= 2).length;
+  const issues = [];
+  const advice = [];
+  const severe = [];
+  const leadingTone = mod(state.root + 11, 12);
+  const tonic = mod(state.root, 12);
+  moves.forEach((move, index) => {
+    if (mod(move.from, 12) === leadingTone && mod(move.to, 12) !== tonic) {
+      const text = `第 ${index + 1} 声部：导音 ${midiToNoteName(move.from)} 建议上行解决到 ${noteName(tonic)}。`;
+      (state.styleMode === "classical" ? severe : issues).push(text);
+    }
+    if (getFunctionClass(chordA) === "Dominant" && mod(move.from, 12) === mod(state.root + 10, 12) && move.distance >= 0) {
+      const text = `第 ${index + 1} 声部：属七的七音 ${midiToNoteName(move.from)} 通常下行解决。`;
+      (state.styleMode === "jazz" ? issues : severe).push(text);
+    }
+    if (Math.abs(move.distance) > 7) issues.push(`第 ${index + 1} 声部跳进 ${Math.abs(move.distance)} 半音，建议改用转位或共同音。`);
+  });
+  severe.push(...detectParallelPerfects(moves));
+  if (state.styleMode === "classical") issues.push(...detectParallelPerfects(moves, true));
+  if (commonTones) advice.push(`保留 ${commonTones} 个共同音，稳定度好。`);
+  if (stepwise < Math.max(2, moves.length - 1)) advice.push("可尝试让更多内声级进，级进优于跳进。");
+  if (state.styleMode === "jazz") advice.push("爵士 comping 可接受较开放声部，但 3-7/7-3 guide tones 要保持清楚。");
+  if (state.styleMode === "classical") advice.push("古典模式按 chorale style 更严格：导音、七音、平行与隐藏五八度都要检查。");
+  const rating = Math.max(20, Math.min(100, 100 - maxMove * 8 + commonTones * 9 + stepwise * 5 - severe.length * 18 - issues.length * 8));
+  const summary = `最大移动 ${maxMove} 半音；共同音 ${commonTones} 个；级进/保留 ${stepwise}/${moves.length}。${rating >= 82 ? "声部非常平滑。" : rating >= 62 ? "可用，但还能优化。" : "教育性地暴露了需要修正的声部问题。"}`;
+  return { maxMove, commonTones, stepwise, severe, issues, advice, rating: Math.round(rating), summary };
+}
+
+function compareVoiceLeading(chordA, chordB, options = {}) {
+  const source = getCompactVoicing(chordA);
+  const targetRaw = getCompactVoicing(chordB);
+  normalizeVoiceAdjustments(source.length);
+  const adjustments = options.adjustments || state.voiceAdjustments;
+  const moves = buildVoiceMoves(source, targetRaw, adjustments);
+  const check = evaluateVoiceLeading(chordA, chordB, moves);
+  return {
+    source,
+    target: moves.map((m) => m.to),
+    moves,
+    summary: check.summary,
+    parallelRisk: check.severe.some((item) => item.includes("平行")),
+    check,
+  };
+}
+
+function resetVoiceAdjustments() {
+  state.voiceAdjustments = [0, 0, 0, 0];
+}
+
+function optimizeVoiceLeadingAdjustments(chordA, chordB) {
+  const source = getCompactVoicing(chordA);
+  const target = getCompactVoicing(chordB);
+  state.voiceAdjustments = source.map((from, index) => {
+    const raw = target[index % target.length] || target[0];
+    const candidates = [-12, -7, -5, -2, -1, 0, 1, 2, 5, 7, 12].map((offset) => {
+      let to = raw;
+      while (to - from > 6) to -= 12;
+      while (from - to > 6) to += 12;
+      return offset + to - (raw + (to - raw));
+    });
+    return candidates.sort((a, b) => {
+      const moveA = buildVoiceMoves([from], [raw], [a])[0];
+      const moveB = buildVoiceMoves([from], [raw], [b])[0];
+      return Math.abs(moveA.distance) - Math.abs(moveB.distance);
+    })[0] || 0;
+  });
 }
 
 function getIntervalInfo(a, b) {
@@ -1390,15 +1656,34 @@ function renderFretboardVisual(chord) {
 
 function renderVoicings(chord) {
   const tones = getChordNoteNames(chord);
-  const compact = getChordMidi(chord).slice(0, 4).map((midi) => midiToNoteName(midi)).join(" ");
-  const drop2 = getChordMidi(chord).slice(0, 4);
+  const midi = getChordMidi(chord);
+  const compact = midi.slice(0, 4).map((note) => midiToNoteName(note)).join(" ");
+  const drop2 = midi.slice(0, 4);
   if (drop2.length >= 4) drop2[1] -= 12;
-  const guitarSet = tones.slice(0, 4).join(" ");
-  els.voicingStrip.innerHTML = [
-    ["钢琴紧凑", compact],
-    ["Drop 2", drop2.map((midi) => midiToNoteName(midi)).join(" ")],
-    ["吉他省略", guitarSet],
-  ].map(([title, body]) => `<article class="voicing-card"><strong>${title}</strong><span>${body}</span></article>`).join("");
+  const drop3 = midi.slice(0, 4);
+  if (drop3.length >= 4) drop3[0] -= 12;
+  const rootless37 = chord.intervals
+    .filter((interval) => [3, 4, 9, 10, 11, 13, 14, 15, 17, 20, 21].includes(interval))
+    .slice(0, 4)
+    .map((interval) => noteName(state.root + interval));
+  const quartal = [0, 5, 10, 15].map((interval) => noteName(state.root + interval));
+  const upperStructure = getFunctionClass(chord) === "Dominant"
+    ? [14, 18, 21].map((interval) => noteName(state.root + interval))
+    : [14, 18, 23].map((interval) => noteName(state.root + interval));
+  const chorale = getCompactVoicing(chord, state.root, 3).map((note) => midiToNoteName(note));
+  const cards = [
+    ["钢琴紧凑", compact, "适合识别和弦性质、键盘基础伴奏。"],
+    ["Drop 2", drop2.map((note) => midiToNoteName(note)).join(" "), "适合中速 ballad comping 与吉他四声部。"],
+    ["Drop 3", drop3.map((note) => midiToNoteName(note)).join(" "), "低音更开，适合吉他低把位或钢琴左手支撑。"],
+    ["Rootless 3-7", rootless37.join(" ") || tones.slice(1).join(" "), "快 tempo、bebop、钢琴左手常用，根音交给贝斯。"],
+    ["Upper Structure", upperStructure.join(" "), "属和弦上方三和弦色彩，适合 altered / Lydian dominant。"],
+    ["Quartal", quartal.join(" "), "四度堆叠，适合 modal、fusion 与现代吉他。"],
+    ["Chorale 四声部", chorale.join(" "), "古典模式参考：声部紧密、便于检查平行与解决。"],
+    ["吉他省略", tones.slice(0, 4).join(" "), "保留根音、三音、七音；五音可省略。"],
+  ];
+  els.voicingStrip.innerHTML = cards
+    .map(([title, body, context]) => `<article class="voicing-card"><strong>${title}</strong><span>${body}</span><small>${context}</small></article>`)
+    .join("");
 }
 
 function renderTheoryPanel() {
@@ -1514,7 +1799,7 @@ function renderProgressionBuilder() {
   if (!els.progressionPalette) return;
   els.progressionPalette.innerHTML = PROGRESSION_PALETTE.map(
     (item) => `
-      <button class="palette-chord" data-add-degree="${item.degree}" type="button">
+      <button class="palette-chord drag-source" draggable="true" data-drag-degree="${item.degree}" data-add-degree="${item.degree}" type="button">
         <strong>${item.degree}</strong>
         <span>${degreeToChordName(item.degree)} · ${item.label}</span>
       </button>
@@ -1533,10 +1818,13 @@ function renderProgressionBuilder() {
     <h4>${analysis.roman}</h4>
     <ul>
       <li><strong>功能链：</strong>${analysis.functions}</li>
-      <li><strong>好听度评分：</strong>${analysis.score}/100</li>
+      <li><strong>综合评分：</strong>${analysis.score}/100</li>
+      <li><strong>专业维度：</strong>${renderScoreLine(analysis.scores)}</li>
       <li><strong>替代建议：</strong>${analysis.suggestion}</li>
+      <li><strong>下一和弦建议：</strong>${analysis.nextSuggestions.join("、")}</li>
       <li><strong>实际和弦：</strong>${state.progression.map(degreeToChordName).join(" - ") || "尚未建立"}</li>
     </ul>
+    ${analysis.events.length ? `<div class="analysis-tags">${analysis.events.map((event) => `<span>${event}</span>`).join("")}</div>` : ""}
   `;
 }
 
@@ -1573,7 +1861,31 @@ function renderVoiceControls() {
   els.voiceChordB.innerHTML = options;
   els.voiceChordA.value = previousA;
   els.voiceChordB.value = previousB;
+  if (state.voiceExample === "good") {
+    els.voiceChordA.value = els.voiceChordA.value || "7";
+    els.voiceChordB.value = els.voiceChordB.value || "maj7";
+  }
+  document.querySelectorAll("[data-voice-example]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.voiceExample === state.voiceExample);
+  });
   renderVoiceVisual();
+}
+
+function renderVoiceAdjusters(comparison) {
+  if (!els.voiceAdjusters) return;
+  normalizeVoiceAdjustments(comparison.moves.length);
+  els.voiceAdjusters.innerHTML = comparison.moves
+    .map((move, index) => `
+      <label>
+        <span>声部 ${index + 1}: ${midiToNoteName(move.from)} → ${midiToNoteName(move.to)}</span>
+        <select data-voice-adjust="${index}">
+          ${[-12, -7, -5, -2, -1, 0, 1, 2, 5, 7, 12].map((value) => `
+            <option value="${value}" ${state.voiceAdjustments[index] === value ? "selected" : ""}>${value > 0 ? "+" : ""}${value} 半音</option>
+          `).join("")}
+        </select>
+      </label>
+    `)
+    .join("");
 }
 
 function renderVoiceVisual() {
@@ -1581,6 +1893,7 @@ function renderVoiceVisual() {
   const chordA = chordById(els.voiceChordA.value || "maj7");
   const chordB = chordById(els.voiceChordB.value || "7");
   const comparison = compareVoiceLeading(chordA, chordB);
+  renderVoiceAdjusters(comparison);
   const all = [...comparison.source, ...comparison.target];
   const min = Math.min(...all) - 2;
   const max = Math.max(...all) + 2;
@@ -1601,17 +1914,33 @@ function renderVoiceVisual() {
   }).join("");
   els.voiceVisual.innerHTML = `
     <defs>
+      <linearGradient id="voiceGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#6b8cff"></stop>
+        <stop offset="100%" stop-color="#a78bfa"></stop>
+      </linearGradient>
       <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-        <path d="M0,0 L0,6 L9,3 z" fill="#1f7a68"></path>
+        <path d="M0,0 L0,6 L9,3 z" fill="#a78bfa"></path>
       </marker>
     </defs>
     <text class="voice-label" x="80" y="28">${noteName(state.root)}${chordA.name}</text>
     <text class="voice-label" x="680" y="28">${noteName(state.root)}${chordB.name}</text>
     ${rows}
   `;
+  const severe = comparison.check.severe.length
+    ? comparison.check.severe.map((item) => `<li class="issue-severe">${item}</li>`).join("")
+    : '<li class="issue-good">未发现严重规则问题。</li>';
+  const issues = comparison.check.issues.length
+    ? comparison.check.issues.map((item) => `<li>${item}</li>`).join("")
+    : '<li class="issue-good">没有明显可疑移动。</li>';
+  const advice = comparison.check.advice.map((item) => `<li>${item}</li>`).join("");
   els.voiceWarnings.innerHTML = `
     <h4>检查结果</h4>
-    <p>${comparison.summary}</p>
+    <p>${comparison.summary} 评分 ${comparison.check.rating}/100。</p>
+    <ul>
+      ${severe}
+      ${issues}
+      ${advice}
+    </ul>
   `;
 }
 
@@ -1659,8 +1988,22 @@ function renderVoiceCheck() {
   `;
 }
 
+function updateVoiceExampleState(example) {
+  state.voiceExample = example;
+  if (example === "bad") {
+    state.voiceAdjustments = [7, -5, 7, -5];
+    els.voiceChordA.value = "maj7";
+    els.voiceChordB.value = "maj7";
+  } else {
+    state.voiceAdjustments = [0, -1, 0, 0];
+    els.voiceChordA.value = "m7";
+    els.voiceChordB.value = "maj7";
+  }
+  renderVoiceVisual();
+  persist();
+}
+
 function renderQuiz() {
-  const kinds = ["chord", "interval"];
   if (!state.quiz.answer) nextQuiz();
   els.quizScore.textContent = `${state.quiz.correct} / ${state.quiz.total}`;
   els.quizPrompt.innerHTML =
@@ -1884,9 +2227,16 @@ function persist() {
       chordSearch: state.chordSearch,
       phraseStyle: state.phraseStyle,
       styleMode: state.styleMode,
+      darkMode: state.darkMode,
+      playbackMode: state.playbackMode,
+      audioTone: state.audioTone,
+      swing: state.swing,
+      humanize: state.humanize,
       theoryFocus: state.theoryFocus,
       selectedModeId: state.selectedModeId,
       progression: state.progression,
+      voiceAdjustments: state.voiceAdjustments,
+      voiceExample: state.voiceExample,
       tabBeats: state.tabBeats,
       tabGrid: state.tabGrid,
     })
@@ -1907,9 +2257,16 @@ function loadState() {
     state.chordSearch = prefs.chordSearch || "";
     state.phraseStyle = prefs.phraseStyle || "all";
     state.styleMode = prefs.styleMode || "jazz";
+    state.darkMode = prefs.darkMode !== false;
+    state.playbackMode = prefs.playbackMode || "block";
+    state.audioTone = prefs.audioTone || "piano";
+    state.swing = !!prefs.swing;
+    state.humanize = prefs.humanize !== false;
     state.theoryFocus = prefs.theoryFocus || "chord";
     state.selectedModeId = prefs.selectedModeId || "ionian";
     state.progression = Array.isArray(prefs.progression) ? prefs.progression : ["ii7", "V7", "Imaj7"];
+    state.voiceAdjustments = Array.isArray(prefs.voiceAdjustments) ? prefs.voiceAdjustments : [0, 0, 0, 0];
+    state.voiceExample = prefs.voiceExample || "good";
     state.tabBeats = Number.isFinite(prefs.tabBeats) ? prefs.tabBeats : 4;
     state.tabGrid = normalizeTabGrid(prefs.tabGrid, state.tabBeats);
     state.customPhrases = JSON.parse(localStorage.getItem(STORAGE_KEYS.customPhrases) || "[]");
@@ -1992,6 +2349,12 @@ function bindEvents() {
       return;
     }
 
+    const voiceExampleButton = event.target.closest("[data-voice-example]");
+    if (voiceExampleButton) {
+      updateVoiceExampleState(voiceExampleButton.dataset.voiceExample);
+      return;
+    }
+
     const theoryButton = event.target.closest("[data-theory-focus]");
     if (theoryButton) {
       state.theoryFocus = theoryButton.dataset.theoryFocus;
@@ -2059,6 +2422,32 @@ function bindEvents() {
   els.notationToggle.addEventListener("change", () => {
     state.useFlats = els.notationToggle.checked;
     renderAll();
+    persist();
+  });
+
+  els.darkModeToggle.addEventListener("change", () => {
+    state.darkMode = els.darkModeToggle.checked;
+    document.body.classList.toggle("dark-mode", state.darkMode);
+    persist();
+  });
+
+  els.playbackModeSelect.addEventListener("change", () => {
+    state.playbackMode = els.playbackModeSelect.value;
+    persist();
+  });
+
+  els.audioToneSelect.addEventListener("change", () => {
+    state.audioTone = els.audioToneSelect.value;
+    persist();
+  });
+
+  els.swingToggle.addEventListener("change", () => {
+    state.swing = els.swingToggle.checked;
+    persist();
+  });
+
+  els.humanizeToggle.addEventListener("change", () => {
+    state.humanize = els.humanizeToggle.checked;
     persist();
   });
 
@@ -2138,11 +2527,26 @@ function bindEvents() {
   els.voiceChordA.addEventListener("change", renderVoiceVisual);
   els.voiceChordB.addEventListener("change", renderVoiceVisual);
   els.visualizeVoiceBtn.addEventListener("click", renderVoiceVisual);
+  els.optimizeVoiceBtn.addEventListener("click", () => {
+    const a = chordById(els.voiceChordA.value || "maj7");
+    const b = chordById(els.voiceChordB.value || "7");
+    optimizeVoiceLeadingAdjustments(a, b);
+    renderVoiceVisual();
+    persist();
+  });
+  els.voiceAdjusters.addEventListener("change", (event) => {
+    const select = event.target.closest("[data-voice-adjust]");
+    if (!select) return;
+    state.voiceAdjustments[Number(select.dataset.voiceAdjust)] = Number(select.value);
+    renderVoiceVisual();
+    persist();
+  });
   els.playVoiceBtn.addEventListener("click", () => {
     const a = chordById(els.voiceChordA.value || "maj7");
     const b = chordById(els.voiceChordB.value || "7");
-    playNotes(getChordMidi(a), { mode: "block", duration: 0.8, startAt: 0 });
-    playNotes(getChordMidi(b), { mode: "block", duration: 0.8, startAt: 0.9 });
+    const comparison = compareVoiceLeading(a, b);
+    playNotes(comparison.source, { mode: "block", duration: 0.8, startAt: 0 });
+    playNotes(comparison.target, { mode: "block", duration: 0.8, startAt: 0.9 });
   });
 
   els.nextQuizBtn.addEventListener("click", () => {
@@ -2233,6 +2637,12 @@ function bindEvents() {
 
 function renderAll() {
   els.notationToggle.checked = state.useFlats;
+  els.darkModeToggle.checked = state.darkMode;
+  document.body.classList.toggle("dark-mode", state.darkMode);
+  els.playbackModeSelect.value = state.playbackMode;
+  els.audioToneSelect.value = state.audioTone;
+  els.swingToggle.checked = state.swing;
+  els.humanizeToggle.checked = state.humanize;
   els.modeSelect.value = state.mode;
   els.chordSearch.value = state.chordSearch;
   document.querySelectorAll("[data-style-mode]").forEach((button) => {
