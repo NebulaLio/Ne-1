@@ -1071,6 +1071,16 @@ function getFunctionClass(chord) {
   return "Color";
 }
 
+function functionToneClass(chord) {
+  const cls = getFunctionClass(chord);
+  return {
+    Tonic: "tonic",
+    Dominant: "dominant",
+    Subdominant: "subdominant",
+    Color: "color",
+  }[cls] || "color";
+}
+
 function getResolutionAdvice(chord) {
   const root = noteName(state.root);
   const upFourth = noteName(state.root + 5);
@@ -1730,9 +1740,11 @@ function renderChordGrid() {
       const tones = getChordNoteNames(chord)
         .map((note, index) => `<span class="tone-pill">${intervalToLabel(chord.intervals[index])} ${note}</span>`)
         .join("");
+      const functionClass = getFunctionClass(chord);
       return `
-        <button class="chord-card ${active ? "active" : ""}" data-chord="${chord.id}" type="button">
+        <button class="chord-card ${active ? "active" : ""} ${functionToneClass(chord)}" data-chord="${chord.id}" type="button">
           ${state.favorites.has(chord.id) ? '<span class="favorite-badge">已收藏</span>' : ""}
+          <span class="function-badge">${functionClass}</span>
           <h4>${getChordDisplayName(chord)}</h4>
           <div class="tone-row">${tones}</div>
           <p>${chord.theory}</p>
@@ -1909,36 +1921,47 @@ function renderVoiceVisual() {
   const chordB = chordById(els.voiceChordB.value || "7");
   const comparison = compareVoiceLeading(chordA, chordB);
   renderVoiceAdjusters(comparison);
-  const all = [...comparison.source, ...comparison.target];
-  const min = Math.min(...all) - 2;
-  const max = Math.max(...all) + 2;
-  const yFor = (midi) => 320 - ((midi - min) / (max - min || 1)) * 280;
+  const laneYs = [94, 174, 254, 334];
+  const x1 = 170;
+  const x2 = 760;
+  const labelX1 = 96;
+  const labelX2 = 806;
+  const centerX = 465;
   const rows = comparison.moves.map((move, index) => {
-    const x1 = 120;
-    const x2 = 720;
-    const y1 = yFor(move.from);
-    const y2 = yFor(move.to);
+    const y = laneYs[index] || laneYs.at(-1);
+    const direction = move.distance > 0 ? "up" : move.distance < 0 ? "down" : "same";
+    const bend = direction === "up" ? -18 : direction === "down" ? 18 : 0;
+    const path = `M ${x1} ${y} C ${x1 + 165} ${y + bend}, ${x2 - 165} ${y + bend}, ${x2} ${y}`;
+    const distanceLabel = move.distance > 0 ? `+${move.distance}` : `${move.distance}`;
     return `
-      <line class="voice-line" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"></line>
-      <circle class="voice-note" cx="${x1}" cy="${y1}" r="22"></circle>
-      <circle class="voice-note" cx="${x2}" cy="${y2}" r="22"></circle>
-      <text class="voice-label" x="${x1 - 24}" y="${y1 + 5}">${midiToNoteName(move.from)}</text>
-      <text class="voice-label" x="${x2 - 24}" y="${y2 + 5}">${midiToNoteName(move.to)}</text>
-      <text class="voice-label" x="405" y="${(y1 + y2) / 2 - 6}">${move.distance > 0 ? "+" : ""}${move.distance}</text>
+      <line class="voice-guide" x1="76" y1="${y}" x2="844" y2="${y}"></line>
+      <text class="voice-index" x="44" y="${y + 6}">V${index + 1}</text>
+      <path class="voice-line ${direction}" d="${path}"></path>
+      <circle class="voice-note source" cx="${x1}" cy="${y}" r="20"></circle>
+      <circle class="voice-note target" cx="${x2}" cy="${y}" r="20"></circle>
+      <text class="voice-label note-left" x="${labelX1}" y="${y + 6}">${midiToNoteName(move.from)}</text>
+      <text class="voice-label note-right" x="${labelX2}" y="${y + 6}">${midiToNoteName(move.to)}</text>
+      <rect class="voice-distance-pill" x="${centerX - 26}" y="${y - 16}" width="52" height="32" rx="16"></rect>
+      <text class="voice-distance" x="${centerX}" y="${y + 6}">${distanceLabel}</text>
     `;
   }).join("");
   els.voiceVisual.innerHTML = `
     <defs>
       <linearGradient id="voiceGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#6b8cff"></stop>
-        <stop offset="100%" stop-color="#a78bfa"></stop>
+        <stop offset="0%" stop-color="#6366f1"></stop>
+        <stop offset="100%" stop-color="#7c3aed"></stop>
+      </linearGradient>
+      <linearGradient id="voiceGoldGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#f59e0b"></stop>
+        <stop offset="100%" stop-color="#fb923c"></stop>
       </linearGradient>
       <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-        <path d="M0,0 L0,6 L9,3 z" fill="#a78bfa"></path>
+        <path d="M0,0 L0,6 L9,3 z" fill="#7c3aed"></path>
       </marker>
     </defs>
-    <text class="voice-label" x="80" y="28">${noteName(state.root)}${chordA.name}</text>
-    <text class="voice-label" x="680" y="28">${noteName(state.root)}${chordB.name}</text>
+    <rect class="voice-stage" x="24" y="24" width="872" height="372" rx="26"></rect>
+    <text class="voice-title-left" x="${x1}" y="54">${noteName(state.root)}${chordA.name}</text>
+    <text class="voice-title-right" x="${x2}" y="54">${noteName(state.root)}${chordB.name}</text>
     ${rows}
   `;
   const severe = comparison.check.severe.length
