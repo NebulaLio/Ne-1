@@ -376,8 +376,10 @@ const MODE_LABELS = {
 };
 
 const MODE_DETAILS = [
+  // ── 教會調式（中古調式） ─────────────────────────────
   {
     id: "ionian",
+    category: "教會調式",
     label: "Ionian / 自然大调",
     intervals: [0, 2, 4, 5, 7, 9, 11],
     feature: "明亮、稳定，主功能最清楚。",
@@ -386,6 +388,7 @@ const MODE_DETAILS = [
   },
   {
     id: "dorianFull",
+    category: "教會調式",
     label: "Dorian / 多利亚",
     intervals: [0, 2, 3, 5, 7, 9, 10],
     feature: "小三度加自然六度，有爵士、funk 与 modal 色彩。",
@@ -394,6 +397,7 @@ const MODE_DETAILS = [
   },
   {
     id: "phrygian",
+    category: "教會調式",
     label: "Phrygian / 弗里几亚",
     intervals: [0, 1, 3, 5, 7, 8, 10],
     feature: "b2 最有辨识度，紧张、暗色。",
@@ -402,6 +406,7 @@ const MODE_DETAILS = [
   },
   {
     id: "lydian",
+    category: "教會調式",
     label: "Lydian / 利底亚",
     intervals: [0, 2, 4, 6, 7, 9, 11],
     feature: "#4 让大和弦漂浮、现代。",
@@ -410,6 +415,7 @@ const MODE_DETAILS = [
   },
   {
     id: "mixolydianFull",
+    category: "教會調式",
     label: "Mixolydian / 混合利底亚",
     intervals: [0, 2, 4, 5, 7, 9, 10],
     feature: "大三度加 b7，属功能与 blues 气质明显。",
@@ -418,6 +424,7 @@ const MODE_DETAILS = [
   },
   {
     id: "aeolian",
+    category: "教會調式",
     label: "Aeolian / 自然小调",
     intervals: [0, 2, 3, 5, 7, 8, 10],
     feature: "自然小调，暗色但不一定强属解决。",
@@ -426,11 +433,323 @@ const MODE_DETAILS = [
   },
   {
     id: "locrian",
+    category: "教會調式",
     label: "Locrian / 洛克里亚",
     intervals: [0, 1, 3, 5, 6, 8, 10],
     feature: "b5 让主和弦不稳定，常对应 m7b5。",
     progression: "iø - V7alt - i",
     improv: "突出 b5 与 b9，常作为小调 iiø 功能。",
+  },
+  // ── 旋律小調調式（爵士小調音階） ──────────────────────
+  {
+    id: "melodicMinorMode",
+    category: "旋律小調調式",
+    label: "Melodic Minor / 旋律小调",
+    intervals: [0, 2, 3, 5, 7, 9, 11],
+    feature: "小三度配大六、大七，爵士小调的明亮骨架。",
+    progression: "i(maj7) - ii7 - V7 - i",
+    improv: "用 3、6、7 区分自然小调，适合小调 ii-V。",
+  },
+  {
+    id: "dorianB2",
+    category: "旋律小調調式",
+    label: "Dorian b2 / Phrygian #6",
+    intervals: [0, 1, 3, 5, 7, 9, 10],
+    feature: "b2 与自然六度并存，暗色中带流动。",
+    progression: "i7 - bIImaj7 - i7",
+    improv: "同时保留 Phrygian 的 b2 与 Dorian 的 6 音。",
+  },
+  {
+    id: "lydianAug",
+    category: "旋律小調調式",
+    label: "Lydian Augmented / 增利底亚",
+    intervals: [0, 2, 4, 6, 8, 9, 11],
+    feature: "#4 加 #5，漂浮感最强的大色彩。",
+    progression: "Imaj7#5 静态 vamp",
+    improv: "适合 maj7#5 和弦与电影配乐式悬停。",
+  },
+  {
+    id: "lydianDominant",
+    category: "旋律小調調式",
+    label: "Lydian Dominant / 利底亚属",
+    intervals: [0, 2, 4, 6, 7, 9, 10],
+    feature: "属七结构加 #11，三全音替代首选。",
+    progression: "bII7 - Imaj7（三全音替代）",
+    improv: "3、b7 是导向，#11 是它的招牌音。",
+  },
+  {
+    id: "mixoB6",
+    category: "旋律小調調式",
+    label: "Mixolydian b6 / 混合利底亚降六",
+    intervals: [0, 2, 4, 5, 7, 8, 10],
+    feature: "大三度加 b6、b7，兼具属与小调色彩。",
+    progression: "I7 - bVI - I7",
+    improv: "比 Mixolydian 更暗，常用于爵士小调乐句。",
+  },
+  {
+    id: "locrianSharp2",
+    category: "旋律小調調式",
+    label: "Locrian #2 / 半减音阶",
+    intervals: [0, 2, 3, 5, 6, 8, 10],
+    feature: "半减七和弦（iiø）的标准对应音阶。",
+    progression: "iø7 - V7 - i",
+    improv: "9 音让 Locrian 不那么紧张，最实用的半减选择。",
+  },
+  {
+    id: "superLocrian",
+    category: "旋律小調調式",
+    label: "Super Locrian / Altered 变化音阶",
+    intervals: [0, 1, 3, 4, 6, 8, 10],
+    feature: "b9/#9/b5/#5 全在，变化属和弦专用。",
+    progression: "V7alt - i",
+    improv: "解决到主和弦前，3 与 b7 是必须保留的导向音。",
+  },
+  // ── 和聲小調調式 ─────────────────────────────────────
+  {
+    id: "harmonicMinorMode",
+    category: "和聲小調調式",
+    label: "Harmonic Minor / 和声小调",
+    intervals: [0, 2, 3, 5, 7, 8, 11],
+    feature: "1.5 全音的增二度是它最强的戏剧色彩。",
+    progression: "i - V7 - i（和声小调属）",
+    improv: "导音（7）上行到主音，古典小调终止核心。",
+  },
+  {
+    id: "locrianSharp6",
+    category: "和聲小調調式",
+    label: "Locrian #6 / 洛克里亚升六",
+    intervals: [0, 1, 3, 5, 6, 9, 10],
+    feature: "和声小调 ii°7 的对应音阶，比 Locrian 更紧。",
+    progression: "ii°7 - V7 - i",
+    improv: "6 音（=大三度）与减三主音并存。",
+  },
+  {
+    id: "ionianSharp5",
+    category: "和聲小調調式",
+    label: "Ionian #5 / 增五伊奥尼亚",
+    intervals: [0, 2, 4, 5, 8, 9, 11],
+    feature: "大调配增五度，III+ 增三和弦的音阶。",
+    progression: "III+ - iv - V",
+    improv: "和声小调中 III+ 的临时明亮色彩。",
+  },
+  {
+    id: "dorianSharp4",
+    category: "和聲小調調式",
+    label: "Dorian #4 / 罗马尼亚调式",
+    intervals: [0, 2, 3, 6, 7, 9, 10],
+    feature: "增四度与小三度，吉普赛、东欧色彩。",
+    progression: "i7 - #iv° - i7",
+    improv: "#4 是核心张力，旋律可半音环绕。",
+  },
+  {
+    id: "phrygianDominant",
+    category: "和聲小調調式",
+    label: "Phrygian Dominant / 属弗里几亚",
+    intervals: [0, 1, 4, 5, 7, 8, 10],
+    feature: "V7 与 b2 同时出现，西班牙/弗拉门戈标志。",
+    progression: "V7(b9) - i",
+    improv: "3 与 b2 形成增二度，是辨识度来源。",
+  },
+  {
+    id: "lydianSharp2",
+    category: "和聲小調調式",
+    label: "Lydian #2 / 利底亚升二",
+    intervals: [0, 3, 4, 6, 7, 9, 11],
+    feature: "增二度开头，悬疑、神秘。",
+    progression: "VI maj7 - V7 - i",
+    improv: "和声小调 VI 级的对应音阶，慎用但有特色。",
+  },
+  {
+    id: "ultralocrian",
+    category: "和聲小調調式",
+    label: "Ultra Locrian / 超洛克里亚",
+    intervals: [0, 1, 3, 4, 6, 7, 9],
+    feature: "变化音最密集的音阶之一，几乎全是张力。",
+    progression: "VII°7 替代属",
+    improv: "适合 dim7 到属和弦的半音连接。",
+  },
+  // ── 五聲 / 藍調 / 對稱音階 ────────────────────────────
+  {
+    id: "majorPentatonic",
+    category: "五聲 / 藍調 / 對稱",
+    label: "Major Pentatonic / 大调五声音阶",
+    intervals: [0, 2, 4, 7, 9],
+    feature: "五音骨架，几乎不会「错」，流行与民谣基础。",
+    progression: "I - IV - V（五声版）",
+    improv: "旋律天然好听，初学即兴首选。",
+  },
+  {
+    id: "minorPentatonic",
+    category: "五聲 / 藍調 / 對稱",
+    label: "Minor Pentatonic / 小调五声音阶",
+    intervals: [0, 3, 5, 7, 10],
+    feature: "摇滚、blues、吉他独奏的万能骨架。",
+    progression: "i7 - bVII - bVI - bVII",
+    improv: "推弦、滑音最常落在 b3 与 b7。",
+  },
+  {
+    id: "bluesScale",
+    category: "五聲 / 藍調 / 對稱",
+    label: "Blues / 蓝调音阶",
+    intervals: [0, 3, 5, 6, 7, 10],
+    feature: "小调五声加 b5（蓝调音），张力更足。",
+    progression: "I7 - IV7 - V7（12 小节 blues）",
+    improv: "蓝调音在属和弦前后半音连接最有味道。",
+  },
+  {
+    id: "majorBlues",
+    category: "五聲 / 藍調 / 對稱",
+    label: "Major Blues / 大调蓝调音阶",
+    intervals: [0, 2, 3, 4, 7, 9],
+    feature: "大调五声加入小三度，轻快但带蓝调。",
+    progression: "I7 - IV7 - I7",
+    improv: "大小三度交替是 major blues 的经典语法。",
+  },
+  {
+    id: "wholeTone",
+    category: "五聲 / 藍調 / 對稱",
+    label: "Whole Tone / 全音音阶",
+    intervals: [0, 2, 4, 6, 8, 10],
+    feature: "只有全音，没有明确调性，印象派色彩。",
+    progression: "V7#5 静态和声",
+    improv: "适合 #5 属和弦与德布西式漂浮质感。",
+  },
+  {
+    id: "halfWholeDiminished",
+    category: "五聲 / 藍調 / 對稱",
+    label: "Half-Whole Diminished / 半全减音阶",
+    intervals: [0, 1, 3, 4, 6, 7, 9, 10],
+    feature: "半音全音交替，属七 b9 的常用音阶。",
+    progression: "V7b9 - i",
+    improv: "可在 V7b9 上整段使用，张力与解决都清楚。",
+  },
+  {
+    id: "wholeHalfDiminished",
+    category: "五聲 / 藍調 / 對稱",
+    label: "Whole-Half Diminished / 全半减音阶",
+    intervals: [0, 2, 3, 5, 6, 8, 9, 11],
+    feature: "减和弦的对称音阶，每 3 品重复。",
+    progression: "dim7 过渡连接",
+    improv: "dim7 上直接使用，可对称平移到任意减和弦。",
+  },
+  {
+    id: "chromatic",
+    category: "五聲 / 藍調 / 對稱",
+    label: "Chromatic / 半音音阶",
+    intervals: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    feature: "12 个半音全用，无调性中心。",
+    progression: "半音经过句 / 无调性段落",
+    improv: "半音音型多作经过，需配合目标音解决。",
+  },
+  // ── Bebop / 變化音階 ─────────────────────────────────
+  {
+    id: "bebopMajor",
+    category: "Bebop / 變化音階",
+    label: "Bebop Major / 比巴普大调音阶",
+    intervals: [0, 2, 4, 5, 7, 8, 9, 11],
+    feature: "大调音阶加 #5 经过音，旋律落在和弦音上。",
+    progression: "Imaj7 - vi7 - ii7 - V7",
+    improv: "八分音符长句时，加的音放在弱拍。",
+  },
+  {
+    id: "bebopDominant",
+    category: "Bebop / 變化音階",
+    label: "Bebop Dominant / 比巴普属音阶",
+    intervals: [0, 2, 4, 5, 7, 9, 10, 11],
+    feature: "Mixolydian 加大七度经过音，爵士句子基础。",
+    progression: "V7 - Imaj7",
+    improv: "大七音（7 与 b7 之间）作为下行经过音。",
+  },
+  {
+    id: "bebopDorian",
+    category: "Bebop / 變化音階",
+    label: "Bebop Dorian / 比巴普多利亚",
+    intervals: [0, 2, 3, 5, 7, 9, 10, 11],
+    feature: "Dorian 加大七经过音，小调长句更顺。",
+    progression: "i7 - IV7 - i7",
+    improv: "在 ii7 上做八分音符长句时尤其好用。",
+  },
+  {
+    id: "harmonicMajor",
+    category: "Bebop / 變化音階",
+    label: "Harmonic Major / 和声大调",
+    intervals: [0, 2, 4, 5, 7, 8, 11],
+    feature: "大调和声配 b6，明亮中带伤感。",
+    progression: "I - bVI - V7",
+    improv: "可借用和声小调的属功能色彩。",
+  },
+  // ── 特殊與民族音階 ───────────────────────────────────
+  {
+    id: "doubleHarmonic",
+    category: "特殊與民族音階",
+    label: "Double Harmonic / 双和聲大調（阿拉伯）",
+    intervals: [0, 1, 4, 5, 7, 8, 11],
+    feature: "两个增二度，中东、弗拉门戈色彩。",
+    progression: "Imaj7 - bIImaj7 - Imaj7",
+    improv: "b2 与大三度并置是最有辨识度的音程。",
+  },
+  {
+    id: "hungarianMinor",
+    category: "特殊與民族音階",
+    label: "Hungarian Minor / 匈牙利小调",
+    intervals: [0, 2, 3, 6, 7, 8, 11],
+    feature: "和声小调加 #4，吉普赛音乐的招牌。",
+    progression: "i - iv - V7 - i",
+    improv: "#4 与 7 形成增三色彩，张力很强。",
+  },
+  {
+    id: "neapolitanMinor",
+    category: "特殊與民族音階",
+    label: "Neapolitan Minor / 拿坡里小调",
+    intervals: [0, 1, 3, 5, 7, 8, 11],
+    feature: "b2 加和声小调属，古典戏剧性语法。",
+    progression: "bII - i6/4 - V7 - i",
+    improv: "拿坡里和弦（bII）后接终止式是经典用法。",
+  },
+  {
+    id: "neapolitanMajor",
+    category: "特殊與民族音階",
+    label: "Neapolitan Major / 拿坡里大调",
+    intervals: [0, 1, 3, 5, 7, 9, 11],
+    feature: "b2 与大六、大七并存，柔和又意外。",
+    progression: "bIImaj7 - Imaj7",
+    improv: "从 Phrygian 借 b2，但保留大调的安定。",
+  },
+  {
+    id: "romanianMajor",
+    category: "特殊與民族音階",
+    label: "Romanian Major / 罗马尼亚大调",
+    intervals: [0, 2, 3, 6, 7, 9, 11],
+    feature: "增四度配大七，民间舞蹈色彩。",
+    progression: "Imaj7 - #iv° - Imaj7",
+    improv: "与 Dorian #4 是同族音阶，注意大三度。",
+  },
+  {
+    id: "hirajoshi",
+    category: "特殊與民族音階",
+    label: "Hirajoshi / 平調子（日本）",
+    intervals: [0, 2, 3, 7, 8],
+    feature: "五声不对称结构，日本传统音阶。",
+    progression: "五声 vamp",
+    improv: "空四、五度与小二度并置，东方色彩。",
+  },
+  {
+    id: "enigmatic",
+    category: "特殊與民族音階",
+    label: "Enigmatic / 謎樣音階",
+    intervals: [0, 1, 4, 6, 8, 10, 11],
+    feature: "羅西尼/威爾第式，不對稱的懸疑色彩。",
+    progression: "半音終止句",
+    improv: "圍繞半音與增三結構，適合懸疑樂句。",
+  },
+  {
+    id: "prometheus",
+    category: "特殊與民族音階",
+    label: "Prometheus / 普羅米修斯音階",
+    intervals: [0, 2, 4, 6, 9, 10],
+    feature: "Lydian 屬去掉五音，印象派、爵士常用。",
+    progression: "V7#11sus 靜態和聲",
+    improv: "適合 7#11 和弦，音少而色彩強。",
   },
 ];
 
@@ -583,6 +902,306 @@ const INTERVAL_REFERENCE = [
   ["P8", "纯八度", 12, "稳定重复，常作为低音加厚。"],
 ];
 
+// ── ABRSM 1-8 級樂理知識重點 ─────────────────────────────
+const ABRSM_KNOWLEDGE = [
+  {
+    grade: 1,
+    title: "第 1 級：識譜與節奏基礎",
+    topics: [
+      { title: "譜號與音符位置", points: ["高音譜號（G clef）：第二線是 G；低音譜號（F clef）：第四線是 F。", "中央 C 位於高音譜號下加一線、低音譜號上加一線。", "熟記各線、間及上下加線的音名。"] },
+      { title: "音符時值", points: ["全音符、二分音符、四分音符、八分音符、十六分音符及其休止符。", "附點二分音符 = 3 拍（以四分音符為一拍）。", "時值換算：1 個全音符 = 2 個二分 = 4 個四分 = 8 個八分。"] },
+      { title: "拍號與小節", points: ["本級拍號：2/4、3/4、4/4（單拍子）。", "上方數字＝每小節拍數，下方數字＝以哪種音符為一拍。", "小節線、終止線、反覆記號。"] },
+      { title: "半音、全音與升降號", points: ["半音是西方音樂最小的常用音程；全音 = 2 個半音。", "升號（♯）升半音、降號（♭）降半音、還原號（♮）取消升降。", "一組八度共 12 個半音。"] },
+      { title: "調與音階", points: ["本級大調：C、G、D、F、B♭ 大調；關係小調：A、D 和聲小調。", "大調音階音程結構：全 全 半 全 全 全 半。", "主音、屬音（第 5 級）等基本音級名稱。"] },
+      { title: "音程與三和弦", points: ["能計算音程的度數（1–8 度）。", "主音上的三和弦（主三和弦）與其八度位置。", "認識 I、IV、V 三和弦的根音。"] },
+      { title: "術語與記號", points: ["力度：p、f、mf、mp、cresc.、dim.。", "速度：allegro、andante、adagio 等。", "奏法：legato、staccato、圓滑線、連結線（tie）。"] },
+    ],
+  },
+  {
+    grade: 2,
+    title: "第 2 級：三連音、音程性質與調內和弦",
+    topics: [
+      { title: "節奏", points: ["三連音：三個音佔兩個同等音的時值（如 3 個八分音符 = 1 個四分音符）。", "附點四分音符 = 3 個八分音符；更多十六分音符組合。", "3/8 拍子。"] },
+      { title: "調號", points: ["新增 A 大調（3 個升號）、E♭ 大調（3 個降號）。", "關係小調：F♯ 小調、C 小調。", "背熟五度圈順序：升號 F♯ C♯ G♯ D♯ A♯；降號反向。"] },
+      { title: "音程", points: ["能分辨大、小音程性質（大 2/3/6/7 度與小 2/3/6/7 度）。", "完全 1/4/5/8 度。", "音程需同時看度數與半音數。"] },
+      { title: "音級與三和弦", points: ["音級名稱：主音、上主音、中音、下屬音、屬音、下中音、導音。", "大調與小調中 I、IV、V 三和弦的組成。", "大調中 I IV V 是大三和弦，ii、iii、vi 是小三和弦，vii° 是減三和弦。"] },
+      { title: "術語與記號", points: ["常見連線、斷奏、重音（>）。", "更多速度與表情術語，如 ritardando、a tempo、legato。"] },
+    ],
+  },
+  {
+    grade: 3,
+    title: "第 3 級：複拍子、轉位與終止式",
+    topics: [
+      { title: "複拍子（Compound Time）", points: ["6/8：每小節 6 個八分音符，打成 2 大拍（每拍 3 個八分）。", "單拍子與複拍子的分別：複拍子每拍可分三份。", "學會按強弱位置組合節奏。"] },
+      { title: "調號", points: ["新增 E 大調（4 個升號）、A♭ 大調（4 個降號）。", "關係小調：C♯ 小調、F 小調。"] },
+      { title: "音程", points: ["八度內全部音程，含大、小、完全、增、減性質。", "三全音（增四度＝減五度）＝ 6 個半音。"] },
+      { title: "三和弦與轉位", points: ["原位：根音在低音；第一轉位：三音在低音；第二轉位：五音在低音。", "各音級三和弦的組成與性質，含 II、VI 級。", "終止四六和弦（I₆₄）出現在終止前。"] },
+      { title: "終止式", points: ["完全終止（V–I）、變格終止（IV–I）、不完全終止（結束在 V）。", "能在樂譜中辨認終止位置。"] },
+      { title: "移調與譜號", points: ["把旋律按八度移高或移低。", "鞏固高音、低音譜號的快速識讀。"] },
+    ],
+  },
+  {
+    grade: 4,
+    title: "第 4 級：C 譜號、雙附點與更多和弦",
+    topics: [
+      { title: "調號", points: ["新增 B 大調（5 個升號）、D♭ 大調（5 個降號）。", "關係小調：G♯ 小調、B♭ 小調。"] },
+      { title: "半音變化記號", points: ["重升號（×）升高兩個半音（一個全音）；重降號（𝄫）降兩個半音。", "等音（enharmonic）概念，如 C♯ = D♭。"] },
+      { title: "節奏", points: ["雙附點音符：總時值 = 原音符的 1¾ 倍（第二個附點加原時值的 1/4）。", "9/8、12/8 複拍子，分別為 3 拍與 4 拍。"] },
+      { title: "中音譜號（Alto Clef）", points: ["C 譜號的中央對準第三線，第三線即中央 C。", "中提琴常用中音譜號。"] },
+      { title: "三和弦與終止", points: ["大調、和聲小調中 II、VI 級三和弦及其轉位。", "完全、變格、不完全三種終止，並能在四部譜中辨認。"] },
+      { title: "裝飾音與移調", points: ["倚音（acciaccatura、appoggiatura）、回音、震音等常見裝飾。", "按指定音程移調旋律。"] },
+    ],
+  },
+  {
+    grade: 5,
+    title: "第 5 級：七和弦、全部終止與不規則拍",
+    topics: [
+      { title: "調號", points: ["新增 F♯ 大調（6 個升號）、C♯ 大調（7 個升號）。", "六個升降號以內的全部大小調及其關係調。", "等音調：B 大調 = C♭ 大調、F♯ 大調 = G♭ 大調、C♯ 大調 = D♭ 大調。"] },
+      { title: "拍子與節奏", points: ["不規則拍號：5/4、7/8 等。", "鞏固原 2/4 至 12/8 全部拍號。"] },
+      { title: "譜號", points: ["次中音譜號（Tenor Clef）：第四線為中央 C（大提琴、長號等使用）。", "在高音、低音、中音、次中音四譜號間互讀。"] },
+      { title: "音程與音階", points: ["全部音程含複音程（超過八度）。", "半音音階、全音音階的認識。", "各類大小調音階（自然、和聲、旋律）的寫作。"] },
+      { title: "三和弦轉位與七和弦", points: ["三和弦全部轉位與數字低音標記（5/3、6、6/4）。", "屬七和弦（V7）、減七和弦（vii°7）的組成與轉位。"] },
+      { title: "四種終止", points: ["完全終止 V–I、變格終止 IV–I、不完全終止（止於 V）、阻礙終止 V–VI（小調 V–VI）。", "能為旋律配寫終止和弦。"] },
+      { title: "移調與樂器", points: ["按指定音程移調到任何調。", "認識交響樂團常用樂器及常用移調樂器（B♭、F 調）。"] },
+    ],
+  },
+  {
+    grade: 6,
+    title: "第 6 級：四部和聲與數字低音",
+    topics: [
+      { title: "四部和聲（SATB）", points: ["女高（Soprano）、女低（Alto）、男高（Tenor）、男低（Bass）。", "聲部音域、排列法（密集／開放）與重複音規則。", "避免平行五度、平行八度、隱藏五八度與聲部交錯。"] },
+      { title: "數字低音（Figured Bass）", points: ["5/3：原位三和弦；6（6/3）：第一轉位；6/4：第二轉位。", "臨時記號、數字與升降的標註規則。", "為數字低音填寫上方三聲部。"] },
+      { title: "和聲進行", points: ["原位與轉位三和弦的連接、經過六和弦、終止四六。", "調內七和弦：V7、ii7、vii°7 及其解決。", "七音一律下行級進解決，導音上行到主音。"] },
+      { title: "旋律和聲配置", points: ["為指定旋律配寫四部和聲，選擇合適和弦與轉位。", "終止式設計與旋律最低音寫作。"] },
+      { title: "移調樂器", points: ["B♭、A、F、E♭ 調樂器的移調計算。", "樂器實際音高與記譜音高的差異。"] },
+      { title: "半音音階與創作", points: ["半音音階寫作規則（上行多用升、下行多用降）。", "為指定旋律續寫或創作樂句。"] },
+    ],
+  },
+  {
+    grade: 7,
+    title: "第 7 級：變化和弦與轉調",
+    topics: [
+      { title: "數字低音", points: ["完整實現含七和弦、轉位及臨時記號的數字低音。", "數字低音中的變化音標記（♯、♭、/）。"] },
+      { title: "次屬和弦（Secondary Dominants）", points: ["除 V 外各音級的屬七，如 V7/IV（C 大調中為 C7）、V7/V（D7）。", "次屬七和弦的識別、寫作與解決。"] },
+      { title: "減七和弦", points: ["減七和弦由小三度堆疊，對稱結構只有 3 種不同組合。", "利用等音關係作轉調樞紐。"] },
+      { title: "拿坡里與增六和弦", points: ["拿坡里六和弦（N6）：bII 大三和弦的第一轉位，常接終止四六。", "義大利、法國、德國六和弦（It+6、Fr+6、Ger+6）都含增六度，解決到屬。"] },
+      { title: "轉調", points: ["近關係轉調（相差一個升降號以內）與樞紐和弦轉調。", "持續音（pedal）、懸留音（suspension，下行解決）、先現音。"] },
+      { title: "總譜閱讀", points: ["中音、次中音譜號的熟練閱讀；聲樂與器樂總譜改寫。"] },
+    ],
+  },
+  {
+    grade: 8,
+    title: "第 8 級：變化和聲、等音轉調與總譜",
+    topics: [
+      { title: "完整數字低音", points: ["在鋼琴譜或四部譜上實現複雜數字低音，含全部變化和弦。", "兼顧和聲正確與聲部流暢。"] },
+      { title: "增六和弦系統", points: ["義大利六和弦（It+6，3 個音，低音重複）。", "法國六和弦（Fr+6，含 2 級音）與德國六和弦（Ger+6，含降 3 級音）。", "三種增六和弦都解決到 V 或終止四六。"] },
+      { title: "等音轉調", points: ["利用減七和弦與屬七和弦的等音關係遠距離轉調。", "德國六和弦與屬七和弦的等音互換。"] },
+      { title: "旋律和聲配置", points: ["為完整旋律設計和聲，含轉調、變化和弦與終止布局。", "和聲節奏、低音線條與結構設計。"] },
+      { title: "二十世紀技法", points: ["荀白克十二音技法（tone row）、序列主義。", "印象派平行和弦、調式互換、複調性等概念。"] },
+      { title: "總譜閱讀", points: ["交響樂總譜、聲樂總譜、移調樂器讀譜。", "鍵盤樂譜、室樂與管弦樂片段的改編與分析。"] },
+    ],
+  },
+];
+
+// ── ABRSM 分級測驗題庫（每題：grade, prompt, options, answer, hint） ──
+const ABRSM_QUESTION_BANK = [
+  // 第 1 級
+  { grade: 1, prompt: "一個四分音符等於多少個八分音符？", options: ["2 個", "4 個", "1 個", "3 個"], answer: "2 個", hint: "四分音符時值為 1 拍，八分音符為半拍。" },
+  { grade: 1, prompt: "4/4 拍子每小節有多少拍？", options: ["2 拍", "3 拍", "4 拍", "6 拍"], answer: "4 拍", hint: "上方數字是每小節拍數。" },
+  { grade: 1, prompt: "C 大調調號有多少個升降號？", options: ["1 個升號", "1 個降號", "2 個升號", "沒有升降號"], answer: "沒有升降號", hint: "C 大調音階全部使用白鍵。" },
+  { grade: 1, prompt: "G 大調調號有幾個升號？", options: ["1 個", "2 個", "3 個", "沒有"], answer: "1 個", hint: "升的是 F，即 F♯。" },
+  { grade: 1, prompt: "高音譜號第二線上的音是？", options: ["C", "E", "G", "F"], answer: "G", hint: "高音譜號又稱 G 譜號，螺旋中心對準第二線。" },
+  { grade: 1, prompt: "低音譜號第四線上的音是？", options: ["F", "C", "G", "B"], answer: "F", hint: "低音譜號又稱 F 譜號，兩點夾住第四線。" },
+  { grade: 1, prompt: "一個全音符等於多少個四分音符？", options: ["2 個", "4 個", "6 個", "8 個"], answer: "4 個", hint: "全音符 = 2 個二分 = 4 個四分。" },
+  { grade: 1, prompt: "一個八度內有多少個半音？", options: ["7 個", "8 個", "10 個", "12 個"], answer: "12 個", hint: "鋼琴上 12 個鍵為一組（含黑鍵）。" },
+  { grade: 1, prompt: "「漸強」的義大利文縮寫是？", options: ["dim.", "cresc.", "rit.", "legato"], answer: "cresc.", hint: "crescendo = 逐漸增強。" },
+  { grade: 1, prompt: "A 小調的關係大調是？", options: ["C 大調", "G 大調", "F 大調", "D 大調"], answer: "C 大調", hint: "關係大小調共用同一調號，主音相差小三度。" },
+  // 第 2 級
+  { grade: 2, prompt: "三連音中三個八分音符的總時值等於？", options: ["1 個四分音符", "1 個附點四分音符", "1 個二分音符", "1 個全音符"], answer: "1 個四分音符", hint: "三連音把本來的 2 份時值分給 3 個音。" },
+  { grade: 2, prompt: "A 大調調號有幾個升號？", options: ["1 個", "2 個", "3 個", "4 個"], answer: "3 個", hint: "F♯、C♯、G♯。" },
+  { grade: 2, prompt: "E♭ 大調調號有幾個降號？", options: ["1 個", "2 個", "3 個", "4 個"], answer: "3 個", hint: "B♭、E♭、A♭。" },
+  { grade: 2, prompt: "大調音階中第 I 級到第 III 級是什麼音程？", options: ["小三度", "大三度", "純四度", "純五度"], answer: "大三度", hint: "大調的 1-3 級含 4 個半音。" },
+  { grade: 2, prompt: "自然小調第 I 級到第 III 級是什麼音程？", options: ["小三度", "大三度", "增三度", "純三度"], answer: "小三度", hint: "小三度含 3 個半音，是小調色彩來源。" },
+  { grade: 2, prompt: "一個附點四分音符等於多少個八分音符？", options: ["2 個", "3 個", "4 個", "6 個"], answer: "3 個", hint: "附點延長原音符的一半：1.5 + 1.5 = 3 個八分。" },
+  { grade: 2, prompt: "音階的第 5 級名稱是？", options: ["主音", "下屬音", "屬音", "中音"], answer: "屬音", hint: "屬音是繼主音後第二重要的音。" },
+  { grade: 2, prompt: "大調中屬和弦是哪一級？", options: ["I", "IV", "V", "VI"], answer: "V", hint: "V 級三和弦具有強烈回到 I 的傾向。" },
+  { grade: 2, prompt: "一個十六分音符等於四分音符的多少？", options: ["1/2", "1/4", "1/8", "1/16"], answer: "1/4", hint: "四分音符 = 4 個十六分音符。" },
+  { grade: 2, prompt: "F♯ 小調的關係大調是？", options: ["D 大調", "A 大調", "E 大調", "G 大調"], answer: "A 大調", hint: "A 大調與 F♯ 小調都有 3 個升號。" },
+  // 第 3 級
+  { grade: 3, prompt: "6/8 拍子屬於哪一類拍子？", options: ["單拍子", "複拍子", "不規則拍", "自由拍"], answer: "複拍子", hint: "每大拍可分為三份，6/8 打成 2 大拍。" },
+  { grade: 3, prompt: "6/8 拍子每小節有多少個八分音符？", options: ["2 個", "3 個", "6 個", "8 個"], answer: "6 個", hint: "上方數字就是八分音符的數量。" },
+  { grade: 3, prompt: "自然大調中哪一級是減三和弦？", options: ["II 級", "III 級", "VI 級", "VII 級"], answer: "VII 級", hint: "vii° 是導音上的減三和弦，解決到 I。" },
+  { grade: 3, prompt: "三和弦第一轉位時，低音是哪個音？", options: ["根音", "三音", "五音", "七音"], answer: "三音", hint: "第一轉位以三音為最低音。" },
+  { grade: 3, prompt: "三全音包含多少個半音？", options: ["4 個", "5 個", "6 個", "7 個"], answer: "6 個", hint: "增四度與減五度都是三全音。" },
+  { grade: 3, prompt: "屬和弦（V）最自然解決到哪個和弦？", options: ["主和弦（I）", "下屬和弦（IV）", "上主和弦（ii）", "下中和弦（vi）"], answer: "主和弦（I）", hint: "屬到主（V–I）是最基本的終止。" },
+  { grade: 3, prompt: "把旋律移高一個八度後，下列哪項保持不變？", options: ["實際音高", "音名與音級", "譜上的位置", "音的頻率"], answer: "音名與音級", hint: "只改變八度，音名相同。" },
+  { grade: 3, prompt: "E 大調調號有幾個升號？", options: ["2 個", "3 個", "4 個", "5 個"], answer: "4 個", hint: "F♯、C♯、G♯、D♯。" },
+  { grade: 3, prompt: "6/8 拍子通常打成幾個大拍？", options: ["2 拍", "3 拍", "6 拍", "12 拍"], answer: "2 拍", hint: "每大拍 3 個八分音符：6 ÷ 3 = 2。" },
+  { grade: 3, prompt: "大三和弦的結構是？", options: ["根音＋小三度＋小三度", "根音＋大三度＋小三度", "根音＋小三度＋大三度", "根音＋大三度＋大三度"], answer: "根音＋大三度＋小三度", hint: "如 C 大調：C-E-G（大三度＋小三度）。" },
+  // 第 4 級
+  { grade: 4, prompt: "中音譜號（Alto Clef）的第三線是哪個音？", options: ["中央 C", "G", "F", "A"], answer: "中央 C", hint: "C 譜號的箭頭對準中央 C。" },
+  { grade: 4, prompt: "雙附點音符中，第二個附點增加原音符時值的多少？", options: ["1/2", "1/4", "1/8", "3/4"], answer: "1/4", hint: "第一個附點加 1/2，第二個附點再加 1/4。" },
+  { grade: 4, prompt: "9/8 拍子屬於哪一類拍子？", options: ["單拍子", "複拍子", "不規則拍", "變拍子"], answer: "複拍子", hint: "9/8 打成 3 大拍，每拍 3 個八分。" },
+  { grade: 4, prompt: "自然大調中第 II 級三和弦的性質是？", options: ["大三和弦", "小三和弦", "減三和弦", "增三和弦"], answer: "小三和弦", hint: "如 C 大調的 D-F-A。" },
+  { grade: 4, prompt: "V 和弦接 I 和弦的終止式稱為？", options: ["變格終止", "完全終止", "不完全終止", "阻礙終止"], answer: "完全終止", hint: "Perfect cadence，屬到主最完整。" },
+  { grade: 4, prompt: "IV 和弦接 I 和弦的終止式稱為？", options: ["完全終止", "變格終止", "不完全終止", "阻礙終止"], answer: "變格終止", hint: "Plagal cadence，常見於聖詩「阿們」終止。" },
+  { grade: 4, prompt: "重升號（×）會把音升高多少？", options: ["1 個半音", "2 個半音", "3 個半音", "1 個八度"], answer: "2 個半音", hint: "即一個全音。" },
+  { grade: 4, prompt: "「6/4」和弦（第二轉位）的低音是？", options: ["根音", "三音", "五音", "七音"], answer: "五音", hint: "第二轉位以五音為最低音。" },
+  { grade: 4, prompt: "D♭ 大調調號有幾個降號？", options: ["3 個", "4 個", "5 個", "6 個"], answer: "5 個", hint: "B♭、E♭、A♭、D♭、G♭。" },
+  { grade: 4, prompt: "「6」和弦（第一轉位）的低音是？", options: ["根音", "三音", "五音", "七音"], answer: "三音", hint: "6 是 6/3 的簡寫。" },
+  // 第 5 級
+  { grade: 5, prompt: "下列哪個是不規則拍號？", options: ["4/4", "3/4", "5/4", "6/8"], answer: "5/4", hint: "5 拍無法平分為 2 或 3 的組合。" },
+  { grade: 5, prompt: "次中音譜號（Tenor Clef）哪一條線是中央 C？", options: ["第二線", "第三線", "第四線", "第五線"], answer: "第四線", hint: "次中音譜號的 C 譜號中心對準第四線。" },
+  { grade: 5, prompt: "屬七和弦（V7）由哪些音組成？", options: ["根音、三音、五音、大七音", "根音、三音、五音、小七音", "根音、小三音、五音、小七音", "根音、三音、減五音、小七音"], answer: "根音、三音、五音、小七音", hint: "如 G7 = G-B-D-F（大三和弦＋小七度）。" },
+  { grade: 5, prompt: "減七和弦的每個音程距離是？", options: ["大二度", "大三度", "小三度", "純四度"], answer: "小三度", hint: "小三度堆疊使減七和弦結構對稱。" },
+  { grade: 5, prompt: "大調中 V 接 VI 的終止式稱為？", options: ["完全終止", "變格終止", "不完全終止", "阻礙終止"], answer: "阻礙終止", hint: "Interrupted cadence，屬和弦「意外」接到 VI。" },
+  { grade: 5, prompt: "一個八度的半音音階有多少個音？", options: ["7 個", "8 個", "10 個", "12 個"], answer: "12 個", hint: "每個半音都算一個音。" },
+  { grade: 5, prompt: "F♯ 大調調號有幾個升號？", options: ["4 個", "5 個", "6 個", "7 個"], answer: "6 個", hint: "F♯、C♯、G♯、D♯、A♯、E♯。" },
+  { grade: 5, prompt: "C♯ 大調的等音調是？", options: ["D 大調", "D♭ 大調", "B 大調", "F♯ 大調"], answer: "D♭ 大調", hint: "C♯ 與 D♭ 在鍵盤上是同一個音。" },
+  { grade: 5, prompt: "不完全終止（imperfect cadence）的特徵是？", options: ["V 接 I", "IV 接 I", "樂句結束在 V 和弦上", "V 接 VI"], answer: "樂句結束在 V 和弦上", hint: "停在屬和弦，有未完成、要繼續的感覺。" },
+  { grade: 5, prompt: "和聲小調中為什麼要升高第 VII 級？", options: ["增加節奏感", "形成導音以強化 V–i 終止", "方便移調", "避免增二度"], answer: "形成導音以強化 V–i 終止", hint: "導音只比主音低半音，解決傾向最強。" },
+  // 第 6 級
+  { grade: 6, prompt: "四部和聲中「SATB」依次指？", options: ["女高、女低、男高、男低", "女高、男高、女低、男低", "男高、女高、女低、男低", "獨唱、合唱、器樂、低音"], answer: "女高、女低、男高、男低", hint: "Soprano、Alto、Tenor、Bass。" },
+  { grade: 6, prompt: "數字低音「6」（6/3）表示？", options: ["原位三和弦", "三和弦第一轉位", "三和弦第二轉位", "七和弦原位"], answer: "三和弦第一轉位", hint: "低音上方有六度與三度音程。" },
+  { grade: 6, prompt: "數字低音「6/4」表示？", options: ["原位三和弦", "第一轉位", "第二轉位", "第三轉位"], answer: "第二轉位", hint: "低音上方有六度與四度音程。" },
+  { grade: 6, prompt: "大調中的超級屬七和弦（ii7）是什麼性質？", options: ["大七和弦", "小七和弦", "屬七和弦", "半減七和弦"], answer: "小七和弦", hint: "如 C 大調 Dm7 = D-F-A-C。" },
+  { grade: 6, prompt: "四部和聲為什麼要避免平行五度？", options: ["聲音太小", "兩聲部失去獨立性，音響空洞", "節奏不整齊", "會造成轉調"], answer: "兩聲部失去獨立性，音響空洞", hint: "平行五度與八度會使聲部「黏在一起」。" },
+  { grade: 6, prompt: "原位三和弦通常重複哪個音？", options: ["根音", "三音", "五音", "七音"], answer: "根音", hint: "重複根音最穩定。" },
+  { grade: 6, prompt: "屬七和弦的七音通常如何解決？", options: ["上行級進", "下行級進", "保持不動", "跳進八度"], answer: "下行級進", hint: "如 G7 的 F 下行解決到 E。" },
+  { grade: 6, prompt: "和聲小調中升高第 VII 級後，V 級三和弦變成？", options: ["小三和弦", "大三和弦", "減三和弦", "增三和弦"], answer: "大三和弦", hint: "導音使 V 成為大三和弦，屬功能更強。" },
+  { grade: 6, prompt: "經過六和弦（passing 6/3）通常接在？", options: ["兩個原位和弦之間", "樂曲開頭", "終止之後", "獨立出現"], answer: "兩個原位和弦之間", hint: "低音作級進經過時使用。" },
+  { grade: 6, prompt: "半音音階上行時通常傾向使用？", options: ["降號", "升號", "還原號", "重升號"], answer: "升號", hint: "下行則傾向用降號，方便閱讀。" },
+  // 第 7 級
+  { grade: 7, prompt: "拿坡里六和弦（N6）是什麼和弦的第一轉位？", options: ["bII 上的大三和弦", "II 上的小三和弦", "IV 上的大七和弦", "VI 上的小三和弦"], answer: "bII 上的大三和弦", hint: "C 大調中即 D♭ 大三和弦的第一轉位。" },
+  { grade: 7, prompt: "C 大調中的次屬和弦 V7/IV 是？", options: ["G7", "D7", "C7", "A7"], answer: "C7", hint: "IV 是 F，F 的屬七是 C7。" },
+  { grade: 7, prompt: "減七和弦按等音關係共有多少種不同組合？", options: ["2 種", "3 種", "4 種", "7 種"], answer: "3 種", hint: "結構每小三度重複，12 個音分 3 組。" },
+  { grade: 7, prompt: "持續音（pedal）通常固定在哪兩個音？", options: ["中音與下中音", "主音與屬音", "三音與七音", "導音與上主音"], answer: "主音與屬音", hint: "tonic pedal 與 dominant pedal。" },
+  { grade: 7, prompt: "懸留音（suspension）的典型解決方式是？", options: ["上行級進", "下行級進", "上行跳進", "保持不動"], answer: "下行級進", hint: "如 4-3、9-8、7-6 懸留。" },
+  { grade: 7, prompt: "德國六和弦（Ger+6）包含哪個標誌性音程？", options: ["增六度", "減七度", "純四度", "大三度（不存在）"], answer: "增六度", hint: "三種增六和弦都含增六度，向外擴張解決到八度。" },
+  { grade: 7, prompt: "C 大調中轉到屬調（G 大調）的調號變化是？", options: ["少一個升號", "多一個升號", "多一個降號", "調號不變"], answer: "多一個升號", hint: "屬調比主調多一個升號（F♯）。" },
+  { grade: 7, prompt: "屬七和弦解決到主和弦時，三音（導音）通常？", options: ["下行到五音", "保持不動", "上行半音到主音", "跳進四度"], answer: "上行半音到主音", hint: "如 G7 的 B 上行到 C。" },
+  { grade: 7, prompt: "C 大調中 V7/V 是哪個和弦？", options: ["C7", "D7", "A7", "G7"], answer: "D7", hint: "V 是 G，G 的屬七是 D7。" },
+  { grade: 7, prompt: "近關係轉調通常指轉到相差多少升降號以內的調？", options: ["0 個", "1 個", "3 個", "5 個"], answer: "1 個", hint: "如 C 大調轉到 G 大調或 F 大調。" },
+  // 第 8 級
+  { grade: 8, prompt: "義大利六和弦（It+6）由幾個不同音高組成？", options: ["2 個", "3 個", "4 個", "5 個"], answer: "3 個", hint: "通常重複低音，共 4 個聲部但只有 3 個音。" },
+  { grade: 8, prompt: "法國六和弦與德國六和弦的分別是？", options: ["法國六含 2 級音，德國六含降 3 級音", "法國六是小三和弦", "德國六沒有增六度", "兩者完全相同"], answer: "法國六含 2 級音，德國六含降 3 級音", hint: "A 小調中 Fr+6 含 B（2 級），Ger+6 含 C（b3 級）。" },
+  { grade: 8, prompt: "等音轉調（enharmonic modulation）最常利用哪個和弦？", options: ["主三和弦", "減七和弦", "掛留四和弦", "空五和弦"], answer: "減七和弦", hint: "減七和弦的對稱結構可被重新解釋為多個調的和弦。" },
+  { grade: 8, prompt: "十二音技法（twelve-tone technique）的創立者是？", options: ["德布西", "荀白克", "巴赫", "華格納"], answer: "荀白克", hint: "Arnold Schoenberg，20 世紀初提出。" },
+  { grade: 8, prompt: "管弦樂團中的法國號是什麼調的移調樂器？", options: ["B♭ 調", "E♭ 調", "F 調", "C 調（非移調）"], answer: "F 調", hint: "法國號（horn）記譜比實際音高高五度。" },
+  { grade: 8, prompt: "B♭ 調單簧管演奏譜上的 C，實際發音是？", options: ["C", "B♭", "D", "A"], answer: "B♭", hint: "記譜音比實際音高大二度。" },
+  { grade: 8, prompt: "德國六和弦可作為哪個和弦的等音形式？", options: ["屬七和弦", "減三和弦", "大六和弦", "掛留和弦"], answer: "屬七和弦", hint: "Ger+6 與異名同音的屬七和弦聲部排列相同。" },
+  { grade: 8, prompt: "華格納（Wagner）和聲的典型特徵是？", options: ["只用三和弦", "大量半音化與懸延不決的終止", "完全無調性", "只使用教會調式"], answer: "大量半音化與懸延不決的終止", hint: "《特里斯坦與伊索爾德》開頭是著名例子。" },
+  { grade: 8, prompt: "B♭ 調小號演奏實際音高 C，譜上應記為？", options: ["B♭", "C", "D", "A"], answer: "D", hint: "實際音高比記譜低大二度，記譜要寫高大二度。" },
+  { grade: 8, prompt: "序列主義（serialism）中「音列」通常包含多少個音？", options: ["7 個", "8 個", "10 個", "12 個"], answer: "12 個", hint: "12 個半音各出現一次，再進行變形。" },
+];
+
+// ── 樂理歷史科普時間軸 ───────────────────────────────────
+const THEORY_HISTORY = [
+  { era: "古希臘 約公元前 6 世紀", title: "數字裡的音程：畢達哥拉斯", body: "畢達哥拉斯發現弦長比例決定音程：2:1 是八度、3:2 是純五度、4:3 是純四度。古希臘人由四音音列（tetrachord）拼出各種調式（harmoniai），奠定了「音樂是數學」的觀念。" },
+  { era: "中世紀 約 500–1400", title: "教會調式與記譜的誕生", body: "葛麗果聖歌（Gregorian chant）是單聲部宗教歌曲，最早用紐姆符號（neumes）提示旋律走向，沒有明確音高。11 世紀義大利修士圭多·達雷佐（Guido d'Arezzo）發明譜線、六聲音階與唱名（ut re mi fa sol la，即後來的 Do Re Mi），中古教會調式（多利亞、弗里幾亞等）在此時定型。" },
+  { era: "文藝復興 約 1400–1600", title: "五線譜成熟與複調黃金時代", body: "有量記譜法（mensural notation）發展出明確的時值，逐步演進成現代五線譜與拍號。帕勒斯替那（Palestrina）等人把對位法（複調）推向高峰，教會調式開始向大小調體系過渡。" },
+  { era: "巴洛克 約 1600–1750", title: "大小調、數字低音與功能和聲", body: "大小調體系確立，低音上方用數字標示和弦（數字低音 / figured bass），和聲開始有「主–屬」的功能邏輯。巴赫《平均律鍵盤曲集》（1722、1742）以全部 24 個大小調寫作，實踐並推廣了十二平均律；拉摩（Rameau）1722 年《和聲論》首次系統論述和弦與轉位。" },
+  { era: "古典時期 約 1750–1820", title: "奏鳴曲式與終止式規範", body: "海頓、莫札特、貝多芬把功能和聲（I–IV–V–I）、奏鳴曲式與各種終止式運用得最為規範均衡，和聲節奏清晰、轉調多在近關係調之間。" },
+  { era: "浪漫時期 約 1820–1900", title: "半音化與色彩和聲", body: "蕭邦、李斯特、華格納大量使用遠關係轉調、拿坡里六和弦、增六和弦與高疊和弦，和聲的色彩與戲劇性壓過功能規則，調性逐漸被推到邊緣——華格納《特里斯坦》的開頭和弦甚至製造了「永不終止」的懸念。" },
+  { era: "20 世紀", title: "調性瓦解、調式復興與爵士", body: "德布西、拉威爾受教會調式、全音音階與東方音樂啟發，寫出平行和弦與調式和聲；荀白克提出無調性與十二音技法。另一方面，爵士樂把延伸和弦（9/11/13）、變化屬、ii–V–I 與替代屬發展成新的和聲語法。" },
+  { era: "爵士與流行 1900 至今", title: "從藍調到現代流行和聲", body: "藍調音階與 12 小節藍調結構經紐奧爾良、搖擺樂、Bebop（1940 年代）一路演進，薩克斯風手與鋼琴手建立了爵士即興的調式系統；搖滾、靈魂樂、R&B、City Pop 再把藍調、教會調式與高疊和弦帶進大眾音樂。" },
+  { era: "記譜法演變", title: "從紐姆到五線譜，再到六線譜", body: "音符形狀從方形紐姆、菱形有量音符，演變成今天的橢圓符頭；小節線、拍號、力度與速度記號陸續定型。吉他六線譜（tablature）源自魯特琴譜，直接標註按弦位置，入門更直觀，但不取代五線譜記錄節奏與音高的能力。" },
+  { era: "律制演變", title: "為什麼需要十二平均律", body: "畢氏律以純五度連生，轉調後會累積誤差；純律的和弦最和諧但各調之間不能互通；中庸全音律是折中。十二平均律把八度均分為 12 個半音，每個調都略有偏差但都可接受，任意轉調與自由換調才成為可能，巴赫的《平均律》是其里程碑。" },
+];
+
+// ── 吉他和弦一鍵輸入：開放把位指法（由低到高 E A D G B e；x＝悶音） ──
+const GUITAR_OPEN_SHAPES = {
+  "0:maj": "x32010", "2:maj": "xx0232", "4:maj": "022100", "5:maj": "133211",
+  "7:maj": "320003", "9:maj": "x02220", "10:maj": "x13331", "11:maj": "x24442",
+  "9:min": "x02210", "4:min": "022000", "2:min": "xx0231", "11:min": "x24432",
+  "5:min": "133111", "7:min": "355333", "0:min": "x35543", "1:min": "x46654",
+  "6:min": "244222",
+  "4:7": "020100", "7:7": "320001", "2:7": "xx0212", "9:7": "x02020",
+  "0:7": "x32310", "11:7": "x21202", "5:7": "131211", "10:7": "x13131",
+  "4:m7": "022030", "9:m7": "x02010", "2:m7": "xx0211", "11:m7": "x24232",
+  "6:m7": "242252",
+  "0:maj7": "x32000", "5:maj7": "1x3210", "9:maj7": "x02120", "7:maj7": "320002",
+  "9:sus4": "x02230", "2:sus4": "xx0233", "4:sus4": "022200",
+  "0:sus4": "x33011", "7:sus4": "3x0013",
+  "9:sus2": "x02200", "2:sus2": "xx0230", "0:sus2": "x30033", "7:sus2": "3x023x",
+  "4:6": "022120", "9:6": "x02222", "2:6": "xx0202",
+  "0:add9": "x32030", "0:9": "x32333", "9:9": "x02423",
+  "11:dim7": "x23434",
+};
+
+// 封閉把位模板（形狀為空弦把位，由低到高 E A D G B e；x＝悶音）
+const GUITAR_E_FORM = { rootOpen: 4, shapes: {
+  maj: "022100", min: "022000", dim: "0120xx", aug: "032110",
+  sus4: "022200", "6": "022120", m6: "022020", "7": "020100",
+  maj7: "021100", m7: "022030", mMaj7: "021000", halfDim: "012030",
+  dim7: "012020", add9: "022102", "9": "020102",
+} };
+const GUITAR_A_FORM = { rootOpen: 9, shapes: {
+  maj: "x02220", min: "x02210", dim: "x0121x", sus2: "x02200", sus4: "x02230",
+  "6": "x02222", "7": "x02020", m7: "x02010", maj7: "x02120",
+  halfDim: "x0101x", "9": "x02423",
+} };
+
+// 吉他一鍵輸入支援的和弦性質（順序即下拉選單順序）
+const GUITAR_CHORD_INSERT_QUALITIES = [
+  { id: "maj", label: "大三和弦（maj）" },
+  { id: "min", label: "小三和弦（m）" },
+  { id: "dim", label: "減三和弦（dim）" },
+  { id: "aug", label: "增三和弦（aug）" },
+  { id: "sus2", label: "掛二（sus2）" },
+  { id: "sus4", label: "掛四（sus4）" },
+  { id: "6", label: "六和弦（6）" },
+  { id: "m6", label: "小六（m6）" },
+  { id: "7", label: "屬七（7）" },
+  { id: "maj7", label: "大七（maj7）" },
+  { id: "m7", label: "小七（m7）" },
+  { id: "mMaj7", label: "小大七（mMaj7）" },
+  { id: "halfDim", label: "半減七（m7b5）" },
+  { id: "dim7", label: "減七（dim7）" },
+  { id: "add9", label: "加九（add9）" },
+  { id: "9", label: "九和弦（9）" },
+];
+
+// 常用和弦快捷標籤
+const GUITAR_QUICK_CHORDS = [
+  { root: 0, quality: "maj", label: "C" }, { root: 2, quality: "maj", label: "D" },
+  { root: 4, quality: "maj", label: "E" }, { root: 5, quality: "maj", label: "F" },
+  { root: 7, quality: "maj", label: "G" }, { root: 9, quality: "maj", label: "A" },
+  { root: 10, quality: "maj", label: "B♭" }, { root: 11, quality: "maj", label: "B" },
+  { root: 9, quality: "min", label: "Am" }, { root: 4, quality: "min", label: "Em" },
+  { root: 2, quality: "min", label: "Dm" }, { root: 11, quality: "min", label: "Bm" },
+  { root: 4, quality: "7", label: "E7" }, { root: 7, quality: "7", label: "G7" },
+  { root: 2, quality: "7", label: "D7" }, { root: 9, quality: "7", label: "A7" },
+  { root: 0, quality: "7", label: "C7" }, { root: 11, quality: "7", label: "B7" },
+  { root: 9, quality: "m7", label: "Am7" }, { root: 2, quality: "m7", label: "Dm7" },
+  { root: 4, quality: "m7", label: "Em7" }, { root: 0, quality: "maj7", label: "Cmaj7" },
+  { root: 5, quality: "maj7", label: "Fmaj7" }, { root: 11, quality: "dim7", label: "Bdim7" },
+];
+
+function parseShapeString(shape) {
+  return shape.split("").map((char) => (char === "x" ? "x" : Number(char)));
+}
+
+// 回傳吉他和弦指法（由低到高 E A D G B e，數字＝品位、"x"＝悶音），無則 null
+function getGuitarChordShape(rootPc, qualityId) {
+  const openKey = `${rootPc}:${qualityId}`;
+  if (GUITAR_OPEN_SHAPES[openKey]) return parseShapeString(GUITAR_OPEN_SHAPES[openKey]);
+  const candidates = [];
+  if (GUITAR_E_FORM.shapes[qualityId]) {
+    const fret = mod(rootPc - GUITAR_E_FORM.rootOpen, 12);
+    candidates.push({ fret, shape: parseShapeString(GUITAR_E_FORM.shapes[qualityId]) });
+  }
+  if (GUITAR_A_FORM.shapes[qualityId]) {
+    const fret = mod(rootPc - GUITAR_A_FORM.rootOpen, 12);
+    candidates.push({ fret, shape: parseShapeString(GUITAR_A_FORM.shapes[qualityId]) });
+  }
+  if (!candidates.length) return null;
+  candidates.sort((a, b) => a.fret - b.fret);
+  const pick = candidates[0];
+  if (pick.fret === 0) return pick.shape;
+  return pick.shape.map((value) => (value === "x" ? "x" : value + pick.fret));
+}
+
 const PROGRESSION_PRESETS = [
   { title: "古典正格终止", degrees: ["I", "IV", "V", "I"], note: "T-S-D-T，最清楚的调性闭合。" },
   { title: "爵士 ii-V-I", degrees: ["ii7", "V7", "Imaj7"], note: "导向音最短连接，爵士核心语法。" },
@@ -610,11 +1229,77 @@ const PROGRESSION_PALETTE = [
   { degree: "bVII7", quality: "7", function: "color", label: "借用/摇摆" },
 ];
 
+const TOOLBOX_ITEMS = [
+  {
+    id: "cheat",
+    priority: "高",
+    title: "互动式音阶理论速查表",
+    source: "muted.io",
+    action: "theory",
+    description: "综合 Cheat Sheet，显示当前主音的音阶、和弦、音程与五线谱练习入口。",
+    recommendation: "适合做学习首页：先选主音，再进入调式、和弦或音程。"
+  },
+  {
+    id: "circle",
+    priority: "高",
+    title: "互动五度圈 + 三度圈",
+    source: "muted.io",
+    action: "progressions",
+    description: "用于看调性关系、常用进行、借用和弦与转调方向。",
+    recommendation: "与功能和声库联动：选一个调，立即看到最自然的下一和弦。"
+  },
+  {
+    id: "multi-board",
+    priority: "高",
+    title: "多乐器指板视觉化",
+    source: "muted.io",
+    action: "dictionary",
+    description: "钢琴键盘、吉他指板、贝斯指板与乌克丽丽指板的可切换工作台。",
+    recommendation: "当前已具备钢琴 + 吉他，可继续扩展到弦乐与管乐 voicing。"
+  },
+  {
+    id: "transpose",
+    priority: "中",
+    title: "音阶寻找器 / 和弦移调器",
+    source: "muted.io",
+    action: "intervals",
+    description: "输入音符找音阶；输入和弦一键移调，显示转调前后构成音。",
+    recommendation: "未来可服务管乐移调乐器：Bb、Eb、F 乐器一键换谱。"
+  },
+  {
+    id: "formula",
+    priority: "中",
+    title: "和弦公式与音程分解器",
+    source: "muted.io",
+    action: "dictionary",
+    description: "点击和弦显示公式、张力音、解决倾向和构建步骤。",
+    recommendation: "已经和当前和弦词典深度联动，可继续补五线谱显示。"
+  },
+  {
+    id: "mini-seq",
+    priority: "中",
+    title: "简单节拍器 + 迷你音序器",
+    source: "muted.io",
+    action: "phrases",
+    description: "轻量创作入口，用来快速测试进行、乐句和听感。",
+    recommendation: "下一阶段可升级为 Hookpad 式时间轴。"
+  },
+  {
+    id: "orchestration",
+    priority: "新",
+    title: "弦乐 / 管乐配器草图",
+    source: "Nebula",
+    action: "scores",
+    description: "输入和弦后，提示弦乐、木管、铜管的实用音区和 voicing 倾向。",
+    recommendation: "Phase 4 的核心入口：先做简单建议，再扩展到多轨 MIDI。"
+  },
+];
+
 const STORAGE_KEYS = {
   prefs: "music-dictionary-prefs-v1",
   customPhrases: "music-dictionary-custom-phrases-v1",
   scores: "music-dictionary-scores-v1",
-  favorites: "music-dictionary-favorites-v1",
+  logo: "music-dictionary-logo-v1",
 };
 
 const DEGREE_NAMES = ["1", "2", "3", "4", "5", "6", "7"];
@@ -660,12 +1345,20 @@ const state = {
   progression: ["ii7", "V7", "Imaj7"],
   voiceAdjustments: [0, 0, 0, 0],
   voiceExample: "good",
-  quiz: { total: 0, correct: 0, answer: "", type: "chord" },
+  quiz: { total: 0, correct: 0, answer: "", type: "chord", answered: false, grade: 0 },
+  quizGrade: 0,
+  abrsmGrade: 1,
+  quizTimer: null,
   customPhrases: [],
   scores: [],
-  favorites: new Set(),
+  logo: "",
   tabBeats: 4,
   tabGrid: [],
+  tabCursor: 0,
+  tabChordRoot: 0,
+  tabChordQuality: "maj",
+  pianoChordRoot: 0,
+  pianoChordQuality: "maj",
 };
 
 const els = {
@@ -734,12 +1427,17 @@ const els = {
   tabEditor: document.getElementById("tabEditor"),
   tabPreview: document.getElementById("tabPreview"),
   addTabBeatBtn: document.getElementById("addTabBeatBtn"),
+  removeTabBeatBtn: document.getElementById("removeTabBeatBtn"),
+  exportTabBtn: document.getElementById("exportTabBtn"),
   clearTabBtn: document.getElementById("clearTabBtn"),
   saveTabBtn: document.getElementById("saveTabBtn"),
+  tabTitleInput: document.getElementById("tabTitleInput"),
   rightHandInput: document.getElementById("rightHandInput"),
   leftHandInput: document.getElementById("leftHandInput"),
+  pianoTitleInput: document.getElementById("pianoTitleInput"),
   scoreMemoInput: document.getElementById("scoreMemoInput"),
   clearPianoBtn: document.getElementById("clearPianoBtn"),
+  exportPianoBtn: document.getElementById("exportPianoBtn"),
   savePianoBtn: document.getElementById("savePianoBtn"),
   voiceCheck: document.getElementById("voiceCheck"),
   savedScores: document.getElementById("savedScores"),
@@ -748,7 +1446,26 @@ const els = {
   quizScore: document.getElementById("quizScore"),
   nextQuizBtn: document.getElementById("nextQuizBtn"),
   quizNotes: document.getElementById("quizNotes"),
-  favoriteChordBtn: document.getElementById("favoriteChordBtn"),
+  quizGradeTabs: document.getElementById("quizGradeTabs"),
+  abrsmGradeTabs: document.getElementById("abrsmGradeTabs"),
+  abrsmKnowledgePanel: document.getElementById("abrsmKnowledgePanel"),
+  theoryHistoryTimeline: document.getElementById("theoryHistoryTimeline"),
+  tabChordRoot: document.getElementById("tabChordRoot"),
+  tabChordQuality: document.getElementById("tabChordQuality"),
+  tabChordPreview: document.getElementById("tabChordPreview"),
+  insertTabChordBtn: document.getElementById("insertTabChordBtn"),
+  tabChordQuick: document.getElementById("tabChordQuick"),
+  pianoChordRoot: document.getElementById("pianoChordRoot"),
+  pianoChordQuality: document.getElementById("pianoChordQuality"),
+  insertPianoRightBtn: document.getElementById("insertPianoRightBtn"),
+  insertPianoLeftBtn: document.getElementById("insertPianoLeftBtn"),
+  logoUpload: document.getElementById("logoUpload"),
+  brandLogo: document.querySelector(".brand-logo"),
+  brandLogoImg: document.getElementById("brandLogoImg"),
+  brandLogoPlaceholder: document.getElementById("brandLogoPlaceholder"),
+  removeLogoBtn: document.getElementById("removeLogoBtn"),
+  toolboxGrid: document.getElementById("toolboxGrid"),
+  toolboxDetail: document.getElementById("toolboxDetail"),
   toastRegion: document.getElementById("toastRegion"),
 };
 
@@ -799,6 +1516,78 @@ function showToast(message, tone = "success") {
 
 function mod(n, m) {
   return ((n % m) + m) % m;
+}
+
+function safeSetStorage(key, value) {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch {
+    showToast("本機儲存空間不足，Logo 或設定可能無法保留", "info");
+    return false;
+  }
+}
+
+function renderLogo() {
+  const hasLogo = !!state.logo;
+  els.brandLogoImg.hidden = !hasLogo;
+  els.brandLogoPlaceholder.hidden = hasLogo;
+  els.removeLogoBtn.hidden = !hasLogo;
+  els.brandLogo.classList.toggle("has-logo", hasLogo);
+  if (hasLogo) {
+    els.brandLogoImg.src = state.logo;
+  } else {
+    els.brandLogoImg.removeAttribute("src");
+  }
+}
+
+function readLogoFile(file) {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.type.startsWith("image/")) {
+      reject(new Error("請選擇圖片檔案"));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("圖片讀取失敗"));
+    reader.onload = () => {
+      if (file.type === "image/svg+xml") {
+        resolve(reader.result);
+        return;
+      }
+      const img = new Image();
+      img.onerror = () => reject(new Error("圖片格式無法辨識"));
+      img.onload = () => {
+        const MAX_SIZE = 256;
+        const scale = Math.min(1, MAX_SIZE / Math.max(img.width, img.height));
+        const width = Math.max(1, Math.round(img.width * scale));
+        const height = Math.max(1, Math.round(img.height * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/png"));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function safeFileName(name) {
+  return String(name || "樂譜").replace(/[\\/:*?"<>|]/g, "_").trim().slice(0, 80) || "樂譜";
+}
+
+function downloadTextFile(filename, content) {
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function getAudioContext() {
@@ -1600,7 +2389,6 @@ function renderChordDetails(chord) {
     <div><dt>调内作用</dt><dd>${analyzeChordFunction(chord)}</dd></div>
     <div><dt>提示</dt><dd>${roman} / ${selectedDegree}</dd></div>
   `;
-  els.favoriteChordBtn.textContent = state.favorites.has(chord.id) ? "已收藏" : "收藏";
 }
 
 function analyzeChordFunction(chord) {
@@ -1743,7 +2531,6 @@ function renderChordGrid() {
       const functionClass = getFunctionClass(chord);
       return `
         <button class="chord-card ${active ? "active" : ""} ${functionToneClass(chord)}" data-chord="${chord.id}" type="button">
-          ${state.favorites.has(chord.id) ? '<span class="favorite-badge">已收藏</span>' : ""}
           <span class="function-badge">${functionClass}</span>
           <h4>${getChordDisplayName(chord)}</h4>
           <div class="tone-row">${tones}</div>
@@ -1755,6 +2542,34 @@ function renderChordGrid() {
   if (!filtered.length) {
     els.chordGrid.innerHTML = '<div class="empty-state">没有匹配的和弦，换个关键词试试。</div>';
   }
+}
+
+function renderToolbox(selectedId = TOOLBOX_ITEMS[0]?.id) {
+  if (!els.toolboxGrid) return;
+  const selected = TOOLBOX_ITEMS.find((item) => item.id === selectedId) || TOOLBOX_ITEMS[0];
+  const priorityClass = (priority) => {
+    if (priority === "高") return "high";
+    if (priority === "中") return "medium";
+    return "new";
+  };
+  els.toolboxGrid.innerHTML = TOOLBOX_ITEMS.map((item) => `
+    <button class="tool-card ${item.id === selected.id ? "active" : ""}" data-toolbox-id="${item.id}" type="button">
+      <span class="priority-chip ${priorityClass(item.priority)}">${item.priority}</span>
+      <strong>${item.title}</strong>
+      <p>${item.description}</p>
+      <small>${item.source}</small>
+    </button>
+  `).join("");
+  els.toolboxDetail.innerHTML = `
+    <h4>${selected.title}</h4>
+    <ul>
+      <li><strong>优先级：</strong>${selected.priority}</li>
+      <li><strong>借鉴来源：</strong>${selected.source}</li>
+      <li><strong>实际建议：</strong>${selected.recommendation}</li>
+      <li><strong>当前可联动：</strong>点击下方按钮进入对应模块。</li>
+    </ul>
+    <button class="primary-button" data-toolbox-open="${selected.action}" type="button">打开相关工具</button>
+  `;
 }
 
 function renderScaleView() {
@@ -1855,23 +2670,61 @@ function renderProgressionBuilder() {
   `;
 }
 
+function getModeStepFormula(mode) {
+  const steps = [];
+  for (let i = 1; i < mode.intervals.length; i += 1) {
+    steps.push(mode.intervals[i] - mode.intervals[i - 1]);
+  }
+  steps.push(12 + mode.intervals[0] - mode.intervals[mode.intervals.length - 1]);
+  return steps
+    .map((step) => {
+      if (step === 1) return "半";
+      if (step === 2) return "全";
+      return `${step} 半音`;
+    })
+    .join(" ");
+}
+
 function renderModes() {
   if (!els.modeGallery) return;
-  els.modeGallery.innerHTML = MODE_DETAILS.map((mode) => {
-    const notes = mode.intervals.map((step) => noteName(state.root + step)).join(" ");
-    return `
-      <article class="mode-card ${mode.id === state.selectedModeId ? "active" : ""}" data-mode-detail="${mode.id}">
-        <h4>${mode.label}</h4>
-        <p>${notes}</p>
-        <p>${mode.feature}</p>
-      </article>
-    `;
-  }).join("");
+  const categories = [];
+  MODE_DETAILS.forEach((mode) => {
+    let group = categories.find((item) => item.category === mode.category);
+    if (!group) {
+      group = { category: mode.category, modes: [] };
+      categories.push(group);
+    }
+    group.modes.push(mode);
+  });
+  els.modeGallery.innerHTML = categories
+    .map((group) => `
+      <div class="mode-group">
+        <h4 class="mode-group-title">${group.category} <span>${group.modes.length}</span></h4>
+        <div class="mode-group-cards">
+          ${group.modes
+            .map((mode) => {
+              const notes = mode.intervals.map((step) => noteName(state.root + step)).join(" ");
+              return `
+                <article class="mode-card ${mode.id === state.selectedModeId ? "active" : ""}" data-mode-detail="${mode.id}">
+                  <h4>${mode.label}</h4>
+                  <p class="mode-card-notes">${notes}</p>
+                  <p>${mode.feature}</p>
+                </article>
+              `;
+            })
+            .join("")}
+        </div>
+      </div>
+    `)
+    .join("");
   const selected = MODE_DETAILS.find((mode) => mode.id === state.selectedModeId) || MODE_DETAILS[0];
   els.modeDetail.innerHTML = `
     <h4>${selected.label}</h4>
+    <p class="mode-detail-category">${selected.category}</p>
     <ul>
       <li><strong>音阶：</strong>${selected.intervals.map((step) => noteName(state.root + step)).join(" ")}</li>
+      <li><strong>音程結構（半音數）：</strong>${selected.intervals.slice(1).map((step, i) => step - selected.intervals[i]).join("、")}（回到八度：${12 + selected.intervals[0] - selected.intervals[selected.intervals.length - 1]}）</li>
+      <li><strong>全半音排列：</strong>${getModeStepFormula(selected)}</li>
       <li><strong>特点：</strong>${selected.feature}</li>
       <li><strong>范例进行：</strong>${selected.progression}</li>
       <li><strong>即兴提示：</strong>${selected.improv}</li>
@@ -2044,54 +2897,143 @@ function updateVoiceExampleState(example) {
 function renderQuiz() {
   if (!state.quiz.answer) nextQuiz();
   els.quizScore.textContent = `${state.quiz.correct} / ${state.quiz.total}`;
-  els.quizPrompt.innerHTML =
+  document.querySelectorAll("[data-quiz-grade]").forEach((tab) => {
+    tab.classList.toggle("active", Number(tab.dataset.quizGrade) === state.quizGrade);
+  });
+  const gradeBadge =
+    state.quiz.type === "abrsm"
+      ? `<span class="quiz-badge">ABRSM ${state.quiz.grade} 級</span>`
+      : `<span class="quiz-badge">綜合聽辨</span>`;
+  const questionTitle =
     state.quiz.type === "chord"
-      ? `<h4>这是哪个和弦？</h4><p>${state.quiz.prompt}</p>`
-      : `<h4>这是哪个音程？</h4><p>${state.quiz.prompt}</p>`;
+      ? "這是哪個和弦？"
+      : state.quiz.type === "interval"
+        ? "這是哪個音程？"
+        : "樂理選擇題";
+  els.quizPrompt.innerHTML = `<h4>${gradeBadge}${questionTitle}</h4><p>${state.quiz.prompt}</p>`;
   els.quizOptions.innerHTML = state.quiz.options
-    .map(
-      (option, index) => `
-        <button class="quiz-option" data-quiz-option="${index}" type="button">${option}</button>
-      `
-    )
+    .map((option, index) => {
+      const classes = ["quiz-option"];
+      if (state.quiz.answered) {
+        classes.push("locked");
+        if (option === state.quiz.answer) classes.push("correct");
+        if (index === state.quiz.selectedIndex && option !== state.quiz.answer) classes.push("wrong");
+      }
+      return `
+        <button class="${classes.join(" ")}" data-quiz-option="${index}" type="button" ${state.quiz.answered ? "disabled" : ""}>${option}</button>
+      `;
+    })
     .join("");
-  els.quizNotes.innerHTML = `
-    <h4>学习提示</h4>
-    <p>${state.quiz.hint}</p>
-  `;
+  if (!state.quiz.answered) {
+    els.quizNotes.innerHTML = `
+      <h4>學習提示</h4>
+      <p>${state.quiz.hint}</p>
+      <p class="quiz-hint-note">每題只能選擇一次，作答後會自動跳往下一題。</p>
+    `;
+  }
+}
+
+function makeChordQuestion() {
+  const chord = CHORD_QUALITY_LIBRARY[Math.floor(Math.random() * CHORD_QUALITY_LIBRARY.length)];
+  const correct = `${noteName(state.root)}${chord.name}`;
+  const wrongs = CHORD_QUALITY_LIBRARY.filter((item) => item.id !== chord.id)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 3)
+    .map((item) => `${noteName(state.root)}${item.name}`);
+  return {
+    type: "chord",
+    prompt: `${getChordNoteNames(chord).join("、")}，功能 ${getFunctionClass(chord)}。`,
+    options: [correct, ...wrongs].sort(() => Math.random() - 0.5),
+    answer: correct,
+    hint: getTheoryHtml(chord).replace(/<[^>]+>/g, " "),
+  };
+}
+
+function makeIntervalQuestion() {
+  const interval = INTERVAL_REFERENCE[Math.floor(Math.random() * (INTERVAL_REFERENCE.length - 1))];
+  const a = NOTE_NAMES.sharp[Math.floor(Math.random() * 12)];
+  const b = NOTE_NAMES.sharp[(NOTE_NAMES.sharp.indexOf(a) + interval[2]) % 12];
+  const answer = interval[1];
+  const wrongs = INTERVAL_REFERENCE.filter((item) => item[1] !== interval[1])
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 3)
+    .map((item) => item[1]);
+  return {
+    type: "interval",
+    prompt: `${a} → ${b}`,
+    options: [answer, ...wrongs].sort(() => Math.random() - 0.5),
+    answer,
+    hint: `答案是 ${interval[0]}，${interval[3]}`,
+  };
+}
+
+function makeAbrsmQuestion(grade) {
+  const pool = ABRSM_QUESTION_BANK.filter((item) => item.grade === grade);
+  const picked = pool[Math.floor(Math.random() * pool.length)];
+  return {
+    type: "abrsm",
+    prompt: picked.prompt,
+    options: [...picked.options].sort(() => Math.random() - 0.5),
+    answer: picked.answer,
+    hint: picked.hint,
+  };
 }
 
 function nextQuiz() {
-  const chordMode = Math.random() > 0.45;
-  if (chordMode) {
-    const chord = CHORD_QUALITY_LIBRARY[Math.floor(Math.random() * CHORD_QUALITY_LIBRARY.length)];
-    const correct = `${noteName(state.root)}${chord.name}`;
-    const wrongs = CHORD_QUALITY_LIBRARY.filter((item) => item.id !== chord.id)
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 3)
-      .map((item) => `${noteName(state.root)}${item.name}`);
-    state.quiz = {
-      type: "chord",
-      prompt: `${getChordNoteNames(chord).join("、")}，功能 ${getFunctionClass(chord)}。`,
-      options: [correct, ...wrongs].sort(() => Math.random() - 0.5),
-      answer: correct,
-      hint: getTheoryHtml(chord).replace(/<[^>]+>/g, " "),
-    };
+  const total = state.quiz.total || 0;
+  const correct = state.quiz.correct || 0;
+  let question;
+  if (state.quizGrade > 0) {
+    question = makeAbrsmQuestion(state.quizGrade);
+  } else if (Math.random() > 0.45) {
+    question = makeChordQuestion();
   } else {
-    const interval = INTERVAL_REFERENCE[Math.floor(Math.random() * (INTERVAL_REFERENCE.length - 1))];
-    const a = NOTE_NAMES.sharp[Math.floor(Math.random() * 12)];
-    const b = NOTE_NAMES.sharp[(NOTE_NAMES.sharp.indexOf(a) + interval[2]) % 12];
-    const answer = interval[1];
-    const wrongs = INTERVAL_REFERENCE.filter((item) => item[1] !== interval[1]).sort(() => Math.random() - 0.5).slice(0, 3).map((item) => item[1]);
-    state.quiz = {
-      type: "interval",
-      prompt: `${a} → ${b}`,
-      options: [answer, ...wrongs].sort(() => Math.random() - 0.5),
-      answer,
-      hint: `答案是 ${interval[0]}，${interval[3]}`,
-    };
+    question = makeIntervalQuestion();
   }
-  state.quiz.total += 1;
+  state.quiz = {
+    ...question,
+    total: total + 1,
+    correct,
+    selectedIndex: null,
+    answered: false,
+    grade: state.quizGrade,
+  };
+}
+
+function answerQuiz(index) {
+  if (state.quiz.answered) return;
+  const chosen = state.quiz.options[index];
+  const isCorrect = chosen === state.quiz.answer;
+  state.quiz.answered = true;
+  state.quiz.selectedIndex = index;
+  if (isCorrect) state.quiz.correct += 1;
+  renderQuiz();
+  els.quizNotes.innerHTML = `
+    <h4>${isCorrect ? "答對了！" : "再想一下"}</h4>
+    <p><strong>正確答案：</strong>${state.quiz.answer}。</p>
+    <p>${state.quiz.hint}</p>
+    <p class="quiz-hint-note">${isCorrect ? "稍候自動跳往下一題……" : "請記住答案，稍候自動跳往下一題……"}</p>
+  `;
+  els.quizScore.textContent = `${state.quiz.correct} / ${state.quiz.total}`;
+  clearTimeout(state.quizTimer);
+  state.quizTimer = setTimeout(() => {
+    advanceQuiz();
+  }, isCorrect ? 1300 : 2800);
+}
+
+function advanceQuiz() {
+  clearTimeout(state.quizTimer);
+  nextQuiz();
+  renderQuiz();
+}
+
+function switchQuizGrade(grade) {
+  state.quizGrade = grade;
+  state.quiz.answer = "";
+  clearTimeout(state.quizTimer);
+  nextQuiz();
+  renderQuiz();
+  persist();
 }
 
 function deriveDiatonicChord(index) {
@@ -2146,6 +3088,50 @@ function renderKnowledge() {
       `
     )
     .join("");
+  renderAbrsmKnowledge();
+  renderTheoryHistory();
+}
+
+function renderAbrsmKnowledge() {
+  if (!els.abrsmKnowledgePanel) return;
+  document.querySelectorAll("[data-abrsm-grade]").forEach((tab) => {
+    tab.classList.toggle("active", Number(tab.dataset.abrsmGrade) === state.abrsmGrade);
+  });
+  const gradeData = ABRSM_KNOWLEDGE.find((item) => item.grade === state.abrsmGrade) || ABRSM_KNOWLEDGE[0];
+  els.abrsmKnowledgePanel.innerHTML = `
+    <div class="abrsm-grade-head">
+      <h4>${gradeData.title}</h4>
+      <p class="abrsm-grade-tip">想驗證學習成果？可到「測驗模式」選擇 ABRSM ${gradeData.grade} 級題庫。</p>
+    </div>
+    <div class="abrsm-topic-grid">
+      ${gradeData.topics
+        .map(
+          (topic) => `
+            <article class="abrsm-topic">
+              <h4>${topic.title}</h4>
+              <ul>${topic.points.map((point) => `<li>${point}</li>`).join("")}</ul>
+            </article>
+          `
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function renderTheoryHistory() {
+  if (!els.theoryHistoryTimeline) return;
+  els.theoryHistoryTimeline.innerHTML = THEORY_HISTORY.map(
+    (item) => `
+      <div class="history-item">
+        <div class="history-dot"></div>
+        <div class="history-body">
+          <p class="history-era">${item.era}</p>
+          <h4>${item.title}</h4>
+          <p>${item.body}</p>
+        </div>
+      </div>
+    `
+  ).join("");
 }
 
 function renderPhraseFilters() {
@@ -2210,7 +3196,7 @@ function renderTabEditor() {
           <span>${string}</span>
           ${Array.from({ length: state.tabBeats }, (_, colIndex) => {
             const value = cells[colIndex] || "";
-            return `<input data-row="${rowIndex}" data-col="${colIndex}" maxlength="2" placeholder="-" value="${escapeHtml(value)}" />`;
+            return `<input data-row="${rowIndex}" data-col="${colIndex}" maxlength="2" inputmode="numeric" placeholder="-" aria-label="${string} 弦第 ${colIndex + 1} 格" value="${escapeHtml(value)}" />`;
           }).join("")}
         </div>
       `;
@@ -2218,24 +3204,198 @@ function renderTabEditor() {
     .join("");
 }
 
-function serializeTabGrid(grid = state.tabGrid) {
+function serializeTabGrid(grid = state.tabGrid, beats = state.tabBeats) {
   const strings = ["e", "B", "G", "D", "A", "E"];
   return strings
     .map((label, rowIndex) => {
       const row = grid[rowIndex] || [];
-      const inputs = Array.from({ length: state.tabBeats }, (_, colIndex) => row[colIndex] || "-");
-      return `${label}| ${inputs.join(" - ")}`;
+      const cells = Array.from({ length: beats }, (_, colIndex) => {
+        const raw = String(row[colIndex] ?? "").trim();
+        return (raw === "" ? "-" : raw).padStart(2, "-");
+      });
+      return `${label}|${cells.join("-")}|`;
     })
     .join("\n");
+}
+
+function buildTabScore(title, memo = "") {
+  return {
+    type: "tab",
+    title,
+    memo,
+    body: serializeTabGrid(),
+  };
+}
+
+function buildPianoScore(title, memo = "") {
+  const rightHand = els.rightHandInput.value.trim() || "-";
+  const leftHand = els.leftHandInput.value.trim() || "-";
+  return {
+    type: "piano",
+    title,
+    memo,
+    body: `右手（RH）：${rightHand}\n左手（LH）：${leftHand}`,
+  };
+}
+
+function buildScoreTxt(score) {
+  const typeLabel = score.type === "tab" ? "吉他譜（六線譜）" : "鋼琴譜";
+  const exportedAt = new Date().toLocaleString("zh-HK");
+  return `\uFEFF${typeLabel}：${score.title}
+説明：${score.memo || "無"}
+匯出時間：${exportedAt}
+
+${score.body}
+`;
 }
 
 function updateTabPreview() {
   els.tabPreview.textContent = serializeTabGrid();
 }
 
+// ── 譜例編輯：和弦一鍵輸入 ────────────────────────────────
+function buildChordRootOptions() {
+  return NOTE_NAMES.sharp
+    .map((note, index) => `<option value="${index}">${note}</option>`)
+    .join("");
+}
+
+function renderChordInsertSelectors() {
+  const rootOptions = buildChordRootOptions();
+  if (els.tabChordRoot) {
+    els.tabChordRoot.innerHTML = rootOptions;
+    els.tabChordRoot.value = String(state.tabChordRoot);
+  }
+  if (els.pianoChordRoot) {
+    els.pianoChordRoot.innerHTML = rootOptions;
+    els.pianoChordRoot.value = String(state.pianoChordRoot);
+  }
+  if (els.tabChordQuality) {
+    els.tabChordQuality.innerHTML = GUITAR_CHORD_INSERT_QUALITIES.map(
+      (item) => `<option value="${item.id}">${item.label}</option>`
+    ).join("");
+    els.tabChordQuality.value = state.tabChordQuality;
+  }
+  if (els.pianoChordQuality) {
+    els.pianoChordQuality.innerHTML = CHORD_QUALITY_LIBRARY.map(
+      (item) => `<option value="${item.id}">${item.name}（${item.id}）</option>`
+    ).join("");
+    els.pianoChordQuality.value = state.pianoChordQuality;
+  }
+}
+
+function renderTabChordQuick() {
+  if (!els.tabChordQuick) return;
+  els.tabChordQuick.innerHTML = GUITAR_QUICK_CHORDS.map(
+    (item) =>
+      `<button type="button" class="mini-button chord-quick-chip" data-quick-root="${item.root}" data-quick-quality="${item.quality}">${item.label}</button>`
+  ).join("");
+}
+
+function renderTabChordPreview() {
+  if (!els.tabChordPreview) return;
+  const root = Number(els.tabChordRoot?.value ?? state.tabChordRoot);
+  const quality = els.tabChordQuality?.value || state.tabChordQuality;
+  const chord = chordById(quality);
+  const shape = getGuitarChordShape(root, quality);
+  const chordName = `${NOTE_NAMES.sharp[root]}${chord ? chord.name : ""}`;
+  if (!shape) {
+    els.tabChordPreview.innerHTML = `<span class="chord-preview-empty">${chordName} 暫無內建指法，請手動輸入</span>`;
+    return;
+  }
+  // 指法由低到高 E A D G B e
+  const stringsLowToHigh = ["E", "A", "D", "G", "B", "e"];
+  const rows = stringsLowToHigh
+    .map((label, index) => {
+      const value = shape[index] === "x" ? "✕" : String(shape[index]);
+      return `<div class="shape-row"><span class="shape-string">${label}</span><span class="shape-fret">${value}</span></div>`;
+    })
+    .join("");
+  els.tabChordPreview.innerHTML = `
+    <div class="shape-head">
+      <strong>${chordName}</strong>
+      <span class="shape-hint">由低到高 E A D G B e</span>
+    </div>
+    <div class="shape-box">${rows}</div>
+  `;
+}
+
+function focusTabCell(row, col) {
+  const target = els.tabEditor.querySelector(`input[data-row="${row}"][data-col="${col}"]`);
+  if (target) {
+    target.focus();
+    target.select();
+  }
+}
+
+function insertGuitarChord(root, quality) {
+  const chord = chordById(quality);
+  const shape = getGuitarChordShape(root, quality);
+  const chordName = `${NOTE_NAMES.sharp[root]}${chord ? chord.name : ""}`;
+  if (!shape) {
+    showToast(`${chordName} 暫無內建指法，可手動輸入`, "info");
+    return;
+  }
+  let col = Number.isFinite(state.tabCursor) ? state.tabCursor : 0;
+  if (col < 0 || col >= state.tabBeats) col = state.tabBeats - 1;
+  state.tabGrid = normalizeTabGrid(state.tabGrid, state.tabBeats);
+  // shape 由低到高，grid 列序由高到低（e B G D A E），需反轉
+  const rowsHighToLow = [...shape].reverse();
+  rowsHighToLow.forEach((value, row) => {
+    state.tabGrid[row][col] = value === "x" ? "" : String(value);
+  });
+  const nextCol = col + 1;
+  if (nextCol >= state.tabBeats) {
+    state.tabBeats += 1;
+    state.tabGrid = normalizeTabGrid(state.tabGrid, state.tabBeats - 1).map((row) => [...row, ""]);
+  }
+  state.tabCursor = nextCol;
+  renderTabEditor();
+  updateTabPreview();
+  focusTabCell(0, nextCol);
+  persist();
+  showToast(`已插入 ${chordName} 到第 ${col + 1} 欄`, "success");
+}
+
+function buildChordMidiAt(root, chord, baseOctave) {
+  return chord.intervals.map((interval) => {
+    let midi = 12 * (baseOctave + 1) + root + interval;
+    if (baseOctave >= 4 && midi < 60) midi += 12;
+    return midi;
+  });
+}
+
+function appendNotesToScoreTextarea(textarea, notes) {
+  const current = textarea.value.trim();
+  textarea.value = current ? `${current} | ${notes}` : notes;
+  textarea.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+function insertPianoChord(hand) {
+  const root = Number(els.pianoChordRoot.value);
+  const chord = chordById(els.pianoChordQuality.value);
+  if (!chord) return;
+  const chordName = `${NOTE_NAMES.sharp[root]}${chord.name}`;
+  const target = hand === "right" ? els.rightHandInput : els.leftHandInput;
+  let notes;
+  if (hand === "right") {
+    const midi = buildChordMidiAt(root, chord, 4);
+    notes = midi.map((value) => midiToNoteName(value)).join(" ");
+  } else {
+    const rootMidi = 12 * 4 + root; // 低音聲部，約 C3 區
+    const fifthInterval = ["dim", "dim7", "halfDim"].includes(chord.id) ? 6 : chord.id === "aug" ? 8 : 7;
+    const fifthMidi = rootMidi + fifthInterval;
+    notes = `${midiToNoteName(rootMidi)} ${midiToNoteName(fifthMidi)}`;
+  }
+  appendNotesToScoreTextarea(target, notes);
+  renderVoiceCheck();
+  persist();
+  showToast(`已把 ${chordName} 插入${hand === "right" ? "右手" : "左手"}聲部`, "success");
+}
+
 function renderSavedScores() {
   if (!state.scores.length) {
-    els.savedScores.innerHTML = '<div class="empty-state">还没有保存任何谱例。</div>';
+    els.savedScores.innerHTML = '<div class="empty-state">還沒有保存任何譜例。</div>';
     return;
   }
   els.savedScores.innerHTML = state.scores
@@ -2244,9 +3404,15 @@ function renderSavedScores() {
     .map(
       (score) => `
         <article class="saved-score">
-          <h4>${score.type === "tab" ? "吉他谱" : "钢琴谱"} · ${escapeHtml(score.title)}</h4>
-          <p>${escapeHtml(score.memo || "无说明")}</p>
-          <p>${escapeHtml(score.body)}</p>
+          <div class="saved-score-head">
+            <h4>${score.type === "tab" ? "吉他譜" : "鋼琴譜"} · ${escapeHtml(score.title)}</h4>
+            <div class="saved-score-actions">
+              <button class="ghost-button mini-button" data-export-score="${score.id}" type="button">匯出 TXT</button>
+              <button class="ghost-button mini-button danger-button" data-delete-score="${score.id}" type="button">刪除</button>
+            </div>
+          </div>
+          <p class="saved-score-memo">${escapeHtml(score.memo || "無說明")}</p>
+          <pre class="saved-score-body">${escapeHtml(score.body)}</pre>
         </article>
       `
     )
@@ -2277,11 +3443,21 @@ function persist() {
       voiceExample: state.voiceExample,
       tabBeats: state.tabBeats,
       tabGrid: state.tabGrid,
+      quizGrade: state.quizGrade,
+      abrsmGrade: state.abrsmGrade,
+      tabChordRoot: state.tabChordRoot,
+      tabChordQuality: state.tabChordQuality,
+      pianoChordRoot: state.pianoChordRoot,
+      pianoChordQuality: state.pianoChordQuality,
     })
   );
   localStorage.setItem(STORAGE_KEYS.customPhrases, JSON.stringify(state.customPhrases));
   localStorage.setItem(STORAGE_KEYS.scores, JSON.stringify(state.scores));
-  localStorage.setItem(STORAGE_KEYS.favorites, JSON.stringify([...state.favorites]));
+  if (state.logo) {
+    safeSetStorage(STORAGE_KEYS.logo, state.logo);
+  } else {
+    localStorage.removeItem(STORAGE_KEYS.logo);
+  }
 }
 
 function loadState() {
@@ -2292,6 +3468,7 @@ function loadState() {
     state.root = Number.isFinite(prefs.root) ? prefs.root : 0;
     state.selectedChordId = prefs.selectedChordId || "maj7";
     state.category = prefs.category || "all";
+    if (state.category === "favorites") state.category = "all";
     state.chordSearch = prefs.chordSearch || "";
     state.phraseStyle = prefs.phraseStyle || "all";
     state.styleMode = prefs.styleMode || "jazz";
@@ -2307,10 +3484,18 @@ function loadState() {
     state.voiceExample = prefs.voiceExample || "good";
     state.tabBeats = Number.isFinite(prefs.tabBeats) ? prefs.tabBeats : 4;
     state.tabGrid = normalizeTabGrid(prefs.tabGrid, state.tabBeats);
+    state.quizGrade = Number.isFinite(prefs.quizGrade) ? Math.min(8, Math.max(0, prefs.quizGrade)) : 0;
+    state.abrsmGrade = Number.isFinite(prefs.abrsmGrade) ? Math.min(8, Math.max(1, prefs.abrsmGrade)) : 1;
+    state.tabChordRoot = Number.isFinite(prefs.tabChordRoot) ? prefs.tabChordRoot : 0;
+    state.tabChordQuality = prefs.tabChordQuality || "maj";
+    state.pianoChordRoot = Number.isFinite(prefs.pianoChordRoot) ? prefs.pianoChordRoot : 0;
+    state.pianoChordQuality = prefs.pianoChordQuality || "maj";
     state.customPhrases = JSON.parse(localStorage.getItem(STORAGE_KEYS.customPhrases) || "[]");
     state.scores = JSON.parse(localStorage.getItem(STORAGE_KEYS.scores) || "[]");
-    const favs = JSON.parse(localStorage.getItem(STORAGE_KEYS.favorites) || "[]");
-    state.favorites = new Set(Array.isArray(favs) ? favs : []);
+    state.logo = localStorage.getItem(STORAGE_KEYS.logo) || "";
+    // 清理舊版收藏模塊殘留的本機資料
+    localStorage.removeItem("music-dictionary-favorites-v2");
+    localStorage.removeItem("music-dictionary-favorites-v1");
   } catch {
     // ignore corrupt local state
   }
@@ -2330,6 +3515,7 @@ function setView(name) {
     progressions: "功能和声",
     modes: "调式大全",
     voice: "声部进行",
+    toolbox: "魔法工具",
     phrases: "乐句工坊",
     quiz: "测验模式",
     scores: "谱例编辑",
@@ -2351,14 +3537,6 @@ function bindEvents() {
       return;
     }
 
-    const chordButton = event.target.closest("[data-chord]");
-    if (chordButton) {
-      state.selectedChordId = chordButton.dataset.chord;
-      renderAll();
-      persist();
-      return;
-    }
-
     const categoryButton = event.target.closest("[data-category]");
     if (categoryButton) {
       state.category = categoryButton.dataset.category;
@@ -2367,6 +3545,26 @@ function bindEvents() {
       });
       renderChordGrid();
       persist();
+      return;
+    }
+
+    const chordButton = event.target.closest("[data-chord]");
+    if (chordButton) {
+      state.selectedChordId = chordButton.dataset.chord;
+      renderAll();
+      persist();
+      return;
+    }
+
+    const toolboxButton = event.target.closest("[data-toolbox-id]");
+    if (toolboxButton) {
+      renderToolbox(toolboxButton.dataset.toolboxId);
+      return;
+    }
+
+    const toolboxOpen = event.target.closest("[data-toolbox-open]");
+    if (toolboxOpen) {
+      setView(toolboxOpen.dataset.toolboxOpen);
       return;
     }
 
@@ -2441,12 +3639,34 @@ function bindEvents() {
 
     const quizOption = event.target.closest("[data-quiz-option]");
     if (quizOption) {
-      const chosen = state.quiz.options[Number(quizOption.dataset.quizOption)];
-      const correct = chosen === state.quiz.answer;
-      if (correct) state.quiz.correct += 1;
-      quizOption.classList.add(correct ? "correct" : "wrong");
-      els.quizNotes.innerHTML = `<h4>${correct ? "答对了" : "再想一下"}</h4><p>正确答案：${state.quiz.answer}。${state.quiz.hint}</p>`;
-      els.quizScore.textContent = `${state.quiz.correct} / ${state.quiz.total}`;
+      answerQuiz(Number(quizOption.dataset.quizOption));
+      return;
+    }
+
+    const quizGradeTab = event.target.closest("[data-quiz-grade]");
+    if (quizGradeTab) {
+      switchQuizGrade(Number(quizGradeTab.dataset.quizGrade));
+      return;
+    }
+
+    const abrsmGradeTab = event.target.closest("[data-abrsm-grade]");
+    if (abrsmGradeTab) {
+      state.abrsmGrade = Number(abrsmGradeTab.dataset.abrsmGrade);
+      renderAbrsmKnowledge();
+      persist();
+      return;
+    }
+
+    const quickChord = event.target.closest("[data-quick-root]");
+    if (quickChord) {
+      const root = Number(quickChord.dataset.quickRoot);
+      const quality = quickChord.dataset.quickQuality;
+      state.tabChordRoot = root;
+      state.tabChordQuality = quality;
+      if (els.tabChordRoot) els.tabChordRoot.value = String(root);
+      if (els.tabChordQuality) els.tabChordQuality.value = quality;
+      renderTabChordPreview();
+      insertGuitarChord(root, quality);
       return;
     }
 
@@ -2501,18 +3721,27 @@ function bindEvents() {
     persist();
   });
 
-  els.favoriteChordBtn.addEventListener("click", () => {
-    const chord = getSelectedChord();
-    if (state.favorites.has(chord.id)) {
-      state.favorites.delete(chord.id);
-      showToast(`${getChordDisplayName(chord)} 已移出收藏`, "info");
-    } else {
-      state.favorites.add(chord.id);
-      showToast(`${getChordDisplayName(chord)} 已收藏`, "success");
+  els.logoUpload.addEventListener("change", async (event) => {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    try {
+      const dataUrl = await readLogoFile(file);
+      state.logo = dataUrl;
+      renderLogo();
+      persist();
+      showToast("Logo 已更新", "success");
+    } catch (error) {
+      showToast(error.message || "Logo 上傳失敗", "info");
+    } finally {
+      els.logoUpload.value = "";
     }
-    renderChordDetails(chord);
-    renderChordGrid();
+  });
+
+  els.removeLogoBtn.addEventListener("click", () => {
+    state.logo = "";
+    renderLogo();
     persist();
+    showToast("Logo 已移除", "info");
   });
 
   els.playChordBtn.addEventListener("click", () => playChordNotes(getChordNoteNames(getSelectedChord()), { arpeggio: false }));
@@ -2595,9 +3824,33 @@ function bindEvents() {
   });
 
   els.nextQuizBtn.addEventListener("click", () => {
-    nextQuiz();
-    renderQuiz();
+    advanceQuiz();
   });
+
+  // 譜例編輯：和弦一鍵輸入
+  els.tabChordRoot?.addEventListener("change", () => {
+    state.tabChordRoot = Number(els.tabChordRoot.value);
+    renderTabChordPreview();
+    persist();
+  });
+  els.tabChordQuality?.addEventListener("change", () => {
+    state.tabChordQuality = els.tabChordQuality.value;
+    renderTabChordPreview();
+    persist();
+  });
+  els.insertTabChordBtn?.addEventListener("click", () => {
+    insertGuitarChord(Number(els.tabChordRoot.value), els.tabChordQuality.value);
+  });
+  els.pianoChordRoot?.addEventListener("change", () => {
+    state.pianoChordRoot = Number(els.pianoChordRoot.value);
+    persist();
+  });
+  els.pianoChordQuality?.addEventListener("change", () => {
+    state.pianoChordQuality = els.pianoChordQuality.value;
+    persist();
+  });
+  els.insertPianoRightBtn?.addEventListener("click", () => insertPianoChord("right"));
+  els.insertPianoLeftBtn?.addEventListener("click", () => insertPianoChord("left"));
 
   els.phraseForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -2623,46 +3876,97 @@ function bindEvents() {
     persist();
   });
 
-  els.clearTabBtn.addEventListener("click", () => {
-    state.tabBeats = 4;
-    state.tabGrid = createEmptyTabGrid(state.tabBeats);
+  els.removeTabBeatBtn.addEventListener("click", () => {
+    if (state.tabBeats <= 1) {
+      showToast("至少要保留 1 個小節格", "info");
+      return;
+    }
+    state.tabBeats -= 1;
+    state.tabGrid = normalizeTabGrid(state.tabGrid, state.tabBeats);
     renderTabEditor();
     updateTabPreview();
     persist();
   });
 
-  els.saveTabBtn.addEventListener("click", () => {
-    const body = serializeTabGrid();
-    const score = {
-      id: `tab-${Date.now()}`,
-      type: "tab",
-      title: `未命名吉他谱 ${state.scores.filter((s) => s.type === "tab").length + 1}`,
-      memo: "",
-      body,
-    };
-    state.scores.push(score);
-    renderSavedScores();
+  els.clearTabBtn.addEventListener("click", () => {
+    state.tabBeats = 4;
+    state.tabGrid = createEmptyTabGrid(state.tabBeats);
+    els.tabTitleInput.value = "";
+    renderTabEditor();
+    updateTabPreview();
     persist();
   });
 
+  els.exportTabBtn.addEventListener("click", () => {
+    const title = els.tabTitleInput.value.trim() || "未命名吉他譜";
+    const score = buildTabScore(title, "");
+    downloadTextFile(`${safeFileName(title)}.txt`, buildScoreTxt(score));
+    showToast("吉他譜 TXT 已匯出", "success");
+  });
+
+  els.saveTabBtn.addEventListener("click", () => {
+    const count = state.scores.filter((s) => s.type === "tab").length + 1;
+    const title = els.tabTitleInput.value.trim() || `未命名吉他譜 ${count}`;
+    const score = {
+      id: `tab-${Date.now()}`,
+      ...buildTabScore(title, ""),
+    };
+    state.scores.push(score);
+    els.tabTitleInput.value = "";
+    renderSavedScores();
+    persist();
+    showToast("吉他譜已保存到本機", "success");
+  });
+
   els.clearPianoBtn.addEventListener("click", () => {
+    els.pianoTitleInput.value = "";
     els.rightHandInput.value = "";
     els.leftHandInput.value = "";
     els.scoreMemoInput.value = "";
     renderVoiceCheck();
   });
 
+  els.exportPianoBtn.addEventListener("click", () => {
+    const title = els.pianoTitleInput.value.trim() || "未命名鋼琴譜";
+    const memo = els.scoreMemoInput.value.trim();
+    const score = buildPianoScore(title, memo);
+    downloadTextFile(`${safeFileName(title)}.txt`, buildScoreTxt(score));
+    showToast("鋼琴譜 TXT 已匯出", "success");
+  });
+
   els.savePianoBtn.addEventListener("click", () => {
+    const count = state.scores.filter((s) => s.type === "piano").length + 1;
+    const title = els.pianoTitleInput.value.trim() || `未命名鋼琴譜 ${count}`;
+    const memo = els.scoreMemoInput.value.trim();
     const score = {
       id: `piano-${Date.now()}`,
-      type: "piano",
-      title: `未命名钢琴谱 ${state.scores.filter((s) => s.type === "piano").length + 1}`,
-      memo: els.scoreMemoInput.value.trim(),
-      body: `右手: ${els.rightHandInput.value.trim() || "-"}\n左手: ${els.leftHandInput.value.trim() || "-"}`,
+      ...buildPianoScore(title, memo),
     };
     state.scores.push(score);
+    els.pianoTitleInput.value = "";
     renderSavedScores();
     persist();
+    showToast("鋼琴譜已保存到本機", "success");
+  });
+
+  els.savedScores.addEventListener("click", (event) => {
+    const exportButton = event.target.closest("[data-export-score]");
+    if (exportButton) {
+      const score = state.scores.find((item) => item.id === exportButton.dataset.exportScore);
+      if (score) {
+        downloadTextFile(`${safeFileName(score.title)}.txt`, buildScoreTxt(score));
+        showToast("譜例 TXT 已匯出", "success");
+      }
+      return;
+    }
+    const deleteButton = event.target.closest("[data-delete-score]");
+    if (deleteButton) {
+      const score = state.scores.find((item) => item.id === deleteButton.dataset.deleteScore);
+      state.scores = state.scores.filter((item) => item.id !== deleteButton.dataset.deleteScore);
+      renderSavedScores();
+      persist();
+      if (score) showToast(`已刪除「${score.title}」`, "info");
+    }
   });
 
   els.tabEditor.addEventListener("input", (event) => {
@@ -2670,10 +3974,51 @@ function bindEvents() {
     if (!input) return;
     const row = Number(input.dataset.row);
     const col = Number(input.dataset.col);
+    // 只保留品位數字（0-9），其餘輸入忽略
+    input.value = input.value.replace(/[^0-9]/g, "").slice(0, 2);
     if (!state.tabGrid[row]) state.tabGrid[row] = [];
     state.tabGrid[row][col] = input.value.trim();
     updateTabPreview();
     persist();
+    // 填滿兩位數後自動跳到下一格
+    if (input.value.length === 2 && col < state.tabBeats - 1) {
+      const next = els.tabEditor.querySelector(`input[data-row="${row}"][data-col="${col + 1}"]`);
+      if (next) {
+        next.focus();
+        next.select();
+      }
+    }
+  });
+
+  els.tabEditor.addEventListener("keydown", (event) => {
+    const input = event.target.closest("input[data-row][data-col]");
+    if (!input) return;
+    const row = Number(input.dataset.row);
+    const col = Number(input.dataset.col);
+    let nextRow = row;
+    let nextCol = col;
+    if (event.key === "ArrowRight" || event.key === "Enter" || event.key === "Tab") {
+      nextCol = Math.min(state.tabBeats - 1, col + 1);
+    } else if (event.key === "ArrowLeft") {
+      nextCol = Math.max(0, col - 1);
+    } else if (event.key === "ArrowDown") {
+      nextRow = Math.min(5, row + 1);
+    } else if (event.key === "ArrowUp") {
+      nextRow = Math.max(0, row - 1);
+    } else {
+      return;
+    }
+    if (event.key !== "Tab") event.preventDefault();
+    const next = els.tabEditor.querySelector(`input[data-row="${nextRow}"][data-col="${nextCol}"]`);
+    if (next) {
+      next.focus();
+      next.select();
+    }
+  });
+
+  els.tabEditor.addEventListener("focusin", (event) => {
+    const input = event.target.closest("input[data-row][data-col]");
+    if (input) state.tabCursor = Number(input.dataset.col);
   });
 
   els.rightHandInput.addEventListener("input", renderVoiceCheck);
@@ -2717,8 +4062,12 @@ function renderAll() {
   renderCustomPhrases();
   renderTabEditor();
   updateTabPreview();
+  renderChordInsertSelectors();
+  renderTabChordQuick();
+  renderTabChordPreview();
   renderVoiceCheck();
   renderSavedScores();
+  renderToolbox();
   renderQuiz();
   state.phraseStyle = state.phraseStyle || "all";
   document.querySelectorAll("[data-phrase-style]").forEach((button) => {
@@ -2729,6 +4078,7 @@ function renderAll() {
 function initialize() {
   loadState();
   bindEvents();
+  renderLogo();
   renderAll();
   setView("dictionary");
 }
