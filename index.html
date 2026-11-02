@@ -1,0 +1,934 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nebula · 乐理与创作的星际地图</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="nebula-bg" aria-hidden="true">
+      <span class="nebula-orb orb-indigo"></span>
+      <span class="nebula-orb orb-violet"></span>
+      <span class="nebula-orb orb-amber"></span>
+      <span class="nebula-orb orb-blue"></span>
+    </div>
+
+    <main class="app-shell">
+      <aside class="sidebar" aria-label="主导航">
+        <div class="brand">
+          <div class="brand-logo-wrap">
+            <label class="brand-logo" for="logoUpload" title="点击上传标志图片">
+              <img id="brandLogoImg" alt="Nebula 标志" hidden />
+              <span id="brandLogoPlaceholder" class="brand-logo-placeholder">上传<br />标志</span>
+            </label>
+            <button id="removeLogoBtn" class="brand-logo-remove" type="button" title="移除标志" hidden>✕</button>
+            <input id="logoUpload" type="file" accept="image/*" hidden />
+          </div>
+          <div>
+            <h1>Nebula</h1>
+            <p>乐理与创作的星际地图</p>
+          </div>
+        </div>
+
+        <nav class="nav-list" aria-label="功能导航">
+          <button class="nav-button active" data-view="dictionary" type="button">和弦词典</button>
+          <button class="nav-button" data-view="theory" type="button">乐理解析</button>
+          <button class="nav-button" data-view="intervals" type="button">音程词典</button>
+          <button class="nav-button" data-view="progressions" type="button">功能和声</button>
+          <button class="nav-button" data-view="modes" type="button">调式大全</button>
+          <button class="nav-button" data-view="voice" type="button">声部进行</button>
+          <button class="nav-button" data-view="library" type="button">乐理图书馆</button>
+          <button class="nav-button" data-view="phrases" type="button">乐句工坊</button>
+          <button class="nav-button" data-view="quiz" type="button">测验闯关</button>
+          <button class="nav-button" data-view="scores" type="button">谱例编辑</button>
+        </nav>
+
+        <section class="quick-panel" aria-label="当前调性信息">
+          <p class="eyebrow">当前主音</p>
+          <strong id="currentRootLabel">C</strong>
+          <span id="currentRootHint">自然音阶 · 可切换升降号记谱</span>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">探索和声与旋律的无限可能</p>
+            <h2 id="viewTitle">和弦词典</h2>
+          </div>
+          <div class="topbar-actions" aria-label="全局显示与风格设置">
+            <label class="switch">
+              <input id="notationToggle" type="checkbox" />
+              <span>降号记谱 (♭)</span>
+            </label>
+
+            <div class="style-switch" id="langSwitch" aria-label="语言切换">
+              <button class="segment" data-lang="zh-CN" type="button">简体</button>
+              <button class="segment active" data-lang="zh-HK" type="button">繁体</button>
+            </div>
+            <div class="style-switch" id="styleSwitch" aria-label="音乐风格切换">
+              <button class="segment active" data-style-mode="jazz" type="button">爵士</button>
+              <button class="segment" data-style-mode="classical" type="button">古典</button>
+              <button class="segment" data-style-mode="pop" type="button">流行</button>
+            </div>
+            <label class="select-label">
+              <span>核心调式</span>
+              <select id="modeSelect">
+                <option value="major">自然大调</option>
+                <option value="minor">自然小调</option>
+                <option value="harmonicMinor">和声小调</option>
+                <option value="melodicMinor">旋律小调</option>
+                <option value="dorian">多利亚调式 (Dorian)</option>
+                <option value="mixolydian">混合利底亚 (Mixolydian)</option>
+              </select>
+            </label>
+          </div>
+        </header>
+
+        <section id="dictionary" class="view active" aria-labelledby="viewTitle">
+          <div class="root-strip" id="rootStrip" aria-label="主音选择"></div>
+
+          <section class="hero-tool">
+            <div class="chord-focus">
+              <div class="focus-header">
+                <div>
+                  <p class="eyebrow">当前和弦焦点</p>
+                  <h3 id="selectedChordName">Cmaj7</h3>
+                </div>
+              </div>
+              <div class="tone-row" id="selectedChordTones"></div>
+              <div class="construction-strip" id="constructionStrip"></div>
+              <p id="selectedChordAnalysis" class="analysis-text"></p>
+              <dl class="detail-grid" id="selectedChordDetails"></dl>
+            </div>
+
+            <div class="instrument-map">
+              <div class="instrument-header">
+                <div>
+                  <span class="instrument-title">互动钢琴键盘</span>
+                  <span class="instrument-hint">点击、拖拽滑奏，或使用电脑键盘 A–L 实时弹奏</span>
+                </div>
+                <span id="lastPlayedNoteBadge" class="played-note-badge">待弹奏</span>
+              </div>
+              <div class="piano-visual" id="pianoVisual" role="group" aria-label="可弹奏钢琴键盘"></div>
+              <div class="fretboard-visual" id="fretboardVisual" aria-label="吉他指板音位分布"></div>
+              <div class="staff-visual-card" id="chordStaffVisual" aria-label="五线谱和弦与音阶展示"></div>
+              <div class="voicing-strip" id="voicingStrip" aria-label="常用声部排列把位"></div>
+            </div>
+
+            <aside class="theory-sidebar">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">深度解析</p>
+                  <h3>和声与配器注解</h3>
+                </div>
+              </div>
+              <div class="theory-tabs" id="theoryTabs">
+                <button class="segment active" data-theory-focus="chord" type="button">和弦</button>
+                <button class="segment" data-theory-focus="scale" type="button">音阶</button>
+                <button class="segment" data-theory-focus="progression" type="button">进行</button>
+                <button class="segment" data-theory-focus="voice" type="button">声部</button>
+              </div>
+              <article id="theoryPanel" class="theory-panel"></article>
+              <div class="playback-controls" aria-label="播放参数设置">
+                <label>
+                  <span>奏法模式</span>
+                  <select id="playbackModeSelect">
+                    <option value="block">柱式齐奏</option>
+                    <option value="arp">分解琶音</option>
+                    <option value="strum">吉他扫弦</option>
+                  </select>
+                </label>
+                <label>
+                  <span>合成音色</span>
+                  <select id="audioToneSelect">
+                    <option value="piano">原声钢琴</option>
+                    <option value="rhodes">复古电钢</option>
+                    <option value="guitar">清音吉他</option>
+                    <option value="synth">现代合成器</option>
+                  </select>
+                </label>
+                <label class="compact-check">
+                  <input id="swingToggle" type="checkbox" />
+                  <span>摇摆律动</span>
+                </label>
+                <label class="compact-check">
+                  <input id="humanizeToggle" type="checkbox" />
+                  <span>人性化微调</span>
+                </label>
+              </div>
+              <div class="audio-actions">
+                <button id="playChordBtn" class="secondary-button" type="button">▶ 试听和弦</button>
+                <button id="playArpBtn" class="secondary-button" type="button">♪ 分解琶音</button>
+                <button id="playScaleUpBtn" class="secondary-button" type="button">↗ 上行音阶</button>
+                <button id="playScaleDownBtn" class="secondary-button" type="button">↘ 下行音阶</button>
+              </div>
+            </aside>
+          </section>
+
+          <div class="toolbar">
+            <label class="search-box">
+              <span>快速检索和弦</span>
+              <input id="chordSearch" type="search" placeholder="输入和弦代号、性质或适用场景，如 maj7 / 变化属 / 挂留" />
+            </label>
+            <div class="segmented" role="tablist" aria-label="和弦分类筛选">
+              <button class="segment active" data-category="all" type="button">全部</button>
+              <button class="segment" data-category="triad" type="button">三和弦</button>
+              <button class="segment" data-category="seventh" type="button">七和弦</button>
+              <button class="segment" data-category="extended" type="button">高叠扩展</button>
+              <button class="segment" data-category="altered" type="button">变化张力</button>
+              <button class="segment" data-category="guitar" type="button">吉他常用</button>
+            </div>
+          </div>
+
+          <section class="chord-grid" id="chordGrid" aria-label="和弦图鉴列表"></section>
+        </section>
+
+        <section id="theory" class="view" aria-labelledby="viewTitle">
+          <div class="theory-layout">
+            <section class="scale-panel">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">调式音阶与自然音和弦</p>
+                  <h3 id="scaleTitle">C 自然大调</h3>
+                </div>
+              </div>
+              <div class="tone-row" id="scaleTones"></div>
+              <div class="degree-table" id="degreeTable"></div>
+            </section>
+
+            <section class="knowledge-grid" id="knowledgeGrid" aria-label="核心乐理专题"></section>
+          </div>
+
+          <section class="abrsm-knowledge-panel theory-panel">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">英皇考级体系 (ABRSM 1–8 级)</p>
+                <h3>分级核心乐理大纲</h3>
+              </div>
+            </div>
+            <div class="segmented grade-tabs" id="abrsmGradeTabs" role="tablist" aria-label="ABRSM 级别切换">
+              <button class="segment" type="button" data-abrsm-grade="1">1 级</button>
+              <button class="segment" type="button" data-abrsm-grade="2">2 级</button>
+              <button class="segment" type="button" data-abrsm-grade="3">3 级</button>
+              <button class="segment" type="button" data-abrsm-grade="4">4 级</button>
+              <button class="segment" type="button" data-abrsm-grade="5">5 级</button>
+              <button class="segment" type="button" data-abrsm-grade="6">6 级</button>
+              <button class="segment" type="button" data-abrsm-grade="7">7 级</button>
+              <button class="segment" type="button" data-abrsm-grade="8">8 级</button>
+            </div>
+            <div id="abrsmKnowledgePanel" class="abrsm-knowledge-body"></div>
+          </section>
+
+          <section class="history-panel theory-panel">
+            <div class="section-title">
+              <div>
+                <p class="eyebrow">西方音乐理论脉络</p>
+                <h3>乐理与和声体系是如何演进的</h3>
+              </div>
+            </div>
+            <div class="history-timeline" id="theoryHistoryTimeline"></div>
+          </section>
+        </section>
+
+        <section id="intervals" class="view" aria-labelledby="viewTitle">
+          <div class="split-layout">
+            <section class="calculator-panel">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">音程测算与听辨</p>
+                  <h3>音程距离计算器</h3>
+                </div>
+              </div>
+              <div class="interval-inputs">
+                <label>
+                  <span>起始音（下方音）</span>
+                  <select id="intervalNoteA"></select>
+                </label>
+                <label>
+                  <span>目标音（上方音）</span>
+                  <select id="intervalNoteB"></select>
+                </label>
+              </div>
+              <article id="intervalResult" class="theory-panel"></article>
+              <div class="audio-actions">
+                <button id="playIntervalBtn" class="secondary-button" type="button">▶ 试听音程</button>
+              </div>
+            </section>
+            <section class="reference-panel" id="intervalReference"></section>
+          </div>
+        </section>
+
+        <section id="progressions" class="view" aria-labelledby="viewTitle">
+          <div class="progression-layout">
+            <section class="progression-library">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">经典和声范式</p>
+                  <h3>常用和声进行库</h3>
+                </div>
+              </div>
+              <div id="progressionLibrary" class="progression-cards"></div>
+            </section>
+            <section class="progression-builder">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">拖拽或点击编排和声</p>
+                  <h3>级数进行与功能评估</h3>
+                </div>
+                <div class="builder-actions">
+                  <button id="addCurrentChordBtn" class="secondary-button" type="button">加入当前和弦</button>
+                  <button id="clearProgressionBtn" class="ghost-button" type="button">清空轨道</button>
+                  <button id="loadProgressionBtn" class="secondary-button" type="button">载入标准范例</button>
+                </div>
+              </div>
+              <div id="progressionPalette" class="progression-palette" aria-label="可选级数和弦素材"></div>
+              <div id="progressionLane" class="progression-lane" aria-label="和声进行时间轴"></div>
+              <article id="progressionAnalysis" class="theory-panel"></article>
+            </section>
+          </div>
+        </section>
+
+        <section id="modes" class="view" aria-labelledby="viewTitle">
+          <div class="mode-spectrum-bar" id="modeSpectrumBar" aria-label="调式明暗光谱互动导航"></div>
+          <div class="modes-layout">
+            <section>
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">调式色彩与即兴指南 · 点击卡片即可联动右侧互动琴键与指板</p>
+                  <h3>全系列调式与特征音阶</h3>
+                </div>
+              </div>
+              <div id="modeGallery" class="mode-gallery"></div>
+            </section>
+            <section id="modeDetail" class="mode-detail theory-panel"></section>
+          </div>
+        </section>
+
+        <section id="voice" class="view" aria-labelledby="viewTitle">
+          <div class="split-layout">
+            <section class="voice-controls">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">四部和声与导向音连接</p>
+                  <h3>声部进行轨迹分析</h3>
+                </div>
+              </div>
+              <div class="voice-selects">
+                <label>
+                  <span>起始和弦</span>
+                  <select id="voiceChordA"></select>
+                </label>
+                <label>
+                  <span>目标和弦</span>
+                  <select id="voiceChordB"></select>
+                </label>
+              </div>
+              <div class="audio-actions">
+                <button id="visualizeVoiceBtn" class="primary-button" type="button">刷新轨迹</button>
+                <button id="playVoiceBtn" class="secondary-button" type="button">▶ 试听连接对比</button>
+                <button id="optimizeVoiceBtn" class="secondary-button" type="button">一键平滑声部</button>
+              </div>
+              <div class="theory-tabs" id="voiceExampleTabs" aria-label="连接范例切换">
+                <button class="segment active" data-voice-example="good" type="button">平滑连接范例</button>
+                <button class="segment" data-voice-example="bad" type="button">问题声部对照</button>
+              </div>
+              <div id="voiceAdjusters" class="voice-adjusters" aria-label="分声部音高微调"></div>
+              <article id="voiceWarnings" class="theory-panel"></article>
+            </section>
+            <section class="voice-visual-wrap">
+              <svg id="voiceVisual" viewBox="0 0 920 420" preserveAspectRatio="none" aria-label="声部运动轨迹图"></svg>
+            </section>
+          </div>
+        </section>
+
+        <section id="library" class="view" aria-labelledby="viewTitle">
+          <div class="library-module-switch" role="tablist" aria-label="乐理图书馆分馆切换">
+            <button type="button" class="segment active" data-lib-tab="terms">🌍 西洋乐器与专业术语五语词典（中/英/意/德/法）</button>
+            <button type="button" class="segment" data-lib-tab="guitar-atlas">🎸 吉他全调式与现代流行指法可视化图鉴</button>
+          </div>
+
+          <div id="libTermsPane" class="lib-pane">
+            <section class="theory-panel" style="margin-bottom:20px;">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">中文 · English · Italiano · Deutsch · Français</p>
+                  <h3>西洋管弦乐器、奏法、速度、表情与曲式专业术语五语对照总表</h3>
+                </div>
+                <div class="saved-score-actions">
+                  <span id="termCountBadge" class="score-chip">64 条术语</span>
+                  <button id="exportTermsTxtBtn" class="secondary-button mini-button" type="button">⬇ 导出五语术语表 TXT</button>
+                </div>
+              </div>
+
+              <div class="lib-toolbar">
+                <label class="search-box" style="flex:1;min-width:260px;">
+                  <span>五语实时检索（支持输入中、英、意、德、法任意语言关键词或缩写）</span>
+                  <input id="termSearchInput" type="search" placeholder="例如：Pizzicato / 拨弦 / Dämpfer / Sourdine / 慢板 / Flatterzunge / 泛音..." />
+                </label>
+                <div class="segmented" id="termCategoryTabs" role="tablist" aria-label="术语分类筛选"></div>
+              </div>
+
+              <div class="terms-table-wrap">
+                <table class="terms-table" aria-label="西洋乐器与音乐术语五语对照表">
+                  <thead>
+                    <tr>
+                      <th>分类</th>
+                      <th>中文名称</th>
+                      <th>意大利文 (Italiano)</th>
+                      <th>德文 (Deutsch)</th>
+                      <th>法文 (Français)</th>
+                      <th>英文 (English)</th>
+                      <th>乐理与配器实务解析</th>
+                    </tr>
+                  </thead>
+                  <tbody id="termsTableBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <div id="libGuitarAtlasPane" class="lib-pane" hidden>
+            <section class="theory-panel">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">CAGED 五把位 · 3NP 全七调式 · 五声蓝调 · Neo-Soul / Funk / 现代流行实战指法</p>
+                  <h3>吉他全调式指法系统与现代流行指法可视化图鉴</h3>
+                </div>
+                <div class="saved-score-actions">
+                  <button id="playGfPatternBtn" class="primary-button mini-button" type="button">▶ 试听当前指法把位</button>
+                  <button id="animateGfPatternBtn" class="secondary-button mini-button" type="button">✨ 动态逐音亮灯演示</button>
+                  <button id="sendGfToTabBtn" class="secondary-button mini-button" type="button">🎸 一键送入六线谱编辑器</button>
+                </div>
+              </div>
+
+              <div class="gf-controls-bar">
+                <label class="chord-select">
+                  <span>主音 / 根音 (Root)</span>
+                  <select id="gfRootSelect" aria-label="吉他指法主音选择"></select>
+                </label>
+                <div class="gf-system-tabs segmented" id="gfCategoryTabs" role="tablist" aria-label="指法体系分类">
+                  <button type="button" class="segment active" data-gf-cat="caged">CAGED 五把位系统</button>
+                  <button type="button" class="segment" data-gf-cat="modes3np">每弦三音 (3NP) 全调式</button>
+                  <button type="button" class="segment" data-gf-cat="pentablues">五声与蓝调 5 把位串联</button>
+                  <button type="button" class="segment" data-gf-cat="modernpop">现代流行 / Neo-Soul / 摇滚指法</button>
+                </div>
+                <div class="gf-label-switch segmented" id="gfLabelSwitch" role="tablist" aria-label="指板圆点标注模式">
+                  <button type="button" class="chip-btn active" data-gf-label="finger">👆 左手指法 (1/2/3/4/T)</button>
+                  <button type="button" class="chip-btn" data-gf-label="degree">🎯 音程度数 (1/3/5/7)</button>
+                  <button type="button" class="chip-btn" data-gf-label="note">🎵 实际音名 (C/D/E)</button>
+                </div>
+              </div>
+
+              <div id="gfPatternSelectorGrid" class="gf-pattern-grid" aria-label="具体指法图谱选择"></div>
+
+              <div id="gfFretboardCard" class="staff-visual-card" style="margin-top:16px;"></div>
+
+              <div class="gf-advice-grid" id="gfAdvicePanel" style="margin-top:16px;"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="phrases" class="view" aria-labelledby="viewTitle">
+          <div class="split-layout">
+            <section class="library-panel">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">30 条结构化语汇 · 技法标签 · 难度分级 · 谱例联动</p>
+                  <h3>古典钢琴、爵士吉他与现代键盘语汇库</h3>
+                </div>
+                <div class="phrase-tempo-box">
+                  <label class="inline-bpm-label">
+                    <span>试听 BPM</span>
+                    <input id="phraseBpmInput" type="number" min="50" max="220" step="2" value="108" />
+                  </label>
+                </div>
+              </div>
+              <div class="phrase-filter-stack">
+                <div class="phrase-filters" id="phraseFilters" aria-label="按风格筛选乐句"></div>
+                <div class="phrase-subfilters">
+                  <div class="phrase-diff-filters" id="phraseDifficultyFilters" aria-label="按难度筛选乐句"></div>
+                  <div class="phrase-tag-filters" id="phraseTagFilters" aria-label="按核心技法标签筛选乐句"></div>
+                </div>
+              </div>
+              <div id="phraseList" class="phrase-list"></div>
+            </section>
+
+            <section class="creator-panel">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">自定义灵感库 · 支持节奏语法与一键送入谱例</p>
+                  <h3 id="phraseFormHeading">记录并保存原创乐句</h3>
+                </div>
+              </div>
+              <form id="phraseForm" class="composer-form">
+                <label>
+                  <span>乐句名称</span>
+                  <input id="phraseTitle" required placeholder="例如：ii-V-I 导音包围解决句" />
+                </label>
+                <div class="form-row-2col">
+                  <label>
+                    <span>适用风格</span>
+                    <select id="phraseStyle">
+                      <option>爵士吉他</option>
+                      <option>古典钢琴</option>
+                      <option>流行键盘</option>
+                      <option>日常练习素材</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>难度分级</span>
+                    <select id="phraseDifficulty">
+                      <option value="入门">入门</option>
+                      <option value="进阶" selected>进阶</option>
+                      <option value="专业">专业</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="form-row-2col">
+                  <label>
+                    <span>配套和声进行</span>
+                    <input id="phraseProgression" placeholder="例如：Dm7 - G7b9 - Cmaj9" />
+                  </label>
+                  <label>
+                    <span>技法标签（逗号分隔）</span>
+                    <input id="phraseTagsInput" placeholder="例如：导向音, 包围音 Enclosure, 半音经过" />
+                  </label>
+                </div>
+                <label>
+                  <span>音符与时值序列（支持 C4/8 E4/8 G4/4 或 /q /e /et 语法，| 分隔小节）</span>
+                  <div class="phrase-token-bar" id="phraseTokenQuickBar">
+                    <span class="tool-strip-label">快捷时值：</span>
+                    <button type="button" class="chip-btn" data-phrase-token="/8">♪ /8 八分</button>
+                    <button type="button" class="chip-btn" data-phrase-token="/8t">³ /8t 三连音</button>
+                    <button type="button" class="chip-btn" data-phrase-token="/4">♩ /4 四分</button>
+                    <button type="button" class="chip-btn" data-phrase-token="/4.">♩. /4. 附点</button>
+                    <button type="button" class="chip-btn" data-phrase-token="/2">𝅗𝅥 /2 二分</button>
+                    <button type="button" class="chip-btn" data-phrase-token="/16">♬ /16 十六分</button>
+                    <button type="button" class="chip-btn" data-phrase-token=" | ">| 小节线</button>
+                  </div>
+                  <textarea id="phraseNotes" rows="5" placeholder="例如：D4/8 F4/8 A4/8 C5/8 | B4/8 G#4/8 A4/8 F4/8 | E4/2 G4/2"></textarea>
+                </label>
+                <label>
+                  <span>乐理要点与演奏解析（可选）</span>
+                  <input id="phraseDescInput" placeholder="例如：G7 上用 G#-F 包围目标音 A，落地 Cmaj7 的三音 E" />
+                </label>
+                <div class="form-submit-row">
+                  <button id="phraseSubmitBtn" class="primary-button" type="submit">保存乐句至本机</button>
+                  <button id="cancelPhraseEditBtn" class="ghost-button" type="button" hidden>取消编辑</button>
+                  <button id="previewFormPhraseBtn" class="secondary-button" type="button">▶ 试听表单乐句</button>
+                </div>
+              </form>
+              <article id="phraseGuide" class="theory-panel"></article>
+              <div class="saved-score-head" style="margin-top:12px;">
+                <h4>我的原创乐句库（支持编辑、复制、导出与送入谱例编辑器）</h4>
+              </div>
+              <div id="customPhraseList" class="custom-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="quiz" class="view" aria-labelledby="viewTitle">
+          <div class="quiz-layout">
+            <section class="quiz-card">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">互动题库与听辨强化</p>
+                  <h3>乐理知识闯关测验</h3>
+                </div>
+                <div class="score-chip" id="quizScore">0 / 0</div>
+              </div>
+              <div class="quiz-grade-bar">
+                <span class="quiz-grade-label">当前题库：</span>
+                <div class="segmented grade-tabs" id="quizGradeTabs" role="tablist" aria-label="测验题库分级">
+                  <button class="segment" type="button" data-quiz-grade="0">综合应用</button>
+                  <button class="segment" type="button" data-quiz-grade="1">1 级</button>
+                  <button class="segment" type="button" data-quiz-grade="2">2 级</button>
+                  <button class="segment" type="button" data-quiz-grade="3">3 级</button>
+                  <button class="segment" type="button" data-quiz-grade="4">4 级</button>
+                  <button class="segment" type="button" data-quiz-grade="5">5 级</button>
+                  <button class="segment" type="button" data-quiz-grade="6">6 级</button>
+                  <button class="segment" type="button" data-quiz-grade="7">7 级</button>
+                  <button class="segment" type="button" data-quiz-grade="8">8 级</button>
+                </div>
+              </div>
+              <div class="quiz-cat-bar">
+                <span class="quiz-grade-label">专项题型：</span>
+                <div class="segmented grade-tabs" id="quizCategoryTabs" role="tablist" aria-label="ABRSM 专项题型筛选">
+                  <button class="chip-btn active" type="button" data-quiz-cat="all">全部题型</button>
+                  <button class="chip-btn" type="button" data-quiz-cat="rhythm">节奏与拍号</button>
+                  <button class="chip-btn" type="button" data-quiz-cat="scale">调号与音阶</button>
+                  <button class="chip-btn" type="button" data-quiz-cat="interval">音程计算</button>
+                  <button class="chip-btn" type="button" data-quiz-cat="chord">和弦与终止式</button>
+                  <button class="chip-btn" type="button" data-quiz-cat="clef">谱号与移调</button>
+                  <button class="chip-btn" type="button" data-quiz-cat="term">五语术语记号</button>
+                </div>
+              </div>
+              <article id="quizPrompt" class="theory-panel"></article>
+              <div id="quizOptions" class="quiz-options"></div>
+              <div class="audio-actions">
+                <button id="nextQuizBtn" class="secondary-button" type="button">下一题</button>
+              </div>
+            </section>
+            <section id="quizNotes" class="theory-panel"></section>
+          </div>
+        </section>
+
+        <section id="scores" class="view" aria-labelledby="viewTitle">
+          <div class="score-global-bar" aria-label="曲谱全局结构与历史控制">
+            <div class="score-meta-controls">
+              <label>
+                <span>拍号</span>
+                <select id="scoreTimeSig">
+                  <option value="4/4">4/4 拍</option>
+                  <option value="3/4">3/4 拍</option>
+                  <option value="2/4">2/4 拍</option>
+                  <option value="6/8">6/8 拍</option>
+                  <option value="12/8">12/8 拍</option>
+                  <option value="5/4">5/4 拍</option>
+                </select>
+              </label>
+              <label>
+                <span>调号</span>
+                <select id="scoreKeySig">
+                  <option value="C">C / Am (0)</option>
+                  <option value="G">G / Em (1♯)</option>
+                  <option value="D">D / Bm (2♯)</option>
+                  <option value="A">A / F♯m (3♯)</option>
+                  <option value="E">E / C♯m (4♯)</option>
+                  <option value="B">B / G♯m (5♯)</option>
+                  <option value="F#">F♯ (6♯)</option>
+                  <option value="F">F / Dm (1♭)</option>
+                  <option value="Bb">B♭ / Gm (2♭)</option>
+                  <option value="Eb">E♭ / Cm (3♭)</option>
+                  <option value="Ab">A♭ / Fm (4♭)</option>
+                  <option value="Db">D♭ (5♭)</option>
+                </select>
+              </label>
+              <label>
+                <span>速度 BPM</span>
+                <input id="scoreBpm" type="number" min="40" max="240" step="2" value="100" />
+              </label>
+              <label>
+                <span>反复结构</span>
+                <select id="scoreRepeatSelect">
+                  <option value="none">无反复</option>
+                  <option value="repeat">段落反复 𝄆 … 𝄇</option>
+                  <option value="dc">D.C. al Fine（从头再奏）</option>
+                </select>
+              </label>
+              <label>
+                <span>小节视窗（移动端友好）</span>
+                <select id="scoreMeasureFilter">
+                  <option value="all">显示全部小节</option>
+                </select>
+              </label>
+            </div>
+            <div class="score-history-controls">
+              <button id="scoreUndoBtn" class="ghost-button mini-button" type="button" title="撤销上一步 (Ctrl+Z)">↶ 撤销</button>
+              <button id="scoreRedoBtn" class="ghost-button mini-button" type="button" title="重做 (Ctrl+Y)">↷ 重做</button>
+              <button id="scoreSnapshotBtn" class="secondary-button mini-button" type="button" title="保存当前版本快照">📌 存为版本快照</button>
+              <label>
+                <span>版本切换</span>
+                <select id="scoreVersionSelect" aria-label="切换历史版本快照">
+                  <option value="">历史快照 (0)</option>
+                </select>
+              </label>
+              <button id="stopScorePlayBtn" class="ghost-button mini-button danger-button" type="button">⏹ 停止播放</button>
+            </div>
+          </div>
+
+          <div class="score-layout">
+            <section class="score-panel">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">专业吉他六线谱 + 五线谱工作台</p>
+                  <h3>六线谱与技法编辑</h3>
+                </div>
+                <div class="saved-score-actions">
+                  <button id="playTabBtn" class="primary-button mini-button" type="button">▶ 播放吉他谱</button>
+                  <button id="clearTabBtn" class="ghost-button mini-button" type="button">重置六线谱</button>
+                </div>
+              </div>
+
+              <label class="score-field">
+                <span>谱例标题</span>
+                <input id="tabTitleInput" placeholder="例如：指弹前奏曲 / 爵士和弦伴奏练习" />
+              </label>
+
+              <div class="tab-setup-bar">
+                <div class="tab-setup-group">
+                  <label>
+                    <span>吉他调弦</span>
+                    <select id="tabTuningSelect">
+                      <option value="standard">标准调弦 (E A D G B e)</option>
+                      <option value="dropD">Drop D (D A D G B e)</option>
+                      <option value="halfDown">降半音 (Eb Ab Db Gb Bb eb)</option>
+                      <option value="openD">开放 D (D A D F# A d)</option>
+                      <option value="openG">开放 G (D G D G B d)</option>
+                      <option value="dadgad">DADGAD (D A D G A d)</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>变调夹 (Capo)</span>
+                    <select id="tabCapoSelect">
+                      <option value="0">不夹 (Capo 0)</option>
+                      <option value="1">Capo 1 品</option>
+                      <option value="2">Capo 2 品</option>
+                      <option value="3">Capo 3 品</option>
+                      <option value="4">Capo 4 品</option>
+                      <option value="5">Capo 5 品</option>
+                      <option value="6">Capo 6 品</option>
+                      <option value="7">Capo 7 品</option>
+                    </select>
+                  </label>
+                  <label class="compact-check" style="margin-top:14px;">
+                    <input id="tabCompactToggle" type="checkbox" />
+                    <span>小节自动换行（适合小屏）</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="chord-insert-bar">
+                <div class="chord-insert-controls">
+                  <label class="chord-select">
+                    <span>根音</span>
+                    <select id="tabChordRoot" aria-label="吉他和弦根音"></select>
+                  </label>
+                  <label class="chord-select">
+                    <span>和弦性质（全 30 种）</span>
+                    <select id="tabChordQuality" aria-label="吉他和弦性质"></select>
+                  </label>
+                  <label class="chord-select">
+                    <span>把位选择</span>
+                    <select id="tabChordPosition" aria-label="吉他和弦把位">
+                      <option value="0">把位 1（开放 / 低把位）</option>
+                      <option value="1">把位 2（中把位 / 6弦型）</option>
+                      <option value="2">把位 3（高把位 / 紧凑型）</option>
+                    </select>
+                  </label>
+                  <button id="insertTabChordBtn" class="primary-button" type="button">将指法填入当前拍位</button>
+                </div>
+                <div id="tabChordPreview" class="chord-shape-preview"></div>
+              </div>
+
+              <div id="tabChordQuick" class="chord-quick-row" aria-label="常用吉他和弦快捷插入"></div>
+
+              <div class="tab-tool-strip" aria-label="节奏时值与吉他技法工具栏">
+                <div class="tool-strip-row" id="tabDurationBar">
+                  <span class="tool-strip-label">拍位时值：</span>
+                  <button type="button" class="chip-btn" data-tab-dur="w">𝅝 全(4)</button>
+                  <button type="button" class="chip-btn" data-tab-dur="hd">𝅗𝅥. 附点二分(3)</button>
+                  <button type="button" class="chip-btn" data-tab-dur="h">𝅗𝅥 二分(2)</button>
+                  <button type="button" class="chip-btn" data-tab-dur="qd">♩. 附点(1.5)</button>
+                  <button type="button" class="chip-btn active" data-tab-dur="q">♩ 四分(1)</button>
+                  <button type="button" class="chip-btn" data-tab-dur="qt">♩³ 四分三连</button>
+                  <button type="button" class="chip-btn" data-tab-dur="ed">♪. 附点八分</button>
+                  <button type="button" class="chip-btn" data-tab-dur="e">♪ 八分(1/2)</button>
+                  <button type="button" class="chip-btn" data-tab-dur="et">♪³ 八分三连</button>
+                  <button type="button" class="chip-btn" data-tab-dur="s">♬ 十六分(1/4)</button>
+                </div>
+                <div class="tool-strip-row" id="tabTechBar">
+                  <span class="tool-strip-label">演奏技法：</span>
+                  <button type="button" class="chip-btn" data-tab-tech="h" title="击弦 Hammer-on，支持复合如 5h7p5">h 击弦</button>
+                  <button type="button" class="chip-btn" data-tab-tech="p" title="勾弦 Pull-off，支持复合如 7p5">p 勾弦</button>
+                  <button type="button" class="chip-btn" data-tab-tech="b" title="推弦 Bend，支持 7b9r7">b 推弦</button>
+                  <button type="button" class="chip-btn" data-tab-tech="r" title="推弦释放 Release，如 7b9r7">r 释放</button>
+                  <button type="button" class="chip-btn" data-tab-tech="/" title="上滑音 Slide Up，如 5/7">/ 上滑</button>
+                  <button type="button" class="chip-btn" data-tab-tech="\" title="下滑音 Slide Down，如 7\5">\ 下滑</button>
+                  <button type="button" class="chip-btn" data-tab-tech="m" title="右手护弦闷音 Palm Mute，如 5m">PM 护弦闷音</button>
+                  <button type="button" class="chip-btn" data-tab-tech="t" title="右手点弦 Tapping，如 7t12">t 点弦</button>
+                  <button type="button" class="chip-btn" data-tab-tech="g" title="装饰音倚音 Grace Note，如 g5h7">g 倚音</button>
+                  <button type="button" class="chip-btn" data-tab-tech="x" title="左手切音死音 Dead Note">x 闷音</button>
+                  <button type="button" class="chip-btn" data-tab-tech="~" title="揉弦 Vibrato">~ 揉弦</button>
+                  <button type="button" class="chip-btn" data-tab-tech="◇" title="自然泛音 Harmonic">◇ 泛音</button>
+                </div>
+              </div>
+
+              <div class="tab-editor" id="tabEditor"></div>
+
+              <div class="score-actions">
+                <button id="addTabBeatBtn" class="secondary-button" type="button">增加拍位格</button>
+                <button id="removeTabBeatBtn" class="secondary-button" type="button">减少拍位格</button>
+                <button id="addTabMeasureBtn" class="secondary-button" type="button">+1 整小节</button>
+                <button id="removeTabMeasureBtn" class="secondary-button" type="button">-1 整小节</button>
+                <button id="saveTabMeasureToPhraseBtn" class="secondary-button" type="button" title="将当前选中或全部小节存至乐句工坊">✨ 将当前选中小节存为乐句</button>
+                <button id="saveTabBtn" class="primary-button" type="button">保存吉他谱</button>
+              </div>
+              <div class="score-actions">
+                <button id="exportTabBtn" class="ghost-button mini-button" type="button">导出 TXT</button>
+                <button id="exportTabMidiBtn" class="ghost-button mini-button" type="button">导出 MIDI (.mid)</button>
+                <button id="exportTabXmlBtn" class="ghost-button mini-button" type="button">导出 MusicXML (GP/MuseScore)</button>
+                <button id="exportTabPdfBtn" class="ghost-button mini-button" type="button">打印 / 导出 PDF</button>
+              </div>
+
+              <div id="tabStaffVisual" class="staff-visual-card" style="margin-bottom:14px;"></div>
+              <pre id="tabPreview" class="score-preview"></pre>
+            </section>
+
+            <section class="score-panel">
+              <div class="section-title">
+                <div>
+                  <p class="eyebrow">高低音大谱表 + 钢琴卷帘工作台</p>
+                  <h3>钢琴双声部编配</h3>
+                </div>
+                <div class="saved-score-actions">
+                  <button id="playPianoBtn" class="primary-button mini-button" type="button">▶ 播放钢琴谱</button>
+                  <button id="optimizePianoScoreBtn" class="secondary-button mini-button" type="button" title="自动平滑右手声部连接">✨ 自动平滑排列</button>
+                  <button id="clearPianoBtn" class="ghost-button mini-button" type="button">清空草稿</button>
+                </div>
+              </div>
+
+              <div class="chord-insert-bar piano-chord-insert">
+                <div class="chord-insert-controls">
+                  <label class="chord-select">
+                    <span>根音</span>
+                    <select id="pianoChordRoot" aria-label="钢琴和弦根音"></select>
+                  </label>
+                  <label class="chord-select">
+                    <span>和弦性质</span>
+                    <select id="pianoChordQuality" aria-label="钢琴和弦性质"></select>
+                  </label>
+                  <label class="chord-select">
+                    <span>声部排列 / 转位</span>
+                    <select id="pianoVoicingType" aria-label="钢琴声部排列方式">
+                      <option value="close">原位密集 (Root Close)</option>
+                      <option value="inv1">第一转位 (1st Inversion)</option>
+                      <option value="inv2">第二转位 (2nd Inversion)</option>
+                      <option value="inv3">第三转位 (3rd Inversion)</option>
+                      <option value="drop2">Drop 2 开放排列</option>
+                      <option value="drop3">Drop 3 宽广排列</option>
+                      <option value="rootless">无根音导向 (Rootless)</option>
+                      <option value="quartal">四度叠置 (Quartal)</option>
+                    </select>
+                  </label>
+                  <label class="chord-select">
+                    <span>音区八度</span>
+                    <select id="pianoOctaveSelect" aria-label="钢琴插入音区">
+                      <option value="2">C2 低音区</option>
+                      <option value="3">C3 中低区</option>
+                      <option value="4" selected>C4 中央区</option>
+                      <option value="5">C5 高音区</option>
+                    </select>
+                  </label>
+                  <label class="chord-select">
+                    <span>时值</span>
+                    <select id="pianoDurationSelect" aria-label="钢琴插入时值">
+                      <option value="w">𝅝 全音符 (/w · /1)</option>
+                      <option value="hd">𝅗𝅥. 附点二分 (/hd · /2.)</option>
+                      <option value="h" selected>𝅗𝅥 二分 (/h · /2)</option>
+                      <option value="qd">♩. 附点四分 (/qd · /4.)</option>
+                      <option value="q">♩ 四分 (/q · /4)</option>
+                      <option value="qt">♩³ 四分三连音 (/qt · /4t)</option>
+                      <option value="ed">♪. 附点八分 (/ed · /8.)</option>
+                      <option value="e">♪ 八分 (/e · /8)</option>
+                      <option value="et">♪³ 八分三连音 (/et · /8t)</option>
+                      <option value="s">♬ 十六分 (/s · /16)</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="chord-insert-controls">
+                  <button id="insertPianoRightBtn" class="secondary-button mini-button" type="button">填入右手和弦</button>
+                  <button id="insertPianoLeftBtn" class="secondary-button mini-button" type="button">填入左手低音</button>
+                  <button id="insertPianoBothBtn" class="primary-button mini-button" type="button">⚡ 双手智能配器填入</button>
+                </div>
+                <p class="chord-insert-hint">支持任意转位、Drop 2/3、无根音与四度叠置；可用下方「可视化步进输入栏」或「互动钢琴卷帘」免手写语法编辑。</p>
+              </div>
+
+              <div class="piano-step-input-bar" id="pianoStepInputBar" aria-label="钢琴可视化步进输入与表情记号工具栏">
+                <div class="tool-strip-row">
+                  <span class="tool-strip-label">目标声部：</span>
+                  <button type="button" class="chip-btn active" data-step-hand="right">右手 (高音谱表)</button>
+                  <button type="button" class="chip-btn" data-step-hand="left">左手 (低音谱表)</button>
+                  <span class="tool-strip-label" style="margin-left:8px;">步进单音：</span>
+                  <button type="button" class="chip-btn" data-step-note="C">C</button>
+                  <button type="button" class="chip-btn" data-step-note="D">D</button>
+                  <button type="button" class="chip-btn" data-step-note="E">E</button>
+                  <button type="button" class="chip-btn" data-step-note="F">F</button>
+                  <button type="button" class="chip-btn" data-step-note="G">G</button>
+                  <button type="button" class="chip-btn" data-step-note="A">A</button>
+                  <button type="button" class="chip-btn" data-step-note="B">B</button>
+                  <button type="button" class="chip-btn" data-step-acc="#">♯</button>
+                  <button type="button" class="chip-btn" data-step-acc="b">♭</button>
+                  <button type="button" class="chip-btn" data-step-token=" , ">, 分拍</button>
+                  <button type="button" class="chip-btn" data-step-token=" | ">| 小节线</button>
+                </div>
+                <div class="tool-strip-row">
+                  <span class="tool-strip-label">排版表情/踏板/指法：</span>
+                  <button type="button" class="chip-btn" data-step-mark="pp" title="极弱 Pianissimo">pp</button>
+                  <button type="button" class="chip-btn" data-step-mark="mp" title="中弱 Mezzo-piano">mp</button>
+                  <button type="button" class="chip-btn" data-step-mark="mf" title="中强 Mezzo-forte">mf</button>
+                  <button type="button" class="chip-btn" data-step-mark="f" title="强 Forte">f</button>
+                  <button type="button" class="chip-btn" data-step-mark="cresc." title="渐强 Crescendo">cresc. &lt;</button>
+                  <button type="button" class="chip-btn" data-step-mark="dim." title="渐弱 Diminuendo">dim. &gt;</button>
+                  <button type="button" class="chip-btn" data-step-mark="Ped." title="踩下延音踏板">Ped.</button>
+                  <button type="button" class="chip-btn" data-step-mark="*" title="抬起延音踏板">* 抬踏板</button>
+                  <button type="button" class="chip-btn" data-step-mark="~" title="同音连音线 Tie / 圆滑线 Slur">⌒ 连音线</button>
+                  <button type="button" class="chip-btn" data-step-mark="(1)" title="1指（拇指）">指法1</button>
+                  <button type="button" class="chip-btn" data-step-mark="(3)" title="3指（中指）">指法3</button>
+                  <button type="button" class="chip-btn" data-step-mark="(5)" title="5指（小指）">指法5</button>
+                </div>
+              </div>
+
+              <div class="piano-score-editor">
+                <label>
+                  <span>谱例标题</span>
+                  <input id="pianoTitleInput" placeholder="例如：爵士抒情伴奏织体 / 四部和声连接" />
+                </label>
+                <label>
+                  <span>右手声部（支持 /w /h /qd /q /e /et /s 或 /1 /2 /4 /8 /8t /16，以及 mf、Ped.、(1)~ 等排版标记）</span>
+                  <textarea id="rightHandInput" rows="3" placeholder="mf E4/8 G4/8 B4/8 D5/8 , C5/2~ | C5/4 B4/8 A4/8 , G4/2 | C4 E4 G4 B4/w"></textarea>
+                </label>
+                <label>
+                  <span>左手声部（低音谱表 · 根音与五音/七音骨架或阿尔贝蒂低音）</span>
+                  <textarea id="leftHandInput" rows="3" placeholder="Ped. C3 G3/h , G2 D3/h * | G2 F3/h , G2 E3/h | C3 G3/w"></textarea>
+                </label>
+                <label>
+                  <span>演奏与配器备注</span>
+                  <input id="scoreMemoInput" placeholder="记录踏板运用、声部排列思路或练习目标" />
+                </label>
+              </div>
+
+              <div class="score-actions">
+                <button id="savePianoMeasureToPhraseBtn" class="secondary-button" type="button" title="将右手当前选中或全部小节存为原创乐句">✨ 将当前选中小节存为乐句</button>
+                <button id="savePianoBtn" class="primary-button" type="button">保存钢琴谱</button>
+                <button id="exportPianoBtn" class="ghost-button mini-button" type="button">导出 TXT</button>
+                <button id="exportPianoMidiBtn" class="ghost-button mini-button" type="button">导出 MIDI (.mid)</button>
+                <button id="exportPianoXmlBtn" class="ghost-button mini-button" type="button">导出 MusicXML</button>
+                <button id="exportPianoPdfBtn" class="ghost-button mini-button" type="button">打印 / 导出 PDF</button>
+              </div>
+
+              <div id="pianoStaffVisual" class="staff-visual-card" style="margin-top:12px;"></div>
+              <div id="pianoRollVisual" class="piano-roll-card"></div>
+
+              <article id="voiceCheck" class="theory-panel" style="margin-top:14px;"></article>
+              <div class="saved-score-head">
+                <h4>已保存谱例库（支持一键加载回编辑器继续修改）</h4>
+              </div>
+              <div id="savedScores" class="saved-score-list"></div>
+            </section>
+          </div>
+        </section>
+      </section>
+    </main>
+
+        <div id="printModal" class="print-modal" hidden role="dialog" aria-modal="true" aria-label="打印与 PDF 导出预览">
+      <div class="print-modal-dialog">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">矢量乐谱排版预览</p>
+            <h3>打印或另存为 PDF</h3>
+          </div>
+          <div class="print-modal-actions saved-score-actions">
+            <button id="triggerBrowserPrintBtn" class="primary-button mini-button" type="button">🖨️ 调用系统打印 / 另存为 PDF</button>
+            <button id="closePrintModalBtn" class="ghost-button mini-button" type="button">关闭预览</button>
+          </div>
+        </div>
+        <div id="printSheetPreview" class="print-sheet-preview"></div>
+      </div>
+    </div>
+    <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
