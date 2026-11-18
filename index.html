@@ -7,32 +7,79 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <a class="skip-link" href="#mainWorkspace">跳到主要内容</a>
+    <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
     <div class="nebula-bg" aria-hidden="true">
       <span class="nebula-orb orb-indigo"></span>
       <span class="nebula-orb orb-violet"></span>
       <span class="nebula-orb orb-amber"></span>
       <span class="nebula-orb orb-blue"></span>
+      <svg class="constellation-map" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+        <g class="const-lines">
+          <path d="M96 168 L214 108 L338 176 L452 118 L560 196" />
+          <path d="M214 108 L268 214 L418 262 L512 208" />
+          <path d="M1120 132 L1240 92 L1348 170 L1392 268" />
+          <path d="M1240 92 L1188 198 L1268 268 L1206 352" />
+          <path d="M180 640 L292 578 L372 656 L486 604" />
+          <path d="M1006 668 L1118 612 L1224 686 L1332 628" />
+          <path d="M560 196 L624 292 L742 246 L824 330" />
+          <path d="M824 330 L920 286 L1006 356 L1104 310 L1188 198" />
+        </g>
+        <g class="const-stars">
+          <circle cx="96" cy="168" r="2.2" /><circle cx="214" cy="108" r="1.6" /><circle cx="338" cy="176" r="2.6" /><circle cx="452" cy="118" r="1.5" /><circle cx="560" cy="196" r="2.1" />
+          <circle cx="268" cy="214" r="1.4" /><circle cx="418" cy="262" r="2.4" /><circle cx="512" cy="208" r="1.7" />
+          <circle cx="1120" cy="132" r="2.3" /><circle cx="1240" cy="92" r="1.6" /><circle cx="1348" cy="170" r="2.7" /><circle cx="1392" cy="268" r="1.4" /><circle cx="1188" cy="198" r="1.8" /><circle cx="1268" cy="268" r="2.1" /><circle cx="1206" cy="352" r="1.5" />
+          <circle cx="180" cy="640" r="1.8" /><circle cx="292" cy="578" r="2.5" /><circle cx="372" cy="656" r="1.5" /><circle cx="486" cy="604" r="1.9" />
+          <circle cx="1006" cy="668" r="2.2" /><circle cx="1118" cy="612" r="1.5" /><circle cx="1224" cy="686" r="2.4" /><circle cx="1332" cy="628" r="1.7" />
+          <circle cx="624" cy="292" r="1.6" /><circle cx="742" cy="246" r="2.2" /><circle cx="824" cy="330" r="1.5" /><circle cx="920" cy="286" r="1.9" /><circle cx="1006" cy="356" r="1.4" /><circle cx="1104" cy="310" r="2.3" />
+        </g>
+      </svg>
     </div>
 
-    <main class="app-shell">
-      <aside class="sidebar" aria-label="主导航">
+    <main class="app-shell" id="mainWorkspace" tabindex="-1">
+      <aside class="sidebar" id="sidebar" aria-label="主导航">
+        <button id="navClose" class="nav-close" type="button" aria-label="关闭导航菜单">✕</button>
         <div class="brand">
-          <div class="brand-logo-wrap">
-            <label class="brand-logo" for="logoUpload" title="点击上传标志图片">
-              <img id="brandLogoImg" alt="Nebula 标志" hidden />
-              <span id="brandLogoPlaceholder" class="brand-logo-placeholder">上传<br />标志</span>
-            </label>
-            <button id="removeLogoBtn" class="brand-logo-remove" type="button" title="移除标志" hidden>✕</button>
-            <input id="logoUpload" type="file" accept="image/*" hidden />
-          </div>
+          <a class="brand-mark" href="#dictionary" aria-label="Nebula · 回到和弦词典" title="回到和弦词典">
+            <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="brandSurface" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#6366f1"></stop>
+                  <stop offset="1" stop-color="#7c3aed"></stop>
+                </linearGradient>
+                <radialGradient id="brandGlow" cx="50%" cy="38%" r="62%">
+                  <stop offset="0" stop-color="#e2e8f0" stop-opacity="0.32"></stop>
+                  <stop offset="1" stop-color="#e2e8f0" stop-opacity="0"></stop>
+                </radialGradient>
+              </defs>
+              <rect width="64" height="64" rx="16" fill="url(#brandSurface)"></rect>
+              <rect width="64" height="64" rx="16" fill="url(#brandGlow)"></rect>
+              <ellipse class="brand-orbit" cx="32" cy="32" rx="25" ry="9.5" transform="rotate(-28 32 32)" fill="none" stroke="#f59e0b" stroke-width="1.1" stroke-opacity="0.55" stroke-dasharray="1.5 4"></ellipse>
+              <path class="brand-const" d="M13 21 L23 27 M43 16 L38 25 M50 46 L43 39" fill="none" stroke="#e2e8f0" stroke-width="0.9" stroke-opacity="0.32" stroke-dasharray="1.5 3"></path>
+              <g class="brand-note">
+                <ellipse cx="25.5" cy="42" rx="6.6" ry="4.9" transform="rotate(-22 25.5 42)" fill="#f59e0b"></ellipse>
+                <ellipse cx="23.8" cy="40.4" rx="2.6" ry="1.5" transform="rotate(-22 23.8 40.4)" fill="#fde68a" fill-opacity="0.75"></ellipse>
+                <rect x="29.7" y="16" width="2.4" height="26.5" rx="1.2" fill="#f59e0b"></rect>
+                <path d="M32.1 16.4 C38.4 18.2 42 22.5 41.4 29.6 C39 25.8 36 23.4 32.1 22.3 Z" fill="#f59e0b"></path>
+              </g>
+              <g class="brand-stars" fill="#e2e8f0">
+                <path d="M45.5 11.5 L46.7 14.6 L49.8 15.8 L46.7 17 L45.5 20.1 L44.3 17 L41.2 15.8 L44.3 14.6 Z" fill-opacity="0.95"></path>
+                <circle cx="13" cy="21" r="1.4" fill-opacity="0.8"></circle>
+                <circle cx="50" cy="46" r="1.3" fill-opacity="0.7"></circle>
+                <circle cx="43" cy="16" r="1" fill-opacity="0.55"></circle>
+              </g>
+              <rect x="0.6" y="0.6" width="62.8" height="62.8" rx="15.4" fill="none" stroke="#e2e8f0" stroke-opacity="0.16"></rect>
+            </svg>
+          </a>
           <div>
             <h1>Nebula</h1>
             <p>乐理与创作的星际地图</p>
           </div>
         </div>
 
-        <nav class="nav-list" aria-label="功能导航">
-          <button class="nav-button active" data-view="dictionary" type="button">和弦词典</button>
+        <nav class="nav-list" id="mainNav" aria-label="功能导航">
+          <button class="nav-button active" data-view="dictionary" type="button" aria-current="page">和弦词典</button>
           <button class="nav-button" data-view="theory" type="button">乐理解析</button>
           <button class="nav-button" data-view="intervals" type="button">音程词典</button>
           <button class="nav-button" data-view="progressions" type="button">功能和声</button>
@@ -51,13 +98,26 @@
         </section>
       </aside>
 
-      <section class="workspace">
+      <section class="workspace" id="workspace">
         <header class="topbar">
-          <div>
-            <p class="eyebrow">探索和声与旋律的无限可能</p>
-            <h2 id="viewTitle">和弦词典</h2>
+          <div class="topbar-title">
+            <button id="navToggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="mainNav" aria-label="打开导航菜单">
+              <span></span><span></span><span></span>
+            </button>
+            <div>
+              <p class="eyebrow" id="topbarEyebrow">探索和声与旋律的无限可能</p>
+              <h2 id="viewTitle" tabindex="-1">和弦词典</h2>
+            </div>
           </div>
           <div class="topbar-actions" aria-label="全局显示与风格设置">
+            <div class="level-switch-wrap">
+              <span class="level-switch-label">解说层级</span>
+              <div class="style-switch level-switch" id="levelSwitch" role="group" aria-label="切换解说深度">
+                <button class="segment" data-level="beginner" type="button" aria-pressed="false" title="零基础：先听感觉，再学怎么用">✧ 初学者</button>
+                <button class="segment active" data-level="learner" type="button" aria-pressed="true" title="学过乐理：保留级数、功能与解决术语">✦ 学过乐理</button>
+                <button class="segment" data-level="pro" type="button" aria-pressed="false" title="音乐人：导向音、张力与编配细节">✵ 音乐人</button>
+              </div>
+            </div>
             <label class="switch">
               <input id="notationToggle" type="checkbox" />
               <span>降号记谱 (♭)</span>
@@ -83,8 +143,20 @@
                 <option value="mixolydian">混合利底亚 (Mixolydian)</option>
               </select>
             </label>
+            <button id="shortcutHelpBtn" class="icon-button" type="button" title="键盘快捷键与操作指南（按 ?）" aria-label="打开键盘快捷键指南">⌘</button>
           </div>
         </header>
+
+        <div class="view-lead" id="viewLead" aria-live="polite">
+          <div class="view-lead-body">
+            <span class="view-coord" id="viewCoord">SECTOR 01 · HARMONY ATLAS</span>
+            <p id="viewLeadText">选择和弦，查看功能、构成、声部连接与可选配属音阶。</p>
+          </div>
+          <div class="level-chip" id="levelChip" data-level="learner">
+            <span class="level-chip-icon" aria-hidden="true">✦</span>
+            <span id="levelChipText">学过乐理视角</span>
+          </div>
+        </div>
 
         <section id="dictionary" class="view active" aria-labelledby="viewTitle">
           <div class="root-strip" id="rootStrip" aria-label="主音选择"></div>
@@ -99,7 +171,7 @@
               </div>
               <div class="tone-row" id="selectedChordTones"></div>
               <div class="construction-strip" id="constructionStrip"></div>
-              <p id="selectedChordAnalysis" class="analysis-text"></p>
+              <p id="selectedChordAnalysis" class="analysis-text" aria-live="polite"></p>
               <dl class="detail-grid" id="selectedChordDetails"></dl>
             </div>
 
@@ -168,17 +240,23 @@
           </section>
 
           <div class="toolbar">
-            <label class="search-box">
-              <span>快速检索和弦</span>
-              <input id="chordSearch" type="search" placeholder="输入和弦代号、性质或适用场景，如 maj7 / 变化属 / 挂留" />
-            </label>
-            <div class="segmented" role="tablist" aria-label="和弦分类筛选">
-              <button class="segment active" data-category="all" type="button">全部</button>
-              <button class="segment" data-category="triad" type="button">三和弦</button>
-              <button class="segment" data-category="seventh" type="button">七和弦</button>
-              <button class="segment" data-category="extended" type="button">高叠扩展</button>
-              <button class="segment" data-category="altered" type="button">变化张力</button>
-              <button class="segment" data-category="guitar" type="button">吉他常用</button>
+            <div class="search-box">
+              <label for="chordSearch">快速检索和弦</label>
+              <div class="search-field">
+                <input id="chordSearch" type="search" placeholder="输入和弦代号、性质或适用场景，如 maj7 / 变化属 / 挂留" autocomplete="off" />
+                <button id="clearChordSearch" class="search-clear" type="button" aria-label="清空搜索" hidden>✕</button>
+              </div>
+            </div>
+            <div class="filter-cluster">
+              <div class="segmented" role="tablist" aria-label="和弦分类筛选">
+                <button class="segment active" data-category="all" type="button">全部</button>
+                <button class="segment" data-category="triad" type="button">三和弦</button>
+                <button class="segment" data-category="seventh" type="button">七和弦</button>
+                <button class="segment" data-category="extended" type="button">高叠扩展</button>
+                <button class="segment" data-category="altered" type="button">变化张力</button>
+                <button class="segment" data-category="guitar" type="button">吉他常用</button>
+              </div>
+              <span class="result-count" id="chordCount" aria-live="polite">30 个和弦</span>
             </div>
           </div>
 
@@ -195,6 +273,7 @@
                 </div>
               </div>
               <div class="tone-row" id="scaleTones"></div>
+              <p class="section-lead" id="scaleLead"></p>
               <div class="degree-table" id="degreeTable"></div>
             </section>
 
@@ -929,6 +1008,34 @@
       </div>
     </div>
     <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+    <div id="navOverlay" class="nav-overlay" hidden></div>
+    <button id="backToTop" class="back-to-top" type="button" aria-label="回到顶部" title="回到顶部">↑</button>
+
+    <div id="shortcutModal" class="shortcut-modal" hidden role="dialog" aria-modal="true" aria-labelledby="shortcutTitle">
+      <div class="shortcut-dialog">
+        <div class="shortcut-head">
+          <div>
+            <p class="eyebrow">Command Deck · 快捷键</p>
+            <h3 id="shortcutTitle">把星图当作乐器来操作</h3>
+          </div>
+          <button id="closeShortcutBtn" class="ghost-button mini-button" type="button">关闭 ESC</button>
+        </div>
+        <div class="shortcut-grid">
+          <div><kbd>Ctrl</kbd><span>+</span><kbd>K</kbd><p>聚焦和弦搜索</p></div>
+          <div><kbd>/</kbd><p>快速搜索和弦</p></div>
+          <div><kbd>?</kbd><p>打开/关闭本指南</p></div>
+          <div><kbd>Alt</kbd><span>+</span><kbd>1–0</kbd><p>跳到第 1–10 个星区</p></div>
+          <div><kbd>[</kbd><span>/</span><kbd>]</kbd><p>上一个 / 下一个星区</p></div>
+          <div><kbd>←</kbd><span>/</span><kbd>→</kbd><p>导航聚焦时切换星区</p></div>
+          <div><kbd>A–L</kbd><p>弹奏互动钢琴</p></div>
+          <div><kbd>Esc</kbd><p>关闭弹窗 / 清空搜索</p></div>
+          <div><kbd>Ctrl</kbd><span>+</span><kbd>Z</kbd><p>谱例编辑器撤销</p></div>
+        </div>
+        <p class="shortcut-note">提示：在输入框中打字时，按键快捷键会自动让位给文字输入。</p>
+      </div>
+    </div>
+
+    <script src="levels.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

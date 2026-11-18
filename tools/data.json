@@ -1,0 +1,1165 @@
+{
+ "chords": [
+  {
+   "id": "maj",
+   "name": "Maj",
+   "intervals": [
+    0,
+    4,
+    7
+   ],
+   "category": "triad",
+   "color": "base",
+   "theory": "大三和弦，稳定明亮。适合主功能、终止和声与旋律落点。",
+   "function": "主功能",
+   "guitar": "常见于开放和弦、分解和弦与扫弦伴奏。"
+  },
+  {
+   "id": "min",
+   "name": "m",
+   "intervals": [
+    0,
+    3,
+    7
+   ],
+   "category": "triad",
+   "color": "base",
+   "theory": "小三和弦，较内省、柔和，常作为主调内的下属或主功能色彩。",
+   "function": "主/下属功能",
+   "guitar": "爵士里常见于 ii 级和弦和小调音色。"
+  },
+  {
+   "id": "dim",
+   "name": "dim",
+   "intervals": [
+    0,
+    3,
+    6
+   ],
+   "category": "triad",
+   "color": "altered",
+   "theory": "减三和弦，张力强，常用于经过和弦、导音和弦与属和弦前导。",
+   "function": "导向",
+   "guitar": "可用作经过连接，和弦走向很清楚。"
+  },
+  {
+   "id": "aug",
+   "name": "aug",
+   "intervals": [
+    0,
+    4,
+    8
+   ],
+   "category": "triad",
+   "color": "altered",
+   "theory": "增三和弦，带有开放和悬浮感，常用于色彩性连接或旋律强调。",
+   "function": "色彩/变化",
+   "guitar": "在爵士和声中常作为经过和弦或替代色彩。"
+  },
+  {
+   "id": "sus2",
+   "name": "sus2",
+   "intervals": [
+    0,
+    2,
+    7
+   ],
+   "category": "triad",
+   "color": "base",
+   "theory": "二度悬挂和弦，保留开放感，常用于现代流行、键盘与吉他伴奏。",
+   "function": "悬挂",
+   "guitar": "适合铺垫和过门，左手/低音不要过满。"
+  },
+  {
+   "id": "sus4",
+   "name": "sus4",
+   "intervals": [
+    0,
+    5,
+    7
+   ],
+   "category": "triad",
+   "color": "base",
+   "theory": "四度悬挂和弦，最经典的悬念型结构，常回解到三和弦。",
+   "function": "悬挂-解决",
+   "guitar": "吉他写作和即兴伴奏里非常实用。"
+  },
+  {
+   "id": "6",
+   "name": "6",
+   "intervals": [
+    0,
+    4,
+    7,
+    9
+   ],
+   "category": "extended",
+   "color": "base",
+   "theory": "加入六度的和弦，音色温暖，古典和流行键盘中都常见。",
+   "function": "延伸主功能",
+   "guitar": "爵士标准里常被视作稳定的延伸色彩。"
+  },
+  {
+   "id": "7",
+   "name": "7",
+   "intervals": [
+    0,
+    4,
+    7,
+    10
+   ],
+   "category": "seventh",
+   "color": "base",
+   "theory": "属七和弦，张力与方向性很强，是爵士和声和调性写作核心。",
+   "function": "属功能",
+   "guitar": "ii-V-I 的 V 级核心，最常用的爵士语汇之一。"
+  },
+  {
+   "id": "maj7",
+   "name": "maj7",
+   "intervals": [
+    0,
+    4,
+    7,
+    11
+   ],
+   "category": "seventh",
+   "color": "base",
+   "theory": "大七和弦，透明而稳定，适合主和弦、抒情旋律与现代编配。",
+   "function": "主功能",
+   "guitar": "爵士吉他里是最常见的主和弦之一。"
+  },
+  {
+   "id": "m7",
+   "name": "m7",
+   "intervals": [
+    0,
+    3,
+    7,
+    10
+   ],
+   "category": "seventh",
+   "color": "base",
+   "theory": "小七和弦，常见于 ii 级和弦、小调主和弦和调性过渡。",
+   "function": "下属/主功能",
+   "guitar": "配合 ii-V-I 的 ii 级和弦使用频率极高。"
+  },
+  {
+   "id": "mMaj7",
+   "name": "mMaj7",
+   "intervals": [
+    0,
+    3,
+    7,
+    11
+   ],
+   "category": "seventh",
+   "color": "altered",
+   "theory": "小大七和弦，带有戏剧感和电影感，常出现在和声小调和借用和声中。",
+   "function": "色彩/借用",
+   "guitar": "适合细腻的和声色彩，不宜过密。"
+  },
+  {
+   "id": "halfDim",
+   "name": "m7b5",
+   "intervals": [
+    0,
+    3,
+    6,
+    10
+   ],
+   "category": "seventh",
+   "color": "altered",
+   "theory": "半减七和弦，导向性强，常作为小调 iiø-V-i 的起点。",
+   "function": "导向/下属",
+   "guitar": "小调功能和声和现代爵士里非常重要。"
+  },
+  {
+   "id": "dim7",
+   "name": "dim7",
+   "intervals": [
+    0,
+    3,
+    6,
+    9
+   ],
+   "category": "seventh",
+   "color": "altered",
+   "theory": "减七和弦对称性强，可做经过和弦、离调和声或紧张推进。",
+   "function": "经过/导向",
+   "guitar": "吉他上便于移动，适合半音连接。"
+  },
+  {
+   "id": "9",
+   "name": "9",
+   "intervals": [
+    0,
+    4,
+    7,
+    10,
+    14
+   ],
+   "category": "extended",
+   "color": "base",
+   "theory": "九和弦，爵士和流行编配常用，保留属功能同时增加歌唱性。",
+   "function": "属/扩展",
+   "guitar": "常通过省略五音来简化。"
+  },
+  {
+   "id": "11",
+   "name": "11",
+   "intervals": [
+    0,
+    4,
+    7,
+    10,
+    14,
+    17
+   ],
+   "category": "extended",
+   "color": "base",
+   "theory": "十一和弦，空间感强，实际编配中经常省略三音或五音以避免冲突。",
+   "function": "扩展",
+   "guitar": "适合上方结构和色彩性配器。"
+  },
+  {
+   "id": "13",
+   "name": "13",
+   "intervals": [
+    0,
+    4,
+    7,
+    10,
+    14,
+    17,
+    21
+   ],
+   "category": "extended",
+   "color": "base",
+   "theory": "十三和弦是完整属扩展，爵士功能感强，音色丰富。",
+   "function": "属/扩展",
+   "guitar": "常省略十一或五音，保留三音、七音与十三音。"
+  },
+  {
+   "id": "alt",
+   "name": "alt",
+   "intervals": [
+    0,
+    4,
+    10,
+    13,
+    15
+   ],
+   "category": "altered",
+   "color": "altered",
+   "theory": "变化属和弦，适合强烈解决到目标主和弦，常包含 b9/#9/b5/#5。",
+   "function": "属功能强化",
+   "guitar": "爵士吉他最常见的张力集合之一。"
+  },
+  {
+   "id": "add9",
+   "name": "add9",
+   "intervals": [
+    0,
+    4,
+    7,
+    14
+   ],
+   "category": "extended",
+   "color": "base",
+   "theory": "加九和弦，清晰而明亮，不像九和弦那样必须强调属功能。",
+   "function": "色彩/主功能",
+   "guitar": "很适合流行伴奏与分解和弦。"
+  },
+  {
+   "id": "5",
+   "name": "5",
+   "intervals": [
+    0,
+    7
+   ],
+   "category": "triad",
+   "color": "base",
+   "theory": "强力和弦，只保留根音与五音，调性感弱但力度直接。",
+   "function": "骨架/中性",
+   "guitar": "摇滚与流行吉他最常见，适合失真或强节奏。"
+  },
+  {
+   "id": "m6",
+   "name": "m6",
+   "intervals": [
+    0,
+    3,
+    7,
+    9
+   ],
+   "category": "extended",
+   "color": "base",
+   "theory": "小六和弦常作为小调稳定终止，也可连接爵士中的 Dorian 色彩。",
+   "function": "小调主功能",
+   "guitar": "适合小调结尾，六度比小七更稳定。"
+  },
+  {
+   "id": "69",
+   "name": "6/9",
+   "intervals": [
+    0,
+    4,
+    7,
+    9,
+    14
+   ],
+   "category": "extended",
+   "color": "base",
+   "theory": "六九和弦温暖、开放，常替代大七作为柔和主和弦。",
+   "function": "主功能色彩",
+   "guitar": "常用在 bossa、soul 与流行爵士。"
+  },
+  {
+   "id": "maj9",
+   "name": "maj9",
+   "intervals": [
+    0,
+    4,
+    7,
+    11,
+    14
+   ],
+   "category": "extended",
+   "color": "base",
+   "theory": "大九和弦延伸大七的透明感，旋律性更强。",
+   "function": "主功能延伸",
+   "guitar": "常省略五音，保留三音、大七与九音。"
+  },
+  {
+   "id": "maj13",
+   "name": "maj13",
+   "intervals": [
+    0,
+    4,
+    7,
+    11,
+    14,
+    21
+   ],
+   "category": "extended",
+   "color": "base",
+   "theory": "大十三和弦带 Lydian/major 色彩，适合现代和声铺陈。",
+   "function": "主功能延伸",
+   "guitar": "适合上方结构或分散声部。"
+  },
+  {
+   "id": "m9",
+   "name": "m9",
+   "intervals": [
+    0,
+    3,
+    7,
+    10,
+    14
+   ],
+   "category": "extended",
+   "color": "base",
+   "theory": "小九和弦是 ii 级与小调主和弦的常用扩展。",
+   "function": "下属/小调主功能",
+   "guitar": "Dorian 色彩清楚，适合 comping。"
+  },
+  {
+   "id": "m11",
+   "name": "m11",
+   "intervals": [
+    0,
+    3,
+    7,
+    10,
+    14,
+    17
+   ],
+   "category": "extended",
+   "color": "base",
+   "theory": "小十一和弦有开放的 Dorian 气质，适合静态 modal vamp。",
+   "function": "下属/调式色彩",
+   "guitar": "可用四度堆叠或省略五音。"
+  },
+  {
+   "id": "7sus4",
+   "name": "7sus4",
+   "intervals": [
+    0,
+    5,
+    7,
+    10
+   ],
+   "category": "seventh",
+   "color": "base",
+   "theory": "属七挂四保留属功能但推迟三音解决，常用于 gospel、fusion 与现代流行。",
+   "function": "属功能悬挂",
+   "guitar": "可在 sus 与 7 之间摆动形成律动。"
+  },
+  {
+   "id": "9sus4",
+   "name": "9sus4",
+   "intervals": [
+    0,
+    5,
+    7,
+    10,
+    14
+   ],
+   "category": "extended",
+   "color": "base",
+   "theory": "九挂四和弦色彩宽阔，常以 Mixolydian sus 或 Dorian 思路处理。",
+   "function": "属/悬挂色彩",
+   "guitar": "适合 funk、fusion 与 open voicing。"
+  },
+  {
+   "id": "7b9",
+   "name": "7b9",
+   "intervals": [
+    0,
+    4,
+    7,
+    10,
+    13
+   ],
+   "category": "altered",
+   "color": "altered",
+   "theory": "降九属和弦张力集中，常解决到小调或大调目标和弦。",
+   "function": "属功能强化",
+   "guitar": "可用半全减音阶或 Phrygian dominant。"
+  },
+  {
+   "id": "7sharp9",
+   "name": "7#9",
+   "intervals": [
+    0,
+    4,
+    7,
+    10,
+    15
+   ],
+   "category": "altered",
+   "color": "altered",
+   "theory": "升九属和弦有蓝调式摩擦，三音与 #9 形成强烈色彩。",
+   "function": "属功能强化",
+   "guitar": "blues、fusion、funk 中非常常见。"
+  },
+  {
+   "id": "7b13",
+   "name": "7b13",
+   "intervals": [
+    0,
+    4,
+    7,
+    10,
+    20
+   ],
+   "category": "altered",
+   "color": "altered",
+   "theory": "降十三属和弦有和声小调色彩，常解决到小调主和弦。",
+   "function": "属功能强化",
+   "guitar": "保留三音七音，加 b13 就有清楚方向。"
+  }
+ ],
+ "modes": [
+  {
+   "id": "ionian",
+   "category": "教會調式",
+   "label": "Ionian / 自然大调",
+   "intervals": [
+    0,
+    2,
+    4,
+    5,
+    7,
+    9,
+    11
+   ],
+   "feature": "明亮、稳定，主功能最清楚。",
+   "progression": "I - IV - V - I",
+   "improv": "强调 3、6、7，旋律落在 1/3/5 最稳定。"
+  },
+  {
+   "id": "dorianFull",
+   "category": "教會調式",
+   "label": "Dorian / 多利亚",
+   "intervals": [
+    0,
+    2,
+    3,
+    5,
+    7,
+    9,
+    10
+   ],
+   "feature": "小三度加自然六度，有爵士、funk 与 modal 色彩。",
+   "progression": "i7 - IV7 或 i7 - ii7",
+   "improv": "把 6 当作标志音，避免只听成自然小调。"
+  },
+  {
+   "id": "phrygian",
+   "category": "教會調式",
+   "label": "Phrygian / 弗里几亚",
+   "intervals": [
+    0,
+    1,
+    3,
+    5,
+    7,
+    8,
+    10
+   ],
+   "feature": "b2 最有辨识度，紧张、暗色。",
+   "progression": "i - bII - bVII",
+   "improv": "b2 要谨慎强调，适合西班牙/金属色彩。"
+  },
+  {
+   "id": "lydian",
+   "category": "教會調式",
+   "label": "Lydian / 利底亚",
+   "intervals": [
+    0,
+    2,
+    4,
+    6,
+    7,
+    9,
+    11
+   ],
+   "feature": "#4 让大和弦漂浮、现代。",
+   "progression": "Imaj7 - II 或 Imaj7 - Vmaj7",
+   "improv": "对 maj7/#11 和弦特别自然，#4 是核心色彩。"
+  },
+  {
+   "id": "mixolydianFull",
+   "category": "教會調式",
+   "label": "Mixolydian / 混合利底亚",
+   "intervals": [
+    0,
+    2,
+    4,
+    5,
+    7,
+    9,
+    10
+   ],
+   "feature": "大三度加 b7，属功能与 blues 气质明显。",
+   "progression": "I7 - bVII - IV",
+   "improv": "围绕 3 与 b7 建立导向，9 与 13 很好用。"
+  },
+  {
+   "id": "aeolian",
+   "category": "教會調式",
+   "label": "Aeolian / 自然小调",
+   "intervals": [
+    0,
+    2,
+    3,
+    5,
+    7,
+    8,
+    10
+   ],
+   "feature": "自然小调，暗色但不一定强属解决。",
+   "progression": "i - bVI - bVII - i",
+   "improv": "b6 是关键色彩，旋律可围绕 1-b7-b6。"
+  },
+  {
+   "id": "locrian",
+   "category": "教會調式",
+   "label": "Locrian / 洛克里亚",
+   "intervals": [
+    0,
+    1,
+    3,
+    5,
+    6,
+    8,
+    10
+   ],
+   "feature": "b5 让主和弦不稳定，常对应 m7b5。",
+   "progression": "iø - V7alt - i",
+   "improv": "突出 b5 与 b9，常作为小调 iiø 功能。"
+  },
+  {
+   "id": "melodicMinorMode",
+   "category": "旋律小調調式",
+   "label": "Melodic Minor / 旋律小调",
+   "intervals": [
+    0,
+    2,
+    3,
+    5,
+    7,
+    9,
+    11
+   ],
+   "feature": "小三度配大六、大七，爵士小调的明亮骨架。",
+   "progression": "i(maj7) - ii7 - V7 - i",
+   "improv": "用 3、6、7 区分自然小调，适合小调 ii-V。"
+  },
+  {
+   "id": "dorianB2",
+   "category": "旋律小調調式",
+   "label": "Dorian b2 / Phrygian #6",
+   "intervals": [
+    0,
+    1,
+    3,
+    5,
+    7,
+    9,
+    10
+   ],
+   "feature": "b2 与自然六度并存，暗色中带流动。",
+   "progression": "i7 - bIImaj7 - i7",
+   "improv": "同时保留 Phrygian 的 b2 与 Dorian 的 6 音。"
+  },
+  {
+   "id": "lydianAug",
+   "category": "旋律小調調式",
+   "label": "Lydian Augmented / 增利底亚",
+   "intervals": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    9,
+    11
+   ],
+   "feature": "#4 加 #5，漂浮感最强的大色彩。",
+   "progression": "Imaj7#5 静态 vamp",
+   "improv": "适合 maj7#5 和弦与电影配乐式悬停。"
+  },
+  {
+   "id": "lydianDominant",
+   "category": "旋律小調調式",
+   "label": "Lydian Dominant / 利底亚属",
+   "intervals": [
+    0,
+    2,
+    4,
+    6,
+    7,
+    9,
+    10
+   ],
+   "feature": "属七结构加 #11，三全音替代首选。",
+   "progression": "bII7 - Imaj7（三全音替代）",
+   "improv": "3、b7 是导向，#11 是它的招牌音。"
+  },
+  {
+   "id": "mixoB6",
+   "category": "旋律小調調式",
+   "label": "Mixolydian b6 / 混合利底亚降六",
+   "intervals": [
+    0,
+    2,
+    4,
+    5,
+    7,
+    8,
+    10
+   ],
+   "feature": "大三度加 b6、b7，兼具属与小调色彩。",
+   "progression": "I7 - bVI - I7",
+   "improv": "比 Mixolydian 更暗，常用于爵士小调乐句。"
+  },
+  {
+   "id": "locrianSharp2",
+   "category": "旋律小調調式",
+   "label": "Locrian #2 / 半减音阶",
+   "intervals": [
+    0,
+    2,
+    3,
+    5,
+    6,
+    8,
+    10
+   ],
+   "feature": "半减七和弦（iiø）的标准对应音阶。",
+   "progression": "iø7 - V7 - i",
+   "improv": "9 音让 Locrian 不那么紧张，最实用的半减选择。"
+  },
+  {
+   "id": "superLocrian",
+   "category": "旋律小調調式",
+   "label": "Super Locrian / Altered 变化音阶",
+   "intervals": [
+    0,
+    1,
+    3,
+    4,
+    6,
+    8,
+    10
+   ],
+   "feature": "b9/#9/b5/#5 全在，变化属和弦专用。",
+   "progression": "V7alt - i",
+   "improv": "解决到主和弦前，3 与 b7 是必须保留的导向音。"
+  },
+  {
+   "id": "harmonicMinorMode",
+   "category": "和聲小調調式",
+   "label": "Harmonic Minor / 和声小调",
+   "intervals": [
+    0,
+    2,
+    3,
+    5,
+    7,
+    8,
+    11
+   ],
+   "feature": "1.5 全音的增二度是它最强的戏剧色彩。",
+   "progression": "i - V7 - i（和声小调属）",
+   "improv": "导音（7）上行到主音，古典小调终止核心。"
+  },
+  {
+   "id": "locrianSharp6",
+   "category": "和聲小調調式",
+   "label": "Locrian #6 / 洛克里亚升六",
+   "intervals": [
+    0,
+    1,
+    3,
+    5,
+    6,
+    9,
+    10
+   ],
+   "feature": "和声小调 ii°7 的对应音阶，比 Locrian 更紧。",
+   "progression": "ii°7 - V7 - i",
+   "improv": "6 音（=大三度）与减三主音并存。"
+  },
+  {
+   "id": "ionianSharp5",
+   "category": "和聲小調調式",
+   "label": "Ionian #5 / 增五伊奥尼亚",
+   "intervals": [
+    0,
+    2,
+    4,
+    5,
+    8,
+    9,
+    11
+   ],
+   "feature": "大调配增五度，III+ 增三和弦的音阶。",
+   "progression": "III+ - iv - V",
+   "improv": "和声小调中 III+ 的临时明亮色彩。"
+  },
+  {
+   "id": "dorianSharp4",
+   "category": "和聲小調調式",
+   "label": "Dorian #4 / 罗马尼亚调式",
+   "intervals": [
+    0,
+    2,
+    3,
+    6,
+    7,
+    9,
+    10
+   ],
+   "feature": "增四度与小三度，吉普赛、东欧色彩。",
+   "progression": "i7 - #iv° - i7",
+   "improv": "#4 是核心张力，旋律可半音环绕。"
+  },
+  {
+   "id": "phrygianDominant",
+   "category": "和聲小調調式",
+   "label": "Phrygian Dominant / 属弗里几亚",
+   "intervals": [
+    0,
+    1,
+    4,
+    5,
+    7,
+    8,
+    10
+   ],
+   "feature": "V7 与 b2 同时出现，西班牙/弗拉门戈标志。",
+   "progression": "V7(b9) - i",
+   "improv": "3 与 b2 形成增二度，是辨识度来源。"
+  },
+  {
+   "id": "lydianSharp2",
+   "category": "和聲小調調式",
+   "label": "Lydian #2 / 利底亚升二",
+   "intervals": [
+    0,
+    3,
+    4,
+    6,
+    7,
+    9,
+    11
+   ],
+   "feature": "增二度开头，悬疑、神秘。",
+   "progression": "VI maj7 - V7 - i",
+   "improv": "和声小调 VI 级的对应音阶，慎用但有特色。"
+  },
+  {
+   "id": "ultralocrian",
+   "category": "和聲小調調式",
+   "label": "Ultra Locrian / 超洛克里亚",
+   "intervals": [
+    0,
+    1,
+    3,
+    4,
+    6,
+    7,
+    9
+   ],
+   "feature": "变化音最密集的音阶之一，几乎全是张力。",
+   "progression": "VII°7 替代属",
+   "improv": "适合 dim7 到属和弦的半音连接。"
+  },
+  {
+   "id": "majorPentatonic",
+   "category": "五聲 / 藍調 / 對稱",
+   "label": "Major Pentatonic / 大调五声音阶",
+   "intervals": [
+    0,
+    2,
+    4,
+    7,
+    9
+   ],
+   "feature": "五音骨架，几乎不会「错」，流行与民谣基础。",
+   "progression": "I - IV - V（五声版）",
+   "improv": "旋律天然好听，初学即兴首选。"
+  },
+  {
+   "id": "minorPentatonic",
+   "category": "五聲 / 藍調 / 對稱",
+   "label": "Minor Pentatonic / 小调五声音阶",
+   "intervals": [
+    0,
+    3,
+    5,
+    7,
+    10
+   ],
+   "feature": "摇滚、blues、吉他独奏的万能骨架。",
+   "progression": "i7 - bVII - bVI - bVII",
+   "improv": "推弦、滑音最常落在 b3 与 b7。"
+  },
+  {
+   "id": "bluesScale",
+   "category": "五聲 / 藍調 / 對稱",
+   "label": "Blues / 蓝调音阶",
+   "intervals": [
+    0,
+    3,
+    5,
+    6,
+    7,
+    10
+   ],
+   "feature": "小调五声加 b5（蓝调音），张力更足。",
+   "progression": "I7 - IV7 - V7（12 小节 blues）",
+   "improv": "蓝调音在属和弦前后半音连接最有味道。"
+  },
+  {
+   "id": "majorBlues",
+   "category": "五聲 / 藍調 / 對稱",
+   "label": "Major Blues / 大调蓝调音阶",
+   "intervals": [
+    0,
+    2,
+    3,
+    4,
+    7,
+    9
+   ],
+   "feature": "大调五声加入小三度，轻快但带蓝调。",
+   "progression": "I7 - IV7 - I7",
+   "improv": "大小三度交替是 major blues 的经典语法。"
+  },
+  {
+   "id": "wholeTone",
+   "category": "五聲 / 藍調 / 對稱",
+   "label": "Whole Tone / 全音音阶",
+   "intervals": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    10
+   ],
+   "feature": "只有全音，没有明确调性，印象派色彩。",
+   "progression": "V7#5 静态和声",
+   "improv": "适合 #5 属和弦与德布西式漂浮质感。"
+  },
+  {
+   "id": "halfWholeDiminished",
+   "category": "五聲 / 藍調 / 對稱",
+   "label": "Half-Whole Diminished / 半全减音阶",
+   "intervals": [
+    0,
+    1,
+    3,
+    4,
+    6,
+    7,
+    9,
+    10
+   ],
+   "feature": "半音全音交替，属七 b9 的常用音阶。",
+   "progression": "V7b9 - i",
+   "improv": "可在 V7b9 上整段使用，张力与解决都清楚。"
+  },
+  {
+   "id": "wholeHalfDiminished",
+   "category": "五聲 / 藍調 / 對稱",
+   "label": "Whole-Half Diminished / 全半减音阶",
+   "intervals": [
+    0,
+    2,
+    3,
+    5,
+    6,
+    8,
+    9,
+    11
+   ],
+   "feature": "减和弦的对称音阶，每 3 品重复。",
+   "progression": "dim7 过渡连接",
+   "improv": "dim7 上直接使用，可对称平移到任意减和弦。"
+  },
+  {
+   "id": "chromatic",
+   "category": "五聲 / 藍調 / 對稱",
+   "label": "Chromatic / 半音音阶",
+   "intervals": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+   ],
+   "feature": "12 个半音全用，无调性中心。",
+   "progression": "半音经过句 / 无调性段落",
+   "improv": "半音音型多作经过，需配合目标音解决。"
+  },
+  {
+   "id": "bebopMajor",
+   "category": "Bebop / 變化音階",
+   "label": "Bebop Major / 比巴普大调音阶",
+   "intervals": [
+    0,
+    2,
+    4,
+    5,
+    7,
+    8,
+    9,
+    11
+   ],
+   "feature": "大调音阶加 #5 经过音，旋律落在和弦音上。",
+   "progression": "Imaj7 - vi7 - ii7 - V7",
+   "improv": "八分音符长句时，加的音放在弱拍。"
+  },
+  {
+   "id": "bebopDominant",
+   "category": "Bebop / 變化音階",
+   "label": "Bebop Dominant / 比巴普属音阶",
+   "intervals": [
+    0,
+    2,
+    4,
+    5,
+    7,
+    9,
+    10,
+    11
+   ],
+   "feature": "Mixolydian 加大七度经过音，爵士句子基础。",
+   "progression": "V7 - Imaj7",
+   "improv": "大七音（7 与 b7 之间）作为下行经过音。"
+  },
+  {
+   "id": "bebopDorian",
+   "category": "Bebop / 變化音階",
+   "label": "Bebop Dorian / 比巴普多利亚",
+   "intervals": [
+    0,
+    2,
+    3,
+    5,
+    7,
+    9,
+    10,
+    11
+   ],
+   "feature": "Dorian 加大七经过音，小调长句更顺。",
+   "progression": "i7 - IV7 - i7",
+   "improv": "在 ii7 上做八分音符长句时尤其好用。"
+  },
+  {
+   "id": "harmonicMajor",
+   "category": "Bebop / 變化音階",
+   "label": "Harmonic Major / 和声大调",
+   "intervals": [
+    0,
+    2,
+    4,
+    5,
+    7,
+    8,
+    11
+   ],
+   "feature": "大调和声配 b6，明亮中带伤感。",
+   "progression": "I - bVI - V7",
+   "improv": "可借用和声小调的属功能色彩。"
+  },
+  {
+   "id": "doubleHarmonic",
+   "category": "特殊與民族音階",
+   "label": "Double Harmonic / 双和聲大調（阿拉伯）",
+   "intervals": [
+    0,
+    1,
+    4,
+    5,
+    7,
+    8,
+    11
+   ],
+   "feature": "两个增二度，中东、弗拉门戈色彩。",
+   "progression": "Imaj7 - bIImaj7 - Imaj7",
+   "improv": "b2 与大三度并置是最有辨识度的音程。"
+  },
+  {
+   "id": "hungarianMinor",
+   "category": "特殊與民族音階",
+   "label": "Hungarian Minor / 匈牙利小调",
+   "intervals": [
+    0,
+    2,
+    3,
+    6,
+    7,
+    8,
+    11
+   ],
+   "feature": "和声小调加 #4，吉普赛音乐的招牌。",
+   "progression": "i - iv - V7 - i",
+   "improv": "#4 与 7 形成增三色彩，张力很强。"
+  },
+  {
+   "id": "neapolitanMinor",
+   "category": "特殊與民族音階",
+   "label": "Neapolitan Minor / 拿坡里小调",
+   "intervals": [
+    0,
+    1,
+    3,
+    5,
+    7,
+    8,
+    11
+   ],
+   "feature": "b2 加和声小调属，古典戏剧性语法。",
+   "progression": "bII - i6/4 - V7 - i",
+   "improv": "拿坡里和弦（bII）后接终止式是经典用法。"
+  },
+  {
+   "id": "neapolitanMajor",
+   "category": "特殊與民族音階",
+   "label": "Neapolitan Major / 拿坡里大调",
+   "intervals": [
+    0,
+    1,
+    3,
+    5,
+    7,
+    9,
+    11
+   ],
+   "feature": "b2 与大六、大七并存，柔和又意外。",
+   "progression": "bIImaj7 - Imaj7",
+   "improv": "从 Phrygian 借 b2，但保留大调的安定。"
+  },
+  {
+   "id": "romanianMajor",
+   "category": "特殊與民族音階",
+   "label": "Romanian Major / 罗马尼亚大调",
+   "intervals": [
+    0,
+    2,
+    3,
+    6,
+    7,
+    9,
+    11
+   ],
+   "feature": "增四度配大七，民间舞蹈色彩。",
+   "progression": "Imaj7 - #iv° - Imaj7",
+   "improv": "与 Dorian #4 是同族音阶，注意大三度。"
+  },
+  {
+   "id": "hirajoshi",
+   "category": "特殊與民族音階",
+   "label": "Hirajoshi / 平調子（日本）",
+   "intervals": [
+    0,
+    2,
+    3,
+    7,
+    8
+   ],
+   "feature": "五声不对称结构，日本传统音阶。",
+   "progression": "五声 vamp",
+   "improv": "空四、五度与小二度并置，东方色彩。"
+  },
+  {
+   "id": "enigmatic",
+   "category": "特殊與民族音階",
+   "label": "Enigmatic / 謎樣音階",
+   "intervals": [
+    0,
+    1,
+    4,
+    6,
+    8,
+    10,
+    11
+   ],
+   "feature": "羅西尼/威爾第式，不對稱的懸疑色彩。",
+   "progression": "半音終止句",
+   "improv": "圍繞半音與增三結構，適合懸疑樂句。"
+  },
+  {
+   "id": "prometheus",
+   "category": "特殊與民族音階",
+   "label": "Prometheus / 普羅米修斯音階",
+   "intervals": [
+    0,
+    2,
+    4,
+    6,
+    9,
+    10
+   ],
+   "feature": "Lydian 屬去掉五音，印象派、爵士常用。",
+   "progression": "V7#11sus 靜態和聲",
+   "improv": "適合 7#11 和弦，音少而色彩強。"
+  }
+ ],
+ "ivs": [],
+ "tools": []
+}

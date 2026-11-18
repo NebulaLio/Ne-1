@@ -1272,7 +1272,6 @@ const STORAGE_KEYS = {
   prefs: "music-dictionary-prefs-v1",
   customPhrases: "music-dictionary-custom-phrases-v1",
   scores: "music-dictionary-scores-v1",
-  logo: "music-dictionary-logo-v1",
 };
 
 const DEGREE_NAMES = ["1", "2", "3", "4", "5", "6", "7"];
@@ -1433,24 +1432,44 @@ S2T_CHARS["床"] = "床";
 T2S_CHARS["即"] = "即";
 T2S_CHARS["既"] = "既";
 
+const LANG_CONVERT_CACHE = new Map();
+const LANG_ENTRY_CACHE = new Map();
+const LANG_CJK_RE = /[\u3400-\u9fff]/;
+
+function getLangEntries(lang) {
+  if (LANG_ENTRY_CACHE.has(lang)) return LANG_ENTRY_CACHE.get(lang);
+  const entries = LANG_PHRASES
+    .map((pair, i) => [pair[0], pair[1], lang === "zh-HK" ? pair[1] : pair[0], i])
+    .sort((a, b) => Math.max(b[0].length, b[1].length) - Math.max(a[0].length, a[1].length));
+  LANG_ENTRY_CACHE.set(lang, entries);
+  return entries;
+}
+
 function convertText(text, lang) {
   if (text == null) return text;
-  let out = String(text);
+  const source = String(text);
+  if (!source || !LANG_CJK_RE.test(source)) return source;
+  const cacheKey = lang + "\u0000" + source;
+  const cached = LANG_CONVERT_CACHE.get(cacheKey);
+  if (cached !== undefined) return cached;
+  let out = source;
   const charMap = lang === "zh-HK" ? S2T_CHARS : T2S_CHARS;
   const placeholders = [];
   const token = (i) => "\uE000" + i + "\uE001";
   // 長詞優先；兩側字形都先佔位，再還原為目標語言寫法
-  const entries = LANG_PHRASES
-    .map((pair, i) => [pair[0], pair[1], lang === "zh-HK" ? pair[1] : pair[0], i])
-    .sort((a, b) => Math.max(b[0].length, b[1].length) - Math.max(a[0].length, a[1].length));
-  entries.forEach(([fromS, fromT, to]) => {
+  getLangEntries(lang).forEach((entry) => {
+    const fromS = entry[0];
+    const fromT = entry[1];
+    const to = entry[2];
     const i = placeholders.length;
     placeholders[i] = to;
     out = out.split(fromS).join(token(i));
     if (fromT !== fromS) out = out.split(fromT).join(token(i));
   });
-  out = out.replace(/[㐀-䶿一-鿿]/g, (ch) => charMap[ch] || ch);
+  out = out.replace(/[\u3400-\u9fff]/g, (ch) => charMap[ch] || ch);
   out = out.replace(/\uE000(\d+)\uE001/g, (_, i) => placeholders[Number(i)]);
+  if (LANG_CONVERT_CACHE.size > 7000) LANG_CONVERT_CACHE.clear();
+  LANG_CONVERT_CACHE.set(cacheKey, out);
   return out;
 }
 
@@ -1613,11 +1632,12 @@ const state = {
   voiceExample: "good",
   quiz: { total: 0, correct: 0, answer: "", type: "chord", answered: false, grade: 0 },
   quizGrade: 0,
+  quizCategory: "all",
   abrsmGrade: 1,
+  level: "learner",
   quizTimer: null,
   customPhrases: [],
   scores: [],
-  logo: "",
   tabBeats: 4,
   tabGrid: [],
   tabCursor: 0,
@@ -1642,6 +1662,94 @@ const state = {
   pianoDuration: "h",
   editingScoreId: null,
 };
+
+/* ── 三档解说层级：文本适配与术语翻译 ───────────────────── */
+const NBL = window.NBL;
+
+function levelKey() {
+  return NBL ? NBL.normalizeLevel(state.level) : "learner";
+}
+
+function levelMeta() {
+  return NBL ? NBL.levelMeta(levelKey()) : { label: "学过乐理", short: "进阶", icon: "✦", tagline: "", desc: "" };
+}
+
+function isBeginnerLevel() {
+  return levelKey() === "beginner";
+}
+
+function isProLevel() {
+  return levelKey() === "pro";
+}
+
+function uiText(path, vars) {
+  return NBL ? NBL.ui(path, levelKey(), vars) : "";
+}
+
+function chordLevelText(chord) {
+  return NBL ? NBL.chordText(chord.id, levelKey()) : { summary: chord.theory || "", use: chord.function || "", tip: chord.guitar || "" };
+}
+
+function modeLevelText(mode) {
+  return NBL ? NBL.modeText(mode.id, levelKey()) : { mood: mode.feature || "", use: mode.progression || "", improv: mode.improv || "" };
+}
+
+function intervalLevelText(code) {
+  return NBL ? NBL.intervalText(code, levelKey()) : { sound: "", use: "" };
+}
+
+function levelBadge() {
+  const meta = levelMeta();
+  return `<span class="level-badge" data-level="${levelKey()}">${meta.icon} ${meta.label}</span>`;
+}
+
+const PLAIN_TERM_MAP = [
+  ["导向音", "带路的音"],
+  ["Guide Tone", "带路的音"],
+  ["guide tone", "带路的音"],
+  ["声部连接", "几个音怎么接"],
+  ["平行五度", "两个声部同方向走五度"],
+  ["平行八度", "两个声部同方向走八度"],
+  ["三全音", "相差六个半音的两个音"],
+  ["张力音", "让声音变紧的音"],
+  ["张力", "紧绷感"],
+  ["解决", "回到稳定"],
+  ["转位", "把最低音换掉"],
+  ["配属音阶", "可以配着弹的音阶"],
+  ["声部", "每个音的方向"],
+  ["功能", "作用"],
+  ["级数", "第几级"],
+  ["Voicing", "音的排列"],
+  ["voicing", "音的排列"],
+  ["高叠", "往上叠加"],
+  ["延伸音", "往上加的音"],
+  ["根音", "基准音"],
+  ["省略", "不弹"],
+];
+
+function plainTerm(text) {
+  let out = String(text == null ? "" : text);
+  PLAIN_TERM_MAP.forEach(([from, to]) => {
+    out = out.split(from).join(to);
+  });
+  return out;
+}
+
+function levelAware(text, plainText) {
+  if (isBeginnerLevel() && plainText) return plainText;
+  return text;
+}
+
+function refreshLanguage(...nodes) {
+  nodes.forEach((node) => {
+    if (!node) return;
+    try {
+      applyLanguageToRoot(node);
+    } catch {
+      // ignore transient nodes
+    }
+  });
+}
 
 const els = {
   viewTitle: document.getElementById("viewTitle"),
@@ -1741,12 +1849,24 @@ const els = {
   pianoChordQuality: document.getElementById("pianoChordQuality"),
   insertPianoRightBtn: document.getElementById("insertPianoRightBtn"),
   insertPianoLeftBtn: document.getElementById("insertPianoLeftBtn"),
-  logoUpload: document.getElementById("logoUpload"),
-  brandLogo: document.querySelector(".brand-logo"),
-  brandLogoImg: document.getElementById("brandLogoImg"),
-  brandLogoPlaceholder: document.getElementById("brandLogoPlaceholder"),
-  removeLogoBtn: document.getElementById("removeLogoBtn"),
   toastRegion: document.getElementById("toastRegion"),
+  viewLeadText: document.getElementById("viewLeadText"),
+  viewCoord: document.getElementById("viewCoord"),
+  levelChip: document.getElementById("levelChip"),
+  levelChipText: document.getElementById("levelChipText"),
+  levelSwitch: document.getElementById("levelSwitch"),
+  chordCount: document.getElementById("chordCount"),
+  clearChordSearch: document.getElementById("clearChordSearch"),
+  navToggle: document.getElementById("navToggle"),
+  navClose: document.getElementById("navClose"),
+  navOverlay: document.getElementById("navOverlay"),
+  sidebar: document.getElementById("sidebar"),
+  backToTop: document.getElementById("backToTop"),
+  scrollProgress: document.getElementById("scrollProgress"),
+  shortcutModal: document.getElementById("shortcutModal"),
+  shortcutHelpBtn: document.getElementById("shortcutHelpBtn"),
+  closeShortcutBtn: document.getElementById("closeShortcutBtn"),
+  topbarEyebrow: document.getElementById("topbarEyebrow"),
 };
 
 function noteName(index, useFlats = state.useFlats) {
@@ -1783,75 +1903,39 @@ function escapeHtml(value) {
 
 function showToast(message, tone = "success") {
   if (!els.toastRegion) return;
+  while (els.toastRegion.children.length >= 3) {
+    els.toastRegion.firstElementChild.remove();
+  }
   const toast = document.createElement("div");
   toast.className = `toast ${tone}`;
-  toast.textContent = convertText(message, state.lang);
+  toast.setAttribute("role", "status");
+  const icon = document.createElement("span");
+  icon.className = "toast-icon";
+  icon.setAttribute("aria-hidden", "true");
+  icon.textContent = tone === "success" ? "✦" : tone === "error" ? "⚠" : "✧";
+  const text = document.createElement("span");
+  text.className = "toast-text";
+  text.textContent = convertText(message, state.lang);
+  const close = document.createElement("button");
+  close.className = "toast-close";
+  close.type = "button";
+  close.setAttribute("aria-label", "关闭提示");
+  close.textContent = "✕";
+  toast.append(icon, text, close);
   els.toastRegion.appendChild(toast);
-  window.setTimeout(() => toast.classList.add("visible"), 20);
-  window.setTimeout(() => {
+  let timer = 0;
+  const dismiss = () => {
+    window.clearTimeout(timer);
     toast.classList.remove("visible");
-    window.setTimeout(() => toast.remove(), 240);
-  }, 2300);
+    window.setTimeout(() => toast.remove(), 260);
+  };
+  close.addEventListener("click", dismiss);
+  window.requestAnimationFrame(() => toast.classList.add("visible"));
+  timer = window.setTimeout(dismiss, 2800);
 }
 
 function mod(n, m) {
   return ((n % m) + m) % m;
-}
-
-function safeSetStorage(key, value) {
-  try {
-    localStorage.setItem(key, value);
-    return true;
-  } catch {
-    showToast("本機儲存空間不足，Logo 或設定可能無法保留", "info");
-    return false;
-  }
-}
-
-function renderLogo() {
-  const hasLogo = !!state.logo;
-  els.brandLogoImg.hidden = !hasLogo;
-  els.brandLogoPlaceholder.hidden = hasLogo;
-  els.removeLogoBtn.hidden = !hasLogo;
-  els.brandLogo.classList.toggle("has-logo", hasLogo);
-  if (hasLogo) {
-    els.brandLogoImg.src = state.logo;
-  } else {
-    els.brandLogoImg.removeAttribute("src");
-  }
-}
-
-function readLogoFile(file) {
-  return new Promise((resolve, reject) => {
-    if (!file || !file.type.startsWith("image/")) {
-      reject(new Error("請選擇圖片檔案"));
-      return;
-    }
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error("圖片讀取失敗"));
-    reader.onload = () => {
-      if (file.type === "image/svg+xml") {
-        resolve(reader.result);
-        return;
-      }
-      const img = new Image();
-      img.onerror = () => reject(new Error("圖片格式無法辨識"));
-      img.onload = () => {
-        const MAX_SIZE = 256;
-        const scale = Math.min(1, MAX_SIZE / Math.max(img.width, img.height));
-        const width = Math.max(1, Math.round(img.width * scale));
-        const height = Math.max(1, Math.round(img.height * scale));
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL("image/png"));
-      };
-      img.src = reader.result;
-    };
-    reader.readAsDataURL(file);
-  });
 }
 
 function safeFileName(name) {
@@ -2150,29 +2234,16 @@ function functionToneClass(chord) {
   }[cls] || "color";
 }
 
-function getResolutionAdvice(chord) {
-  const root = noteName(state.root);
-  const upFourth = noteName(state.root + 5);
-  const downHalf = noteName(state.root - 1);
-  const downFifth = noteName(state.root - 5);
-  if (getFunctionClass(chord) === "Dominant") {
-    return `${root}${chord.name} 常解决到 ${upFourth} 或同目标小调；三音向上、七音向下，变化张力半音解决最自然。`;
-  }
-  if (chord.id === "halfDim") return `${root}m7b5 常作为小调 iiø，倾向进入 ${downFifth}7alt 再解决到小调主和弦。`;
-  if (["sus2", "sus4", "7sus4", "9sus4"].includes(chord.id)) return "悬挂音倾向回到三音；也可以保持不解决，形成现代流行或 fusion 的开放感。";
-  if (["dim", "dim7"].includes(chord.id)) return `可半音上行或下行解决，例如经过到 ${downHalf} 或 ${upFourth}，适合连接两个稳定和弦。`;
-  return "稳定和弦可作为起点或终点；如果要推进，可去 IV/ii 类下属功能，再到 V 回归。";
-}
-
-function getTensionSummary(chord) {
-  const tensions = chord.intervals
-    .filter((interval) => Math.abs(interval) > 7 || [1, 2, 5, 6, 8, 9, 10, 11].includes(mod(interval, 12)))
-    .map((interval) => `${intervalToLabel(interval)} ${noteName(state.root + interval)}`);
-  return tensions.length ? tensions.join("、") : "以根音、三音、五音为主，没有明显高位张力。";
-}
-
-function getFunctionLabel(chord) {
+function getFunctionLabel(chord, plain = false) {
   const cls = getFunctionClass(chord);
+  if (plain) {
+    return {
+      Tonic: "家（主和弦）",
+      Dominant: "想回家的推力（属和弦）",
+      Subdominant: "离开家的桥（下属和弦）",
+      Color: "换颜色的和弦",
+    }[cls] || "色彩和弦";
+  }
   return {
     Tonic: "主功能 (Tonic)",
     Dominant: "属功能 (Dominant)",
@@ -2181,48 +2252,126 @@ function getFunctionLabel(chord) {
   }[cls] || cls;
 }
 
+function getResolutionAdvice(chord) {
+  const root = noteName(state.root);
+  const upFourth = noteName(state.root + 5);
+  const downHalf = noteName(state.root - 1);
+  const downFifth = noteName(state.root - 5);
+  const lv = chordLevelText(chord);
+  if (isBeginnerLevel()) {
+    if (getFunctionClass(chord) === "Dominant") {
+      return `它最想走到「家」和弦（通常是 ${upFourth} 那个位置）。弹的时候把最紧张的音往最近的方向挪，就会很顺。`;
+    }
+    if (chord.id === "halfDim") return "它像半开半关的门，常先走到一个更紧的属和弦，再回到小调的家。";
+    if (["sus2", "sus4", "7sus4", "9sus4"].includes(chord.id)) return "挂留音像「还没决定」，可以回到三音收尾，也可以一直悬着制造现代感。";
+    if (["dim", "dim7"].includes(chord.id)) return "它很紧，适合当作两个稳定和弦之间的过道，半音往上或往下走都行。";
+    return "它本身很稳，可以停住；想继续走，就接一个下属或属和弦。";
+  }
+  if (getFunctionClass(chord) === "Dominant") {
+    return `${root}${chord.name} 常解决到 ${upFourth} 或同目标小调；三音向上、七音向下，变化张力半音解决最自然。`;
+  }
+  if (chord.id === "halfDim") return `${root}m7b5 常作为小调 iiø，倾向进入 ${downFifth}7alt 再解决到小调主和弦。`;
+  if (["sus2", "sus4", "7sus4", "9sus4"].includes(chord.id)) return "悬挂音倾向回到三音；也可以保持不解决，形成现代流行或 fusion 的开放感。";
+  if (["dim", "dim7"].includes(chord.id)) return `可半音上行或下行解决，例如经过到 ${downHalf} 或 ${upFourth}，适合连接两个稳定和弦。`;
+  return isProLevel() ? `${lv.use} 需要推进时可接 IV/ii 类下属功能，再经 V 回归。` : "稳定和弦可作为起点或终点；如果要推进，可去 IV/ii 类下属功能，再到 V 回归。";
+}
+
+function getTensionSummary(chord) {
+  const tensions = chord.intervals
+    .filter((interval) => Math.abs(interval) > 7 || [1, 2, 5, 6, 8, 9, 10, 11].includes(mod(interval, 12)))
+    .map((interval) => `${intervalToLabel(interval)} ${noteName(state.root + interval)}`);
+  if (isBeginnerLevel()) {
+    if (!tensions.length) return "它只用最核心的几个音，听起来干净、不紧绷。";
+    if (chord.intervals.length <= 3) {
+      return `它的紧绷感来自 ${tensions.join("、")} 这种不稳定的距离；弹的时候别在低音区久留，早点走到下一个和弦就好。`;
+    }
+    return `它比普通三和弦多了 ${chord.intervals.length - 3} 个「加料音」，所以听起来更满、更紧；想放松就少弹这些音。`;
+  }
+  if (isProLevel()) {
+    return tensions.length
+      ? `${tensions.join("、")}。控制张力密度即可改变解决的急迫感；密集排列时注意低音区浑浊。`
+      : "以根音、三音、五音为主，没有明显高位张力；可用延伸音重新上色。";
+  }
+  return tensions.length ? tensions.join("、") : "以根音、三音、五音为主，没有明显高位张力。";
+}
+
 function getVoiceLeadingAdvice(chord) {
   const notes = getChordMidi(chord);
   const compact = notes.map((midi) => midiToNoteName(midi)).join(" - ");
   const functionClass = getFunctionClass(chord);
+  const lv = chordLevelText(chord);
+  if (isBeginnerLevel()) {
+    return `把和弦音尽量放在附近，不要每个音都跳很远；先保留共同音，再让其余的音走最近的格。可以试试这组排列：${compact}。`;
+  }
   if (functionClass === "Dominant") {
     return `优先锁定三音与七音作为核心导向音（Guide Tones）；解决时令三音上行、七音下行平滑过渡。参考密集排列：${compact}。`;
   }
   if (functionClass === "Subdominant") {
     return `常作为进入属和弦的桥梁，低音宜级进或四五度跳进，内声部尽量保持共同音或级进。参考密集排列：${compact}。`;
   }
+  if (isProLevel()) {
+    return `以 3/7 为骨架，把根音交给低音、五音视密度省略；参考排列 ${compact}。${lv.tip}`;
+  }
   return `适合作为乐句稳定落点。键盘编配可由左手承担根音与五音，右手铺陈三音、七音及延伸音；吉他可省略纯五音。参考密集排列：${compact}。`;
 }
 
 function getTheoryHtml(chord = getSelectedChord()) {
   const chordScales = getChordScaleRecommendations(chord);
-  const scaleRows = chordScales
-    .map((choice) => `
-      <article class="scale-choice">
-        <strong>${choice.scale}</strong>
-        <span>${noteListFromSteps(choice.notes)}</span>
-        <p>${choice.why}</p>
-        <small>特征音：${choice.characteristic.join("、") || "和弦骨干音"} · 避用音：${choice.avoid.join("、") || "无严格避用音"} · 适用场景：${choice.use}</small>
-      </article>
-    `)
+  const shownScales = isBeginnerLevel() ? chordScales.slice(0, 2) : chordScales;
+  const scaleRows = shownScales
+    .map((choice) => {
+      if (isBeginnerLevel()) {
+        return `
+          <article class="scale-choice">
+            <strong>${choice.scale}</strong>
+            <span>${noteListFromSteps(choice.notes)}</span>
+            <p>${escapeHtml(plainTerm(choice.why))}</p>
+            <small>先在这组音里找落点；标着「少碰」的音不要停太久。</small>
+          </article>
+        `;
+      }
+      return `
+        <article class="scale-choice">
+          <strong>${choice.scale}</strong>
+          <span>${noteListFromSteps(choice.notes)}</span>
+          <p>${choice.why}</p>
+          <small>特征音：${choice.characteristic.join("、") || "和弦骨干音"} · 避用音：${choice.avoid.join("、") || "无严格避用音"} · 适用场景：${choice.use}</small>
+        </article>
+      `;
+    })
     .join("");
-  const functionLabel = getFunctionLabel(chord);
+  const functionLabel = getFunctionLabel(chord, isBeginnerLevel());
   const styleAdvice = {
-    jazz: "爵士视角：聚焦三音、七音导向线与高叠张力音（9/11/13），可省略纯五音或引入三全音替代。",
-    classical: "古典视角：注重主–下属–属功能逻辑、终止式规范、挂留音解决，严格避免平行五度与平行八度。",
-    pop: "流行视角：强调旋律线条的歌唱性、顺畅的低音走向（Slash Chord）以及开放和弦的空间色彩。",
+    jazz: isBeginnerLevel()
+      ? "爵士里先把七音、九音当成「加料」，不要一次全弹；三音和七音最重要。"
+      : "爵士视角：聚焦三音、七音导向线与高叠张力音（9/11/13），可省略纯五音或引入三全音替代。",
+    classical: isBeginnerLevel()
+      ? "古典里最重要的是「离开—回家」的方向，并且不要让两个声部一直平行走。"
+      : "古典视角：注重主–下属–属功能逻辑、终止式规范、挂留音解决，严格避免平行五度与平行八度。",
+    pop: isBeginnerLevel()
+      ? "流行里先让旋律好唱，低音走得顺，和弦不用塞太满。"
+      : "流行视角：强调旋律线条的歌唱性、顺畅的低音走向（Slash Chord）以及开放和弦的空间色彩。",
   }[state.styleMode] || "";
+  const lv = chordLevelText(chord);
+  const label = (key, fallback) => escapeHtml(uiText(`labels.${key}`) || fallback);
+  const intro = isBeginnerLevel()
+    ? `<p class="theory-lead">${escapeHtml(lv.summary)} ${escapeHtml(lv.use)}</p>`
+    : isProLevel()
+      ? `<p class="theory-lead">${escapeHtml(lv.summary)} <strong>${escapeHtml(chord.function)}</strong> · ${escapeHtml(lv.use)}</p>`
+      : "";
   return `
-    <h4>${getChordDisplayName(chord)} · ${functionLabel}</h4>
+    <h4>${getChordDisplayName(chord)} · ${functionLabel} ${levelBadge()}</h4>
+    ${intro}
     <ul>
-      <li><strong>功能属性：</strong>${functionLabel} · ${chord.function}</li>
-      <li><strong>解决倾向：</strong>${getResolutionAdvice(chord)}</li>
-      <li><strong>张力与色彩：</strong>${getTensionSummary(chord)}</li>
-      <li><strong>声部连接：</strong>${getVoiceLeadingAdvice(chord)}</li>
-      <li><strong>风格要领：</strong>${styleAdvice}</li>
+      <li><strong>${label("function", "功能属性")}：</strong>${isBeginnerLevel() ? functionLabel : `${functionLabel} · ${chord.function}`}</li>
+      <li><strong>${label("resolution", "解决倾向")}：</strong>${getResolutionAdvice(chord)}</li>
+      <li><strong>${label("tension", "张力与色彩")}：</strong>${getTensionSummary(chord)}</li>
+      <li><strong>${label("voice", "声部连接")}：</strong>${getVoiceLeadingAdvice(chord)}</li>
+      <li><strong>${label("style", "风格要领")}：</strong>${styleAdvice}</li>
+      <li><strong>${label("practice", "练习建议")}：</strong>${escapeHtml(lv.tip)}</li>
     </ul>
     <div class="scale-choice-list">
-      <h4>推荐配属音阶（Chord-Scale）</h4>
+      <h4>${label("scale", "推荐配属音阶（Chord-Scale）")} ${isBeginnerLevel() ? '<span class="mini-hint">先看前两组就够</span>' : ""}</h4>
       ${scaleRows}
     </div>
   `;
@@ -2230,25 +2379,49 @@ function getTheoryHtml(chord = getSelectedChord()) {
 
 function getScaleTheoryHtml() {
   const modeNotes = getScaleNotes().map((n) => noteName(n)).join(" ");
-  return `
-    <h4>${noteName(state.root)} ${getModeLabel()}</h4>
-    <ul>
+  const rootNote = noteName(state.root);
+  const modeLabel = getModeLabel();
+  const bullets = isBeginnerLevel()
+    ? `
+      <li><strong>这组音：</strong>${modeNotes}</li>
+      <li><strong>怎么听：</strong>先听 ${rootNote} 是不是「家」，再听它听起来偏亮还是偏暗。</li>
+      <li><strong>怎么练：</strong>先唱 1-3-5（家、中间、支撑），再把 2/4/6 当成连接音。</li>
+      <li><strong>怎么用：</strong>旋律落在 1/3/5 最稳，想制造一点悬念就停在 2/4/6。</li>
+    `
+    : `
       <li><strong>音阶：</strong>${modeNotes}</li>
       <li><strong>功能：</strong>${getDegreeLabels().join(" - ")}</li>
       <li><strong>练习：</strong>先唱 1-3-5-7，再补 2/4/6，避免只背音名。</li>
-      <li><strong>即兴：</strong>围绕当前和弦音落点，用邻音和经过音连接。</li>
-    </ul>
+      <li><strong>即兴：</strong>${isProLevel() ? "用 3/7 建立骨架，把 9/11/13 当张力层；注意避免音与解决方向。" : "围绕当前和弦音落点，用邻音和经过音连接。"}</li>
+    `;
+  return `
+    <h4>${rootNote} ${modeLabel} ${levelBadge()}</h4>
+    <p class="theory-lead">${escapeHtml(uiText("theory.scaleLead"))}</p>
+    <ul>${bullets}</ul>
   `;
 }
 
 function getProgressionTheoryHtml() {
   const analysis = analyzeProgression(state.progression);
+  if (isBeginnerLevel()) {
+    const feel = analysis.score >= 80 ? "很顺、很有回家的感觉" : analysis.score >= 60 ? "大致顺，但中间会拐一下" : "走向比较意外，适合想要惊喜的段落";
+    return `
+      <h4>这条进行的感觉 ${levelBadge()}</h4>
+      <p class="theory-lead">${escapeHtml(uiText("progressions.lead"))}</p>
+      <ul>
+        <li><strong>实际和弦：</strong>${state.progression.map(degreeToChordName).join(" - ") || "还没有和弦"}</li>
+        <li><strong>听起来：</strong>${feel}。</li>
+        <li><strong>下一步：</strong>可以试试接 ${analysis.nextSuggestions.slice(0, 2).join(" 或 ") || "主和弦"}。</li>
+      </ul>
+      ${analysis.events.length ? `<div class="analysis-tags">${analysis.events.map((event) => `<span>${escapeHtml(plainTerm(event))}</span>`).join("")}</div>` : ""}
+    `;
+  }
   return `
-    <h4>功能进行分析</h4>
+    <h4>功能进行分析 ${levelBadge()}</h4>
     <ul>
       <li><strong>罗马数字：</strong>${analysis.roman}</li>
       <li><strong>功能链：</strong>${analysis.functions}</li>
-      <li><strong>专业评分：</strong>${renderScoreLine(analysis.scores)}</li>
+      <li><strong>${isProLevel() ? "四维评分" : "专业评分"}：</strong>${renderScoreLine(analysis.scores)}</li>
       <li><strong>替代建议：</strong>${analysis.suggestion}</li>
       <li><strong>下一和弦：</strong>${analysis.nextSuggestions.join("、")}</li>
     </ul>
@@ -2259,9 +2432,12 @@ function getProgressionTheoryHtml() {
 function getVoiceTheoryHtml() {
   const a = chordById(els.voiceChordA?.value || "maj7");
   const b = chordById(els.voiceChordB?.value || "7");
+  const comparison = compareVoiceLeading(a, b);
+  const summary = isBeginnerLevel() ? plainTerm(comparison.summary) : comparison.summary;
   return `
-    <h4>${a.name} → ${b.name}</h4>
-    <p>${compareVoiceLeading(a, b).summary}</p>
+    <h4>${a.name} → ${b.name} ${levelBadge()}</h4>
+    <p>${summary}</p>
+    ${isProLevel() ? `<p class="theory-lead">评分 ${comparison.check.rating}/100 · 关注共同音、导向音与平行五八度。</p>` : ""}
   `;
 }
 
@@ -2645,6 +2821,8 @@ function renderChordDetails(chord) {
   const rootNote = noteName(state.root);
   const scaleNotes = getScaleNotes();
   const selectedDegree = getDegreeLabels()[0];
+  const lv = chordLevelText(chord);
+  const meta = levelMeta();
   const construction = chord.intervals.map((interval, index) => {
     const label = ["根音", "三音", "五音", "七音", "九音", "十一音", "十三音"][index] || `${index + 1}`;
     return `${label} +${intervalToLabel(interval)} = ${noteName(state.root + interval)}`;
@@ -2660,7 +2838,12 @@ function renderChordDetails(chord) {
   els.currentRootLabel.textContent = rootNote;
   els.currentRootHint.textContent = `${rootNote} ${getModeLabel()} / ${scaleNotes.map((n) => noteName(n)).join(" ")}`;
   els.selectedChordName.textContent = getChordDisplayName(chord);
-  els.selectedChordAnalysis.textContent = `${chord.theory} 作用：${chord.function}。${chord.guitar}`;
+  const analysisText = isBeginnerLevel()
+    ? `${lv.summary} ${lv.use} 上手提示：${lv.tip}`
+    : isProLevel()
+      ? `${lv.summary} ${lv.use} 编配：${lv.tip}`
+      : `${lv.summary} 功能：${chord.function}。${lv.use}`;
+  els.selectedChordAnalysis.innerHTML = `<span class="analysis-level" data-level="${levelKey()}">${meta.icon} ${escapeHtml(meta.label)}</span><span>${escapeHtml(analysisText)}</span>`;
   els.selectedChordTones.innerHTML = notes
     .map((note, index) => {
       const interval = chord.intervals[index];
@@ -2673,29 +2856,45 @@ function renderChordDetails(chord) {
   els.constructionStrip.innerHTML = construction
     .map((step, index) => `<div class="construction-step"><strong>第 ${index + 1} 步</strong><span>${escapeHtml(step)}</span></div>`)
     .join("");
+  const levelLabel = isBeginnerLevel() ? "它能做什么" : isProLevel() ? "功能定位" : "调内作用";
+  const tipLabel = isBeginnerLevel() ? "上手提示" : isProLevel() ? "编配要点" : "练习提示";
   els.selectedChordDetails.innerHTML = `
     <div><dt>类别</dt><dd>${chordCategoryLabel(chord.category)}</dd></div>
     <div><dt>构成</dt><dd>${pitchInfo}</dd></div>
-    <div><dt>调内作用</dt><dd>${analyzeChordFunction(chord)}</dd></div>
-    <div><dt>提示</dt><dd>${roman} / ${selectedDegree}</dd></div>
+    <div><dt>${levelLabel}</dt><dd>${analyzeChordFunction(chord)}</dd></div>
+    <div><dt>${tipLabel}</dt><dd>${escapeHtml(lv.tip)}</dd></div>
   `;
 }
 
 function analyzeChordFunction(chord) {
-  const rootDegree = getDegreeLabels()[0];
+  const lv = chordLevelText(chord);
+  const functionLabel = getFunctionLabel(chord);
   const third = chord.intervals.find((value) => mod(value, 12) === 3 || mod(value, 12) === 4);
   const seventh = chord.intervals.find((value) => mod(value, 12) === 10 || mod(value, 12) === 11);
   const tension = chord.intervals
     .filter((interval) => [1, 5, 6, 8, 9, 13, 14, 15, 17, 21].includes(interval))
     .map((interval) => intervalToLabel(interval))
     .join("、");
-  const signature = `${rootDegree}${chord.name}`;
-  const base = DEGREE_FUNCTION_HINTS[rootDegree] || "功能待判断";
-  const color = chord.color === "altered" ? "张力强，适合解决。" : "音色较稳，适合铺陈。";
+  const signature = `${noteName(state.root)}${chord.name}`;
   const extras = [];
-  if (third !== undefined) extras.push(`三音决定性质：${intervalToLabel(third)}`);
-  if (seventh !== undefined) extras.push(`七音提供走向：${intervalToLabel(seventh)}`);
-  if (tension) extras.push(`高张力音：${tension}`);
+  if (third !== undefined) extras.push(`三音 ${intervalToLabel(third)} 决定性质`);
+  if (seventh !== undefined) extras.push(`七音 ${intervalToLabel(seventh)} 提供走向`);
+  if (tension) extras.push(`张力音 ${tension}`);
+  const base = chord.function || "色彩功能";
+
+  if (isBeginnerLevel()) {
+    const plainRole = {
+      Tonic: "它是这段音乐里的「家」，听起来最稳，适合开头、停顿或收尾。",
+      Dominant: "它带着很强的「想回家」的推力，通常会走向主和弦。",
+      Subdominant: "它像离开家的一座桥，常把音乐推向属和弦。",
+      Color: "它不直接负责回家，而是给音乐换一种颜色或制造转折。",
+    }[getFunctionClass(chord)] || "它负责提供和声色彩。";
+    return `${plainRole} ${plainTerm(lv.use || base)}`;
+  }
+  if (isProLevel()) {
+    return `${signature}：${functionLabel}（${base}）。${extras.length ? extras.join("；") + "。" : ""}${lv.tip}`;
+  }
+  const color = chord.color === "altered" ? "张力强，适合解决。" : "音色较稳，适合铺陈。";
   return `${signature} 归属 ${base}，${color}${extras.length ? ` ${extras.join("；")}` : ""}`;
 }
 
@@ -2826,18 +3025,22 @@ function renderVoicings(chord) {
     : [14, 18, 23].map((interval) => noteName(state.root + interval));
   const chorale = getCompactVoicing(chord, state.root, 3).map((note) => midiToNoteName(note));
   const cards = [
-    ["键盘密集排列", compact, "音区集中，适合听辨和弦基本性质与键盘柱式伴奏。"],
-    ["Drop 2 开放排列", drop2.map((note) => midiToNoteName(note)).join(" "), "将次高音降低八度，适合抒情慢板伴奏与吉他四声部把位。"],
-    ["Drop 3 宽广排列", drop3.map((note) => midiToNoteName(note)).join(" "), "低音间距更开阔，适合吉他中低把位或钢琴双手分配。"],
-    ["无根音导向排列", rootless37.join(" ") || tones.slice(1).join(" "), "省去根音（交由贝斯承担），凸显三音、七音与高叠张力。"],
-    ["上方三和弦结构", upperStructure.join(" "), "在属和弦上方叠置三和弦，快速构建变化属与利底亚属色彩。"],
-    ["四度叠置排列", quartal.join(" "), "以纯四度/增四度叠置打破三度框架，呈现现代调式爵士空间感。"],
-    ["四部合唱排列", chorale.join(" "), "古典四部和声均衡分布，便于检验声部平滑度与导音解决。"],
-    ["吉他实用简省", tones.slice(0, 4).join(" "), "保留根音、三音与七音核心骨架，适度省略五音以利按弦。"],
+    ["close", "键盘密集排列", compact, "音区集中，适合听辨和弦基本性质与键盘柱式伴奏。"],
+    ["drop2", "Drop 2 开放排列", drop2.map((note) => midiToNoteName(note)).join(" "), "将次高音降低八度，适合抒情慢板伴奏与吉他四声部把位。"],
+    ["drop3", "Drop 3 宽广排列", drop3.map((note) => midiToNoteName(note)).join(" "), "低音间距更开阔，适合吉他中低把位或钢琴双手分配。"],
+    ["rootless", "无根音导向排列", rootless37.join(" ") || tones.slice(1).join(" "), "省去根音（交由贝斯承担），凸显三音、七音与高叠张力。"],
+    ["upper", "上方三和弦结构", upperStructure.join(" "), "在属和弦上方叠置三和弦，快速构建变化属与利底亚属色彩。"],
+    ["quartal", "四度叠置排列", quartal.join(" "), "以纯四度/增四度叠置打破三度框架，呈现现代调式爵士空间感。"],
+    ["chorale", "四部合唱排列", chorale.join(" "), "古典四部和声均衡分布，便于检验声部平滑度与导音解决。"],
+    ["guitar", "吉他实用简省", tones.slice(0, 4).join(" "), "保留根音、三音与七音核心骨架，适度省略五音以利按弦。"],
   ];
   els.voicingStrip.innerHTML = cards
-    .map(([title, body, context]) => `<article class="voicing-card"><strong>${title}</strong><span>${body}</span><small>${context}</small></article>`)
+    .map(([key, title, body, fallback]) => {
+      const context = (NBL && NBL.voicingText(key, levelKey())) || fallback;
+      return `<article class="voicing-card"><strong>${title}</strong><span>${body}</span><small>${escapeHtml(context)}</small></article>`;
+    })
     .join("");
+  refreshLanguage(els.voicingStrip);
 }
 
 function renderTheoryPanel() {
@@ -2853,6 +3056,7 @@ function renderTheoryPanel() {
   document.querySelectorAll("[data-theory-focus]").forEach((button) => {
     button.classList.toggle("active", button.dataset.theoryFocus === state.theoryFocus);
   });
+  refreshLanguage(els.theoryPanel);
 }
 
 function renderChordGrid() {
@@ -2871,19 +3075,24 @@ function renderChordGrid() {
         .map((note, index) => `<span class="tone-pill">${intervalToLabel(chord.intervals[index])} ${note}</span>`)
         .join("");
       const functionClass = getFunctionClass(chord);
+      const lv = chordLevelText(chord);
       return `
-        <button class="chord-card ${active ? "active" : ""} ${functionToneClass(chord)}" data-chord="${chord.id}" type="button">
+        <button class="chord-card ${active ? "active" : ""} ${functionToneClass(chord)}" data-chord="${chord.id}" type="button" aria-pressed="${active}" title="${escapeHtml(lv.summary || chord.theory)}">
           <span class="function-badge">${functionClass}</span>
           <h4>${getChordDisplayName(chord)}</h4>
           <div class="tone-row">${tones}</div>
-          <p>${chord.theory}</p>
+          <p>${escapeHtml(lv.summary || chord.theory)}</p>
         </button>
       `;
     })
     .join("");
-  if (!filtered.length) {
-    els.chordGrid.innerHTML = '<div class="empty-state">没有匹配的和弦，换个关键词试试。</div>';
+  if (els.chordCount) {
+    els.chordCount.textContent = `${filtered.length} 个和弦`;
   }
+  if (!filtered.length) {
+    els.chordGrid.innerHTML = `<div class="empty-state">${escapeHtml(uiText("empty.noMatch"))} </div>`;
+  }
+  refreshLanguage(els.chordGrid, els.chordCount);
 }
 
 function renderToolbox(selectedId = TOOLBOX_ITEMS[0]?.id) {
@@ -2898,7 +3107,7 @@ function renderToolbox(selectedId = TOOLBOX_ITEMS[0]?.id) {
     <button class="tool-card ${item.id === selected.id ? "active" : ""}" data-toolbox-id="${item.id}" type="button">
       <span class="priority-chip ${priorityClass(item.priority)}">${item.priority}</span>
       <strong>${item.title}</strong>
-      <p>${item.description}</p>
+      <p>${escapeHtml(isBeginnerLevel() ? plainTerm(item.description) : item.description)}</p>
       <small>${item.source}</small>
     </button>
   `).join("");
@@ -2918,23 +3127,32 @@ function renderScaleView() {
   const scaleNotes = getScaleNotes();
   const degreeLabels = getDegreeLabels();
   els.scaleTitle.textContent = `${noteName(state.root)} ${getModeLabel()}`;
+  const scaleLead = document.getElementById("scaleLead");
+  if (scaleLead) {
+    scaleLead.textContent = uiText("theory.scaleLead");
+  }
   els.scaleTones.innerHTML = scaleNotes
-    .map((note, index) => `<span class="tone-pill degree">${degreeLabels[index]} ${noteName(note)}</span>`)
+    .map((note, index) => {
+      const degree = isBeginnerLevel() ? String(index + 1) : degreeLabels[index];
+      return `<span class="tone-pill degree">${degree} ${noteName(note)}</span>`;
+    })
     .join("");
   els.degreeTable.innerHTML = scaleNotes
     .map((note, index) => {
       const degree = degreeLabels[index];
-      const label = DEGREE_FUNCTION_HINTS[degree] || "色彩/经过";
+      const displayDegree = isBeginnerLevel() ? String(index + 1) : degree;
+      const hint = (NBL && NBL.degreeText(String(index + 1), levelKey())) || DEGREE_FUNCTION_HINTS[degree] || "色彩/经过";
       const chord = deriveDiatonicChord(index);
       return `
         <div class="degree-row">
-          <strong>${degree}</strong>
+          <strong>${displayDegree}</strong>
           <span>${noteName(note)}</span>
-          <span>${chord} · ${label}</span>
+          <span>${chord} · ${escapeHtml(hint)}</span>
         </div>
       `;
     })
     .join("");
+  refreshLanguage(scaleLead, els.scaleTones, els.degreeTable);
 }
 
 function renderIntervalTool() {
@@ -2948,35 +3166,45 @@ function renderIntervalTool() {
   const a = Number(els.intervalNoteA.value || 0);
   const b = Number(els.intervalNoteB.value || 7);
   const info = getIntervalInfo(a, b);
+  const lv = intervalLevelText(info.code);
+  const soundLabel = isBeginnerLevel() ? "听起来" : isProLevel() ? "音响与倾向" : "听感";
   els.intervalResult.innerHTML = `
-    <h4>${noteName(a)} → ${noteName(b)}</h4>
+    <h4>${noteName(a)} → ${noteName(b)} ${levelBadge()}</h4>
+    <p class="theory-lead">${escapeHtml(uiText("intervals.lead"))}</p>
     <ul>
       <li><strong>音程：</strong>${info.name}（${info.code}）</li>
       <li><strong>半音数：</strong>${info.semitones}</li>
-      <li><strong>听感/用法：</strong>${info.text}</li>
+      <li><strong>${soundLabel}：</strong>${escapeHtml(lv.sound || info.text)}</li>
+      <li><strong>怎么用：</strong>${escapeHtml(lv.use || "")}</li>
     </ul>
   `;
   els.intervalReference.innerHTML = INTERVAL_REFERENCE.map(
-    ([code, name, semitones, text]) => `
-      <article class="interval-item">
-        <strong>${code}</strong>
-        <span>${name} · ${semitones} 半音 · ${text}</span>
-      </article>
-    `
+    ([code, name, semitones, text]) => {
+      const item = (NBL && NBL.intervalText(code, levelKey())) || { sound: text, use: "" };
+      return `
+        <article class="interval-item">
+          <strong>${code}</strong>
+          <span>${name} · ${semitones} 半音 · ${escapeHtml(item.sound)}</span>
+          ${isBeginnerLevel() ? "" : `<small>${escapeHtml(item.use)}</small>`}
+        </article>
+      `;
+    }
   ).join("");
+  refreshLanguage(els.intervalResult, els.intervalReference);
 }
 
 function renderProgressionLibrary() {
   if (!els.progressionLibrary) return;
   els.progressionLibrary.innerHTML = PROGRESSION_PRESETS.map(
     (preset, index) => `
-      <article class="progression-card drag-source" draggable="true" data-preset="${index}" data-drag-degree="${preset.degrees[0]}">
+      <article class="progression-card drag-source" draggable="true" data-preset="${index}" data-drag-degree="${preset.degrees[0]}" role="button" tabindex="0" aria-label="载入进行：${escapeHtml(preset.title)}">
         <strong>${preset.title}</strong>
         <span>${preset.degrees.join(" - ")}</span>
-        <p>${preset.note}</p>
+        <p>${escapeHtml((NBL && NBL.progressionNote(index, levelKey())) || preset.note)}</p>
       </article>
     `
   ).join("");
+  refreshLanguage(els.progressionLibrary);
 }
 
 function renderProgressionBuilder() {
@@ -2991,25 +3219,40 @@ function renderProgressionBuilder() {
   ).join("");
   els.progressionLane.innerHTML = state.progression.length
     ? state.progression.map((degree, index) => `
-        <button class="lane-chord" data-remove-degree="${index}" type="button">
+        <button class="lane-chord" data-remove-degree="${index}" type="button" title="点击移除">
           <strong>${degree}</strong>
-          <span>${degreeToChordName(degree)} · 点击移除</span>
+          <span>${degreeToChordName(degree)} · ${isBeginnerLevel() ? "点一下移除" : "点击移除"}</span>
         </button>
       `).join("")
-    : '<div class="empty-state">点击左侧和弦加入进行。</div>';
+    : `<div class="empty-state">${escapeHtml(uiText("progressions.emptyLane"))}</div>`;
   const analysis = analyzeProgression(state.progression);
+  const levelSummary = isBeginnerLevel()
+    ? (() => {
+        const feel = analysis.score >= 80 ? "很顺、很有回家的感觉" : analysis.score >= 60 ? "大致顺，但中间会拐一下" : "走向比较意外，适合想要惊喜的段落";
+        return `
+          <p class="theory-lead">${escapeHtml(uiText("progressions.lead"))}</p>
+          <ul>
+            <li><strong>实际和弦：</strong>${state.progression.map(degreeToChordName).join(" - ") || "还没有和弦"}</li>
+            <li><strong>听起来：</strong>${feel}。</li>
+            <li><strong>下一步：</strong>可以试试接 ${analysis.nextSuggestions.slice(0, 2).join(" 或 ") || "主和弦"}。</li>
+          </ul>
+        `;
+      })()
+    : `
+      <ul>
+        <li><strong>功能链：</strong>${analysis.functions}</li>
+        <li><strong>${isProLevel() ? "四维评分" : "综合评分"}：</strong>${isProLevel() ? renderScoreLine(analysis.scores) : `${analysis.score}/100`}</li>
+        <li><strong>替代建议：</strong>${analysis.suggestion}</li>
+        <li><strong>下一和弦建议：</strong>${analysis.nextSuggestions.join("、")}</li>
+        <li><strong>实际和弦：</strong>${state.progression.map(degreeToChordName).join(" - ") || "尚未建立"}</li>
+      </ul>
+    `;
   els.progressionAnalysis.innerHTML = `
-    <h4>${analysis.roman}</h4>
-    <ul>
-      <li><strong>功能链：</strong>${analysis.functions}</li>
-      <li><strong>综合评分：</strong>${analysis.score}/100</li>
-      <li><strong>专业维度：</strong>${renderScoreLine(analysis.scores)}</li>
-      <li><strong>替代建议：</strong>${analysis.suggestion}</li>
-      <li><strong>下一和弦建议：</strong>${analysis.nextSuggestions.join("、")}</li>
-      <li><strong>实际和弦：</strong>${state.progression.map(degreeToChordName).join(" - ") || "尚未建立"}</li>
-    </ul>
-    ${analysis.events.length ? `<div class="analysis-tags">${analysis.events.map((event) => `<span>${event}</span>`).join("")}</div>` : ""}
+    <h4>${isBeginnerLevel() ? "这条进行的感觉" : "功能进行分析"} ${levelBadge()}</h4>
+    ${levelSummary}
+    ${analysis.events.length ? `<div class="analysis-tags">${analysis.events.map((event) => `<span>${escapeHtml(isBeginnerLevel() ? plainTerm(event) : event)}</span>`).join("")}</div>` : ""}
   `;
+  refreshLanguage(els.progressionLane, els.progressionAnalysis);
 }
 
 function getModeStepFormula(mode) {
@@ -3160,21 +3403,28 @@ function renderVoiceVisual() {
     ${rows}
   `;
   const severe = comparison.check.severe.length
-    ? comparison.check.severe.map((item) => `<li class="issue-severe">${item}</li>`).join("")
-    : '<li class="issue-good">未发现严重规则问题。</li>';
+    ? comparison.check.severe.map((item) => `<li class="issue-severe">${escapeHtml(isBeginnerLevel() ? plainTerm(item) : item)}</li>`).join("")
+    : `<li class="issue-good">${isBeginnerLevel() ? "没有发现严重的撞音。" : "未发现严重规则问题。"}</li>`;
   const issues = comparison.check.issues.length
-    ? comparison.check.issues.map((item) => `<li>${item}</li>`).join("")
-    : '<li class="issue-good">没有明显可疑移动。</li>';
-  const advice = comparison.check.advice.map((item) => `<li>${item}</li>`).join("");
+    ? comparison.check.issues.map((item) => `<li>${escapeHtml(isBeginnerLevel() ? plainTerm(item) : item)}</li>`).join("")
+    : `<li class="issue-good">${isBeginnerLevel() ? "没有明显不舒服的移动。" : "没有明显可疑移动。"}</li>`;
+  const advice = comparison.check.advice.map((item) => `<li>${escapeHtml(isBeginnerLevel() ? plainTerm(item) : item)}</li>`).join("");
+  const intro = isBeginnerLevel()
+    ? "看四条线有没有同方向撞在一起，或某个声部突然跳很远。分数越高，听起来越顺。"
+    : isProLevel()
+      ? "SATB 规则检查：间距、导向音解决、平行与隐伏五八度、声部交叠。"
+      : "检查导向音、共同音与平行五八度的处理。";
   els.voiceWarnings.innerHTML = `
-    <h4>检查结果</h4>
-    <p>${comparison.summary} 评分 ${comparison.check.rating}/100。</p>
+    <h4>检查结果 ${levelBadge()}</h4>
+    <p class="theory-lead">${escapeHtml(intro)}</p>
+    <p>${escapeHtml(isBeginnerLevel() ? plainTerm(comparison.summary) : comparison.summary)} 评分 ${comparison.check.rating}/100。</p>
     <ul>
       ${severe}
       ${issues}
       ${advice}
     </ul>
   `;
+  refreshLanguage(els.voiceWarnings);
 }
 
 function renderPhraseGuide() {
@@ -3216,9 +3466,10 @@ function renderVoiceCheck() {
     }
   }
   els.voiceCheck.innerHTML = `
-    <h4>声部检查</h4>
-    <p>${bad.length ? bad.join(" ") : "暂未发现明显平行五度/八度；可继续用分解和弦检查。"}</p>
+    <h4>声部检查 ${levelBadge()}</h4>
+    <p>${bad.length ? escapeHtml(bad.map((item) => (isBeginnerLevel() ? plainTerm(item) : item)).join(" ")) : (isBeginnerLevel() ? "暂时没有听到明显的撞音；可以继续用分解和弦检查。" : "暂未发现明显平行五度/八度；可继续用分解和弦检查。")}</p>
   `;
+  refreshLanguage(els.voiceCheck);
 }
 
 function updateVoiceExampleState(example) {
@@ -3284,7 +3535,9 @@ function makeChordQuestion() {
     .map((item) => `${noteName(state.root)}${item.name}`);
   return {
     type: "chord",
-    prompt: `${getChordNoteNames(chord).join("、")}，功能 ${getFunctionClass(chord)}。`,
+    prompt: isBeginnerLevel()
+      ? `${getChordNoteNames(chord).join("、")}，这几个音叠起来最像哪种和弦？`
+      : `${getChordNoteNames(chord).join("、")}，功能 ${getFunctionClass(chord)}。`,
     options: [correct, ...wrongs].sort(() => Math.random() - 0.5),
     answer: correct,
     hint: getTheoryHtml(chord).replace(/<[^>]+>/g, " "),
@@ -3398,38 +3651,24 @@ function deriveDiatonicChord(index) {
 
 function renderKnowledge() {
   const cards = [
-    {
-      title: "古典钢琴和声",
-      body: "围绕调性、终止、经过和声、辅助和弦与声部进行。适合用主音、属音、下属音建立清晰结构。",
-      points: ["I-IV-V-I 的基础逻辑", "邻音、经过音与挂留", "分解和弦与低音线"],
-    },
-    {
-      title: "爵士吉他和声",
-      body: "围绕功能和声、替代属、导向音和声部最小移动。优先看三音和七音，再补张力音。",
-      points: ["ii-V-I 是核心语法", "省略五音更清楚", "alt、sus、upper structure"],
-    },
-    {
-      title: "调式训练",
-      body: "切换大调、小调、和声小调和旋律小调时，先锁定主音，再识别三音与七音。",
-      points: ["先听主音中心", "比较大小三度", "练习同主音多调式"],
-    },
-    {
-      title: "编配习惯",
-      body: "键盘尽量分层：左手低音/和弦骨架，右手旋律与上方结构；吉他优先考虑可演奏把位。",
-      points: ["低音不要过厚", "右手保留旋律", "把位比“全音都弹”更重要"],
-    },
+    { key: "classical", title: "古典钢琴和声" },
+    { key: "jazz", title: "爵士吉他和声" },
+    { key: "modes", title: "调式训练" },
+    { key: "arrangement", title: "编配习惯" },
   ];
   els.knowledgeGrid.innerHTML = cards
-    .map(
-      (card) => `
+    .map((card) => {
+      const content = (NBL && NBL.knowledgeText(card.key, levelKey())) || { body: "", points: [] };
+      return `
         <article class="knowledge-card">
           <h4>${card.title}</h4>
-          <p>${card.body}</p>
-          <ul>${card.points.map((item) => `<li>${item}</li>`).join("")}</ul>
+          <p>${escapeHtml(content.body)}</p>
+          <ul>${(content.points || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
         </article>
-      `
-    )
+      `;
+    })
     .join("");
+  refreshLanguage(els.knowledgeGrid);
   renderAbrsmKnowledge();
   renderTheoryHistory();
 }
@@ -3462,8 +3701,11 @@ function renderAbrsmKnowledge() {
 
 function renderTheoryHistory() {
   if (!els.theoryHistoryTimeline) return;
-  els.theoryHistoryTimeline.innerHTML = THEORY_HISTORY.map(
-    (item) => `
+  const intro = NBL ? NBL.historyIntro(levelKey()) : "";
+  els.theoryHistoryTimeline.innerHTML = `
+    <p class="history-intro">${escapeHtml(intro)}</p>
+    ${THEORY_HISTORY.map(
+      (item) => `
       <div class="history-item">
         <div class="history-dot"></div>
         <div class="history-body">
@@ -3473,7 +3715,9 @@ function renderTheoryHistory() {
         </div>
       </div>
     `
-  ).join("");
+    ).join("")}
+  `;
+  refreshLanguage(els.theoryHistoryTimeline);
 }
 
 function renderPhraseFilters() {
@@ -3937,6 +4181,7 @@ function persist() {
       phraseStyle: state.phraseStyle,
       styleMode: state.styleMode,
       lang: state.lang,
+      level: state.level,
       theme: state.theme || "nebula",
       playbackMode: state.playbackMode,
       tabTuning: state.tabTuning || "standard",
@@ -3959,6 +4204,7 @@ function persist() {
       tabBeats: state.tabBeats,
       tabGrid: state.tabGrid,
       quizGrade: state.quizGrade,
+      quizCategory: state.quizCategory,
       abrsmGrade: state.abrsmGrade,
       tabChordRoot: state.tabChordRoot,
       tabChordQuality: state.tabChordQuality,
@@ -3968,11 +4214,6 @@ function persist() {
   );
   localStorage.setItem(STORAGE_KEYS.customPhrases, JSON.stringify(state.customPhrases));
   localStorage.setItem(STORAGE_KEYS.scores, JSON.stringify(state.scores));
-  if (state.logo) {
-    safeSetStorage(STORAGE_KEYS.logo, state.logo);
-  } else {
-    localStorage.removeItem(STORAGE_KEYS.logo);
-  }
   } catch {
     // ignore storage restrictions in sandboxed environments
   }
@@ -3991,6 +4232,7 @@ function loadState() {
     state.phraseStyle = prefs.phraseStyle || "all";
     state.styleMode = prefs.styleMode || "jazz";
     state.lang = prefs.lang === "zh-CN" ? "zh-CN" : "zh-HK";
+    state.level = NBL ? NBL.normalizeLevel(prefs.level) : "learner";
     state.theme = THEME_OPTIONS.includes(prefs.theme) ? prefs.theme : "nebula";
     state.tabTuning = prefs.tabTuning || "standard";
     state.tabCapo = Number.isFinite(prefs.tabCapo) ? prefs.tabCapo : 0;
@@ -4013,6 +4255,7 @@ function loadState() {
     state.tabBeats = Number.isFinite(prefs.tabBeats) ? prefs.tabBeats : 4;
     state.tabGrid = normalizeTabGrid(prefs.tabGrid, state.tabBeats);
     state.quizGrade = Number.isFinite(prefs.quizGrade) ? Math.min(8, Math.max(0, prefs.quizGrade)) : 0;
+    state.quizCategory = typeof prefs.quizCategory === "string" ? prefs.quizCategory : "all";
     state.abrsmGrade = Number.isFinite(prefs.abrsmGrade) ? Math.min(8, Math.max(1, prefs.abrsmGrade)) : 1;
     state.tabChordRoot = Number.isFinite(prefs.tabChordRoot) ? prefs.tabChordRoot : 0;
     state.tabChordQuality = prefs.tabChordQuality || "maj";
@@ -4020,37 +4263,160 @@ function loadState() {
     state.pianoChordQuality = prefs.pianoChordQuality || "maj";
     state.customPhrases = JSON.parse(localStorage.getItem(STORAGE_KEYS.customPhrases) || "[]");
     state.scores = JSON.parse(localStorage.getItem(STORAGE_KEYS.scores) || "[]");
-    state.logo = localStorage.getItem(STORAGE_KEYS.logo) || "";
-    // 清理舊版收藏模塊殘留的本機資料
+    // 清理舊版收藏與自訂 Logo 殘留的本機資料
     localStorage.removeItem("music-dictionary-favorites-v2");
     localStorage.removeItem("music-dictionary-favorites-v1");
+    localStorage.removeItem("music-dictionary-logo-v1");
   } catch {
     // ignore corrupt local state
   }
 }
 
-function setView(name) {
+const VIEW_META = {
+  dictionary: { title: "和弦词典", sector: "SECTOR 01 · HARMONY ATLAS", eyebrow: "探索和声与旋律的无限可能", lead: "dictionary.focusLead" },
+  theory: { title: "乐理解析", sector: "SECTOR 02 · SCALE SYSTEM", eyebrow: "调式音阶与自然音和弦", lead: "theory.scaleLead" },
+  intervals: { title: "音程词典", sector: "SECTOR 03 · INTERVAL RANGE", eyebrow: "音程测算与听辨", lead: "intervals.lead" },
+  progressions: { title: "功能和声", sector: "SECTOR 04 · FUNCTION CHAIN", eyebrow: "经典和声范式与功能评估", lead: "progressions.lead" },
+  modes: { title: "调式大全", sector: "SECTOR 05 · MODAL SPECTRUM", eyebrow: "调式色彩与即兴指南", lead: "modes.galleryLead" },
+  voice: { title: "声部进行", sector: "SECTOR 06 · VOICE ORBIT", eyebrow: "四部和声与导向音连接", lead: "voice.lead" },
+  library: { title: "乐理图书馆", sector: "SECTOR 07 · TERM ARCHIVE", eyebrow: "五语术语与指法图鉴", lead: "library.termsLead" },
+  phrases: { title: "乐句工坊", sector: "SECTOR 08 · PHRASE FORGE", eyebrow: "结构化语汇与创作工坊", lead: "phrases.lead" },
+  quiz: { title: "测验闯关", sector: "SECTOR 09 · TRIAL DECK", eyebrow: "互动题库与听辨强化", lead: "quiz.lead" },
+  scores: { title: "谱例编辑", sector: "SECTOR 10 · SCORE LAB", eyebrow: "六线谱与钢琴双声部工作台", lead: "scores.lead" },
+};
+const VIEW_ORDER = Object.keys(VIEW_META);
+let currentViewId = "dictionary";
+let navLastFocused = null;
+
+function prefersReducedMotion() {
+  return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+}
+
+function renderLevelChrome() {
+  const meta = levelMeta();
+  const key = levelKey();
+  document.documentElement.setAttribute("data-level", key);
+  if (els.levelChip) {
+    els.levelChip.dataset.level = key;
+    els.levelChip.title = meta.desc;
+  }
+  if (els.levelChipText) els.levelChipText.textContent = `${meta.label}视角`;
+  if (els.levelSwitch) {
+    els.levelSwitch.querySelectorAll("[data-level]").forEach((button) => {
+      const active = button.dataset.level === key;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+  }
+  const metaView = VIEW_META[currentViewId] || VIEW_META.dictionary;
+  const leadPath = currentViewId === "library" && state.libActiveTab === "guitar-atlas" ? "library.atlasLead" : metaView.lead;
+  if (els.viewLeadText) els.viewLeadText.textContent = uiText(leadPath);
+  if (els.viewCoord) els.viewCoord.textContent = metaView.sector;
+  if (els.topbarEyebrow) els.topbarEyebrow.textContent = metaView.eyebrow;
+  refreshLanguage(els.viewLeadText, els.viewCoord, els.topbarEyebrow, els.levelChipText);
+}
+
+function closeMobileNav() {
+  document.body.classList.remove("nav-open");
+  if (els.navOverlay) els.navOverlay.hidden = true;
+  if (els.navToggle) els.navToggle.setAttribute("aria-expanded", "false");
+}
+
+function openMobileNav() {
+  document.body.classList.add("nav-open");
+  if (els.navOverlay) els.navOverlay.hidden = false;
+  if (els.navToggle) els.navToggle.setAttribute("aria-expanded", "true");
+  const first = document.querySelector(".nav-button");
+  if (first) first.focus({ preventScroll: true });
+}
+
+function setView(name, options = {}) {
+  const next = VIEW_META[name] ? name : "dictionary";
+  const { push = true, scroll = true, focus = true, animate = true } = options;
+  const changed = next !== currentViewId;
+  currentViewId = next;
   document.querySelectorAll(".view").forEach((view) => {
-    view.classList.toggle("active", view.id === name);
+    const on = view.id === next;
+    view.classList.toggle("active", on);
+    view.setAttribute("aria-hidden", String(!on));
+    if (on && changed && animate && !prefersReducedMotion()) {
+      view.classList.remove("view-enter");
+      void view.offsetWidth;
+      view.classList.add("view-enter");
+      window.setTimeout(() => view.classList.remove("view-enter"), 560);
+    }
   });
   document.querySelectorAll(".nav-button").forEach((button) => {
-    button.classList.toggle("active", button.dataset.view === name);
+    const on = button.dataset.view === next;
+    button.classList.toggle("active", on);
+    if (on) button.setAttribute("aria-current", "page");
+    else button.removeAttribute("aria-current");
   });
-  const titles = {
-    dictionary: "和弦词典",
-    theory: "乐理解析",
-    intervals: "音程词典",
-    progressions: "功能和声",
-    modes: "调式大全",
-    voice: "声部进行",
-    library: "乐理图书馆",
-    phrases: "乐句工坊",
-    quiz: "测验闯关",
-    scores: "谱例编辑",
-  };
-  els.viewTitle.textContent = titles[name] || "乐理词典";
-  applyLanguage(document);
+  if (els.viewTitle) {
+    els.viewTitle.textContent = VIEW_META[next].title;
+    refreshLanguage(els.viewTitle);
+  }
+  renderLevelChrome();
+  document.title = convertText(`${VIEW_META[next].title} · Nebula 乐理与创作的星际地图`, state.lang);
+  if (push && location.hash !== `#${next}`) {
+    try {
+      history.pushState({ view: next }, "", `#${next}`);
+    } catch {
+      // file:// or sandboxed history restrictions
+    }
+  }
+  if (scroll) {
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+  }
+  if (focus && els.viewTitle && changed) {
+    try {
+      els.viewTitle.focus({ preventScroll: true });
+    } catch {
+      // ignore
+    }
+  }
+  closeMobileNav();
 }
+
+function renderDictionaryFocus() {
+  const chord = getSelectedChord();
+  renderChordDetails(chord);
+  renderPianoVisual(chord);
+  renderFretboardVisual(chord);
+  renderDictionaryStaffVisual(chord);
+  renderVoicings(chord);
+  renderTheoryPanel();
+  renderChordGrid();
+  refreshLanguage(els.selectedChordAnalysis, els.selectedChordDetails, els.constructionStrip, els.theoryPanel, els.chordGrid, els.voicingStrip, els.pianoVisual);
+}
+
+function applyLevel(nextLevel, options = {}) {
+  const normalized = NBL ? NBL.normalizeLevel(nextLevel) : "learner";
+  if (normalized === state.level) {
+    renderLevelChrome();
+    return;
+  }
+  state.level = normalized;
+  persist();
+  document.body.classList.add("level-switching");
+  window.clearTimeout(applyLevel.timer);
+  applyLevel.timer = window.setTimeout(() => document.body.classList.remove("level-switching"), 460);
+  renderAll();
+  renderLevelChrome();
+  if (options.announce !== false) {
+    const meta = levelMeta();
+    showToast(`已切换到「${meta.label}」视角 · ${meta.tagline}`, "info");
+  }
+}
+
+function debounce(fn, delay = 140) {
+  let timer = 0;
+  return function debounced(...args) {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
 
 function bindEvents() {
   document.querySelectorAll(".nav-button").forEach((button) => {
@@ -4058,6 +4424,12 @@ function bindEvents() {
   });
 
   document.addEventListener("click", (event) => {
+    const levelButton = event.target.closest("#levelSwitch [data-level]");
+    if (levelButton) {
+      applyLevel(levelButton.dataset.level);
+      return;
+    }
+
     const rootButton = event.target.closest("[data-root]");
     if (rootButton) {
       state.root = Number(rootButton.dataset.root);
@@ -4070,7 +4442,9 @@ function bindEvents() {
     if (categoryButton) {
       state.category = categoryButton.dataset.category;
       document.querySelectorAll("[data-category]").forEach((button) => {
-        button.classList.toggle("active", button.dataset.category === state.category);
+        const active = button.dataset.category === state.category;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
       });
       renderChordGrid();
       persist();
@@ -4079,8 +4453,11 @@ function bindEvents() {
 
     const chordButton = event.target.closest("[data-chord]");
     if (chordButton) {
+      if (state.selectedChordId === chordButton.dataset.chord) return;
       state.selectedChordId = chordButton.dataset.chord;
-      renderAll();
+      renderDictionaryFocus();
+      const nextActive = els.chordGrid.querySelector(`[data-chord="${state.selectedChordId}"]`);
+      if (nextActive) nextActive.focus({ preventScroll: true });
       persist();
       return;
     }
@@ -4109,7 +4486,12 @@ function bindEvents() {
     const styleModeButton = event.target.closest("[data-style-mode]");
     if (styleModeButton) {
       state.styleMode = styleModeButton.dataset.styleMode;
-      renderAll();
+      document.querySelectorAll("[data-style-mode]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.styleMode === state.styleMode);
+      });
+      renderTheoryPanel();
+      renderPhraseGuide();
+      refreshLanguage(els.theoryPanel, els.phraseGuide);
       persist();
       return;
     }
@@ -4170,6 +4552,8 @@ function bindEvents() {
     if (modeCard) {
       state.selectedModeId = modeCard.dataset.modeDetail;
       renderModes();
+      const nextMode = document.querySelector(`[data-mode-detail="${state.selectedModeId}"]`);
+      if (nextMode) nextMode.focus({ preventScroll: true });
       persist();
       return;
     }
@@ -4335,39 +4719,242 @@ function bindEvents() {
     persist();
   });
 
+  const runChordSearch = debounce(() => {
+    renderChordGrid();
+    persist();
+  }, 120);
+
+  const syncSearchClear = () => {
+    if (els.clearChordSearch) els.clearChordSearch.hidden = !els.chordSearch.value;
+  };
+
+  const clearChordSearch = () => {
+    els.chordSearch.value = "";
+    state.chordSearch = "";
+    syncSearchClear();
+    renderChordGrid();
+    persist();
+    els.chordSearch.focus();
+  };
+
+  els.chordSearch.addEventListener("input", () => {
+    state.chordSearch = els.chordSearch.value.trim();
+    syncSearchClear();
+    runChordSearch();
+  });
+
+  els.chordSearch.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      if (els.chordSearch.value) clearChordSearch();
+      else els.chordSearch.blur();
+      return;
+    }
+    if (event.key === "Enter") {
+      event.preventDefault();
+      const first = els.chordGrid.querySelector("[data-chord]");
+      if (first) first.click();
+    }
+  });
+
+  if (els.clearChordSearch) {
+    els.clearChordSearch.addEventListener("click", (event) => {
+      event.preventDefault();
+      clearChordSearch();
+    });
+  }
+
+  if (els.navToggle) {
+    els.navToggle.addEventListener("click", () => {
+      if (document.body.classList.contains("nav-open")) closeMobileNav();
+      else openMobileNav();
+    });
+  }
+  if (els.navClose) els.navClose.addEventListener("click", closeMobileNav);
+  if (els.navOverlay) els.navOverlay.addEventListener("click", closeMobileNav);
+
+  const mainNav = document.getElementById("mainNav");
+  if (mainNav) {
+    mainNav.addEventListener("keydown", (event) => {
+      if (!["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+      const buttons = Array.from(mainNav.querySelectorAll(".nav-button"));
+      const index = buttons.indexOf(document.activeElement);
+      if (index < 0) return;
+      event.preventDefault();
+      let next = index;
+      if (event.key === "Home") next = 0;
+      else if (event.key === "End") next = buttons.length - 1;
+      else if (event.key === "ArrowDown" || event.key === "ArrowRight") next = (index + 1) % buttons.length;
+      else next = (index + buttons.length - 1) % buttons.length;
+      buttons[next].focus({ preventScroll: true });
+    });
+  }
+
+  if (els.backToTop) {
+    els.backToTop.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+    });
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    if (event.target.closest("button, input, select, textarea, a")) return;
+    const modeCard = event.target.closest("[data-mode-detail]");
+    if (modeCard) {
+      event.preventDefault();
+      modeCard.click();
+      return;
+    }
+    const presetCard = event.target.closest("[data-preset]");
+    if (presetCard) {
+      event.preventDefault();
+      presetCard.click();
+    }
+  });
+
+  let scrollFrame = 0;
+  const updateScrollUi = () => {
+    scrollFrame = 0;
+    const doc = document.documentElement;
+    const max = doc.scrollHeight - window.innerHeight;
+    const ratio = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    if (els.scrollProgress) els.scrollProgress.style.transform = `scaleX(${ratio})`;
+    if (els.backToTop) els.backToTop.classList.toggle("visible", window.scrollY > 640);
+    document.body.classList.toggle("scrolled", window.scrollY > 24);
+  };
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (scrollFrame) return;
+      scrollFrame = window.requestAnimationFrame(updateScrollUi);
+    },
+    { passive: true }
+  );
+  updateScrollUi();
+
+  const topbarEl = document.querySelector(".topbar");
+  if (topbarEl && typeof ResizeObserver !== "undefined") {
+    const syncTopbarHeight = () => {
+      document.documentElement.style.setProperty("--topbar-height", `${topbarEl.offsetHeight}px`);
+    };
+    const topbarObserver = new ResizeObserver(syncTopbarHeight);
+    topbarObserver.observe(topbarEl);
+    window.addEventListener("resize", syncTopbarHeight, { passive: true });
+    syncTopbarHeight();
+  }
+
+  const openShortcutModal = () => {
+    if (!els.shortcutModal) return;
+    navLastFocused = document.activeElement;
+    els.shortcutModal.hidden = false;
+    document.body.classList.add("modal-open");
+    window.requestAnimationFrame(() => els.closeShortcutBtn?.focus({ preventScroll: true }));
+  };
+  const closeShortcutModal = () => {
+    if (!els.shortcutModal || els.shortcutModal.hidden) return;
+    els.shortcutModal.hidden = true;
+    document.body.classList.remove("modal-open");
+    if (navLastFocused && typeof navLastFocused.focus === "function") {
+      navLastFocused.focus({ preventScroll: true });
+      navLastFocused = null;
+    }
+  };
+  if (els.shortcutHelpBtn) els.shortcutHelpBtn.addEventListener("click", openShortcutModal);
+  if (els.closeShortcutBtn) els.closeShortcutBtn.addEventListener("click", closeShortcutModal);
+  if (els.shortcutModal) {
+    els.shortcutModal.addEventListener("click", (event) => {
+      if (event.target === els.shortcutModal) closeShortcutModal();
+    });
+  }
+  window.toggleShortcutModal = () => {
+    if (els.shortcutModal && els.shortcutModal.hidden) openShortcutModal();
+    else closeShortcutModal();
+  };
+
+  document.addEventListener("keydown", (event) => {
+    const active = document.activeElement;
+    const typing = active && (["INPUT", "TEXTAREA", "SELECT"].includes(active.tagName) || active.isContentEditable);
+    if ((event.ctrlKey || event.metaKey) && String(event.key).toLowerCase() === "k") {
+      event.preventDefault();
+      setView("dictionary");
+      syncSearchClear();
+      els.chordSearch.focus({ preventScroll: true });
+      els.chordSearch.select();
+      return;
+    }
+    if (event.key === "?" && !typing) {
+      event.preventDefault();
+      window.toggleShortcutModal();
+      return;
+    }
+    if (event.key === "Escape") {
+      if (els.shortcutModal && !els.shortcutModal.hidden) {
+        closeShortcutModal();
+        return;
+      }
+      const printModal = document.getElementById("printModal");
+      if (printModal && !printModal.hidden) {
+        printModal.hidden = true;
+        document.body.classList.remove("modal-open");
+        return;
+      }
+      if (document.body.classList.contains("nav-open")) {
+        closeMobileNav();
+        return;
+      }
+      if (active === els.chordSearch && els.chordSearch.value) {
+        clearChordSearch();
+      }
+      return;
+    }
+    if (typing) return;
+    if (event.altKey && /^[0-9]$/.test(event.key)) {
+      event.preventDefault();
+      const index = event.key === "0" ? 9 : Number(event.key) - 1;
+      setView(VIEW_ORDER[index]);
+      return;
+    }
+    if (event.key === "[" || event.key === "]") {
+      event.preventDefault();
+      const index = VIEW_ORDER.indexOf(currentViewId);
+      const step = event.key === "]" ? 1 : VIEW_ORDER.length - 1;
+      setView(VIEW_ORDER[(index + step) % VIEW_ORDER.length]);
+      return;
+    }
+    if (event.key === "/") {
+      event.preventDefault();
+      setView("dictionary");
+      els.chordSearch.focus({ preventScroll: true });
+    }
+  });
+
+  window.addEventListener("popstate", () => {
+    const name = (location.hash || "").replace("#", "");
+    if (VIEW_META[name] && name !== currentViewId) {
+      setView(name, { push: false, scroll: true });
+    }
+  });
+  window.addEventListener("hashchange", () => {
+    const name = (location.hash || "").replace("#", "");
+    if (VIEW_META[name] && name !== currentViewId) {
+      setView(name, { push: false, scroll: true });
+    }
+  });
+
+  const printModal = document.getElementById("printModal");
+  if (printModal) {
+    printModal.addEventListener("click", (event) => {
+      if (event.target === printModal) {
+        printModal.hidden = true;
+        document.body.classList.remove("modal-open");
+      }
+    });
+  }
+
   els.modeSelect.addEventListener("change", () => {
     state.mode = els.modeSelect.value;
     renderAll();
     persist();
-  });
-
-  els.chordSearch.addEventListener("input", () => {
-    state.chordSearch = els.chordSearch.value.trim();
-    renderChordGrid();
-    persist();
-  });
-
-  els.logoUpload.addEventListener("change", async (event) => {
-    const file = event.target.files && event.target.files[0];
-    if (!file) return;
-    try {
-      const dataUrl = await readLogoFile(file);
-      state.logo = dataUrl;
-      renderLogo();
-      persist();
-      showToast("Logo 已更新", "success");
-    } catch (error) {
-      showToast(error.message || "Logo 上傳失敗", "info");
-    } finally {
-      els.logoUpload.value = "";
-    }
-  });
-
-  els.removeLogoBtn.addEventListener("click", () => {
-    state.logo = "";
-    renderLogo();
-    persist();
-    showToast("Logo 已移除", "info");
   });
 
   // 互动钢琴键盘：支持鼠标点击、按住滑动（滑奏）、触屏与键盘按键发声
@@ -4852,6 +5439,7 @@ function bindEvents() {
   document.getElementById("closePrintModalBtn")?.addEventListener("click", () => {
     const modal = document.getElementById("printModal");
     if (modal) modal.hidden = true;
+    document.body.classList.remove("modal-open");
   });
   document.getElementById("scoreUndoBtn")?.addEventListener("click", () => {
     if (scoreHistory.undoStack.length <= 1) return;
@@ -4902,11 +5490,14 @@ function renderAll() {
   els.humanizeToggle.checked = state.humanize;
   els.modeSelect.value = state.mode;
   els.chordSearch.value = state.chordSearch;
+  if (els.clearChordSearch) els.clearChordSearch.hidden = !els.chordSearch.value;
   document.querySelectorAll("[data-style-mode]").forEach((button) => {
     button.classList.toggle("active", button.dataset.styleMode === state.styleMode);
   });
   document.querySelectorAll("[data-category]").forEach((button) => {
-    button.classList.toggle("active", button.dataset.category === state.category);
+    const active = button.dataset.category === state.category;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
   });
   renderRootStrip();
   const chord = getSelectedChord();
@@ -6074,15 +6665,20 @@ function openPrintPreviewModal(type = "tab") {
     <pre>${escapeHtml(textBody)}</pre>
   `;
   modal.hidden = false;
+  document.body.classList.add("modal-open");
+  window.requestAnimationFrame(() => {
+    document.getElementById("closePrintModalBtn")?.focus({ preventScroll: true });
+  });
 }
 
 function initialize() {
   loadState();
   bindEvents();
-  renderLogo();
   renderAll();
   initLanguageObserver();
-  setView("dictionary");
+  const initial = (location.hash || "").replace("#", "");
+  setView(VIEW_META[initial] ? initial : "dictionary", { push: false, scroll: false, focus: false, animate: false });
+  renderLevelChrome();
 }
 
 initialize();
@@ -6663,7 +7259,7 @@ renderPhraseLibrary = function () {
           <h4>${escapeHtml(item.title)}</h4>
           <code>${escapeHtml(item.notes)}</code>
           ${renderPhraseMiniVisual(item.notes)}
-          <p>${escapeHtml(item.description)}</p>
+          <p>${escapeHtml(isBeginnerLevel() ? `${plainTechnique(item.tags)} 先跟着「${item.progression}」听一遍节奏。` : item.description)}</p>
           <div class="phrase-card-actions">
             <button class="primary-button mini-button" data-play-phrase="${escapeHtml(item.notes)}" type="button">▶ 节奏播放</button>
             <button class="secondary-button mini-button" data-open-phrase-score="piano" data-phrase-id="${escapeHtml(item.id)}" type="button">🎹 在谱例编辑中打开(钢琴)</button>
@@ -6712,14 +7308,51 @@ renderCustomPhrases = function () {
     .join("");
 }
 
-renderPhraseGuide = function () {
+function plainTechnique(tags = []) {
+  const map = {
+    "导向音": "先靠近目标和弦里最重要的音，再落下去。",
+    "包围音 Enclosure": "从目标音的上方和下方绕过去，最后落到它。",
+    "三全音替代": "用一个相差半个八度的和弦，替换原来的属和弦。",
+    "Upper Structure": "在属和弦上面再叠一个和弦，让颜色更高级。",
+    "四度模进": "用四度关系把同一个动机重复往上或往下搬。",
+    "半音经过": "用半音当桥梁，把两个和弦音连起来。",
+    "挂留解决": "先留住前一个音，等一拍再放它走。",
+    "ii-V-I": "准备—推进—回家，最常用的三块积木。",
+    "阿尔贝蒂低音": "低音用「低—高—中—高」的分解型伴奏。",
+  };
+  const hit = (tags || []).find((tag) => map[tag]);
+  return hit ? map[hit] : "先跟着和弦换，再把旋律弹进去。";
+}
+
+function renderPhraseGuide() {
   if (!els.phraseGuide) return;
-  els.phraseGuide.innerHTML = `
-    <h4>高水准乐句写作 3 大黄金法则</h4>
-    <p><strong>1. 锁定导向音（3 音与 7 音）：</strong>在和弦切换的第一拍优先落在目标和弦的三音或七音上，无需弹出根音即可清晰勾勒和声走向。</p>
-    <p><strong>2. 包围音（Enclosure）与半音趋近：</strong>在进入强拍目标音之前，先用「上方自然音 + 下方半音」夹击目标音，制造爵士与浪漫派特有的灵动颗粒感。</p>
-    <p><strong>3. 节奏对比与留白：</strong>避免全篇等时值八分音符机械跑动；尝试用三连音（<code>/8t</code>）、附点（<code>/4.</code>）与跨小节延音线（<code>~</code>）形成呼吸对比。</p>
-  `;
+  const chord = getSelectedChord();
+  const lv = chordLevelText(chord);
+  if (isBeginnerLevel()) {
+    els.phraseGuide.innerHTML = `
+      <h4>写一句好听的旋律 ${levelBadge()}</h4>
+      <p><strong>1. 先跟着和弦换音：</strong>每一小节先找到和弦里最重要的两个音，旋律尽量落在它们附近。</p>
+      <p><strong>2. 用级进当桥：</strong>两个远一点的音之间，用相邻的音走过去，会比直接跳好听。</p>
+      <p><strong>3. 留一点空白：</strong>不要每一拍都塞满，长音和停顿会让句子更像「说话」。</p>
+      <p class="theory-lead">当前和弦 ${getChordDisplayName(chord)}：${escapeHtml(lv.use)}</p>
+    `;
+  } else if (isProLevel()) {
+    els.phraseGuide.innerHTML = `
+      <h4>乐句工程：从语音到和声落点 ${levelBadge()}</h4>
+      <p><strong>1. Guide-tone line：</strong>以 3/7 为骨架，让每个和弦切换的强拍落在目标音上，避免根音堆叠。</p>
+      <p><strong>2. Enclosure / 半音趋近：</strong>用「上方自然音 + 下方半音」夹击目标音；注意包围音的方向与节奏位置。</p>
+      <p><strong>3. 节奏位移与呼吸：</strong>用三连音、附点、跨小节延音线制造密度对比；长句末尾留 1–2 拍空间给下一个和声。</p>
+      <p class="theory-lead">当前 ${getChordDisplayName(chord)}：${escapeHtml(lv.tip)}</p>
+    `;
+  } else {
+    els.phraseGuide.innerHTML = `
+      <h4>高水准乐句写作 3 大黄金法则 ${levelBadge()}</h4>
+      <p><strong>1. 锁定导向音（3 音与 7 音）：</strong>在和弦切换的第一拍优先落在目标和弦的三音或七音上，无需弹出根音即可清晰勾勒和声走向。</p>
+      <p><strong>2. 包围音（Enclosure）与半音趋近：</strong>在进入强拍目标音之前，先用「上方自然音 + 下方半音」夹击目标音，制造爵士与浪漫派特有的灵动颗粒感。</p>
+      <p><strong>3. 节奏对比与留白：</strong>避免全篇等时值八分音符机械跑动；尝试用三连音（<code>/8t</code>）、附点（<code>/4.</code>）与跨小节延音线（<code>~</code>）形成呼吸对比。</p>
+    `;
+  }
+  refreshLanguage(els.phraseGuide);
 }
 
 // 将乐句一键加载到谱例编辑器（自动填入钢琴右手 + 自动映射吉他最舒适把位 TAB）
@@ -9128,7 +9761,7 @@ renderWesternTermsLibrary = function () {
           <td class="term-lang-de">${escapeHtml(item.de)}</td>
           <td class="term-lang-fr">${escapeHtml(item.fr)}</td>
           <td class="term-lang-en">${escapeHtml(item.en)}</td>
-          <td class="term-desc-cell">${escapeHtml(item.desc)}</td>
+          <td class="term-desc-cell">${escapeHtml(isBeginnerLevel() ? plainTerm(item.desc) : item.desc)}</td>
         </tr>
       `
     )
@@ -9268,19 +9901,26 @@ renderGuitarFingeringAtlas = function () {
   `;
 
   advicePanel.innerHTML = `
+    <p class="theory-lead">${escapeHtml(uiText("library.atlasLead"))}</p>
     <article class="gf-advice-card">
       <h4>🎯 当前把位速记口诀与手型要领</h4>
-      <p><strong>手型定位：</strong>${escapeHtml(activePattern.anchorFingerRule)}</p>
+      <p><strong>手型定位：</strong>${escapeHtml(isBeginnerLevel() ? plainTerm(activePattern.anchorFingerRule) : activePattern.anchorFingerRule)}</p>
       <ul>
-        ${activePattern.tips.map((t) => `<li>${escapeHtml(t)}</li>`).join("")}
+        ${activePattern.tips.map((t) => `<li>${escapeHtml(isBeginnerLevel() ? plainTerm(t) : t)}</li>`).join("")}
       </ul>
     </article>
     <article class="gf-advice-card">
-      <h4>⚡ 现代流行、Neo-Soul 与调式即兴三大实战铁律</h4>
+      <h4>${isBeginnerLevel() ? "🎸 先记住这三件事" : "⚡ 现代流行、Neo-Soul 与调式即兴三大实战铁律"}</h4>
       <ul>
-        <li><strong>横按 vs 拇指扣弦：</strong>需要饱满封闭和声时用食指（1）大横按；需要右手切音与高音弦双音击勾加花（<code>5h7p5</code>）时，改用拇指（<code>T</code>）扣 6 弦根音。</li>
-        <li><strong>四弦精简原则（去低音化）：</strong>在乐队、Funk 与 City Pop 编曲中，主动舍弃 5、6 弦浑浊低音，只抓 4-3-2-1 弦的 Drop 2 或九/十三和弦。</li>
-        <li><strong>锁定玫红色灵魂特征音：</strong>弹调式绝不是从头到尾爬音阶——在重拍瞄准指板上的玫红色特征音（如 Dorian 的 <code>♮6</code>、Lydian 的 <code>#4</code>），一秒弹出大师味。</li>
+        ${isBeginnerLevel() ? `
+          <li><strong>手型舒服优先：</strong>先选一个能按实、不闷音的手型；横按还是拇指扣弦，等弹顺了再换。</li>
+          <li><strong>低音交给贝斯：</strong>乐队里吉他不用抢 5、6 弦的低音，弹中高音反而更清楚。</li>
+          <li><strong>抓「味道音」：</strong>每个调式都有一个最有特色的音，重拍弹它，味道立刻就出来了。</li>
+        ` : `
+          <li><strong>横按 vs 拇指扣弦：</strong>需要饱满封闭和声时用食指（1）大横按；需要右手切音与高音弦双音击勾加花（<code>5h7p5</code>）时，改用拇指（<code>T</code>）扣 6 弦根音。</li>
+          <li><strong>四弦精简原则（去低音化）：</strong>在乐队、Funk 与 City Pop 编曲中，主动舍弃 5、6 弦浑浊低音，只抓 4-3-2-1 弦的 Drop 2 或九/十三和弦。</li>
+          <li><strong>锁定玫红色灵魂特征音：</strong>弹调式绝不是从头到尾爬音阶——在重拍瞄准指板上的玫红色特征音（如 Dorian 的 <code>♮6</code>、Lydian 的 <code>#4</code>），一秒弹出大师味。</li>
+        `}
       </ul>
     </article>
   `;
@@ -9458,13 +10098,13 @@ renderModes = function () {
               const notes = mode.intervals.map((step) => noteName(state.root + step)).join(" ");
               const meta = getModeVisualMeta(mode);
               return `
-                <article class="mode-card ${mode.id === state.selectedModeId ? "active" : ""}" data-mode-detail="${mode.id}">
+                <article class="mode-card ${mode.id === state.selectedModeId ? "active" : ""}" data-mode-detail="${mode.id}" role="button" tabindex="0" aria-pressed="${mode.id === state.selectedModeId}">
                   <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:4px;">
                     <h4 style="margin:0;">${mode.label}</h4>
                     <span class="mode-char-badge" style="font-size:10.5px;padding:2px 7px;">特征 ${meta.charLabel}</span>
                   </div>
                   <p class="mode-card-notes">${notes}</p>
-                  <p>${mode.feature}</p>
+                  <p>${escapeHtml(modeLevelText(mode).mood || mode.feature)}</p>
                 </article>
               `;
             })
@@ -9539,14 +10179,31 @@ renderModes = function () {
     ["异域色彩", meta.exotic],
   ];
 
+  const mlv = modeLevelText(selected);
+  const detailItems = isBeginnerLevel()
+    ? `
+      <li><strong>音阶：</strong>${selected.intervals.map((step) => `${noteName(state.root + step)}`).join(" · ")}</li>
+      <li><strong>听起来：</strong>${escapeHtml(mlv.mood)}</li>
+      <li><strong>什么时候用：</strong>${escapeHtml(mlv.use)}</li>
+      <li><strong>怎么弹：</strong>${escapeHtml(mlv.improv)}</li>
+    `
+    : `
+      ${isProLevel() ? `<li><strong>变异公式：</strong>${meta.formula}（全半音结构：${getModeStepFormula(selected)}）</li>` : `<li><strong>秒懂变异公式：</strong>${meta.formula}</li>`}
+      <li><strong>当前调式音阶：</strong>${selected.intervals.map((step) => `${noteName(state.root + step)}(${intervalToLabel(step)})`).join(" · ")}</li>
+      <li><strong>一句话听感：</strong>${escapeHtml(mlv.mood)}</li>
+      <li><strong>招牌和声进行：</strong><code>${escapeHtml(mlv.use)}</code></li>
+      <li><strong>实战即兴秘诀：</strong>${escapeHtml(mlv.improv)}</li>
+      ${isProLevel() ? `<li><strong>避用/特征：</strong>特征音 ${meta.charLabel}（${noteName(charPc)}），注意与和弦三音、七音的叠置。</li>` : ""}
+    `;
   els.modeDetail.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
       <div>
         <p class="mode-detail-category">${selected.category}</p>
-        <h4 style="margin:4px 0;">${noteName(state.root)} ${selected.label}</h4>
+        <h4 style="margin:4px 0;">${noteName(state.root)} ${selected.label} ${levelBadge()}</h4>
       </div>
       <span class="mode-char-badge">★ 灵魂特征音：${meta.charLabel}（${noteName(charPc)}）</span>
     </div>
+    <p class="theory-lead">${escapeHtml(uiText("modes.detailLead"))}</p>
 
     <div class="mode-Play-bar">
       <button type="button" class="primary-button mini-button" data-mode-action="play-scale">▶ 播放调式音阶（琴键亮灯）</button>
@@ -9564,11 +10221,7 @@ renderModes = function () {
     </div>
 
     <ul>
-      <li><strong>秒懂变异公式：</strong>${meta.formula}（全半音结构：${getModeStepFormula(selected)}）</li>
-      <li><strong>当前调式音阶：</strong>${selected.intervals.map((step) => `${noteName(state.root + step)}(${intervalToLabel(step)})`).join(" · ")}</li>
-      <li><strong>一句话听感：</strong>${selected.feature}</li>
-      <li><strong>招牌和声进行：</strong><code>${selected.progression}</code></li>
-      <li><strong>实战即兴秘诀：</strong>${selected.improv}</li>
+      ${detailItems}
     </ul>
 
     <div style="margin-top:12px;">
@@ -9751,9 +10404,18 @@ renderAbrsmKnowledge = function () {
     `;
   }).join("");
 
+  const levelTip = isBeginnerLevel()
+    ? "刚开始的话，先看 1–2 级：拍号、音名、半音全音与大小三度是最重要的地基。"
+    : isProLevel()
+      ? "6–8 级的内容直接对应四部写作、增六和弦、等音转调与总谱阅读，可作为编配自查清单。"
+      : "想验证学习成果，可到「测验闯关」选择对应级别题库。";
+
   els.abrsmKnowledgePanel.innerHTML = `
     <div class="abrsm-grade-head">
-      <h4>${gradeData.title}</h4>
+      <div>
+        <h4>${gradeData.title} ${levelBadge()}</h4>
+        <p class="abrsm-grade-tip">${escapeHtml(levelTip)}</p>
+      </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <button type="button" class="primary-button mini-button" data-jump-quiz-grade="${gradeData.grade}">🎯 进入第 ${gradeData.grade} 级专项闯关模式 →</button>
       </div>
@@ -9893,7 +10555,7 @@ renderQuiz = function () {
     : "";
 
   els.quizPrompt.innerHTML = `
-    <h4>${gradeBadge}${catBadge}第 ${state.quiz.total} 题</h4>
+    <h4>${gradeBadge}${catBadge}第 ${state.quiz.total} 题 ${levelBadge()}</h4>
     <p style="font-size:16px;font-weight:750;color:var(--ink);margin-top:8px;">${state.quiz.prompt}</p>
     ${audioStageHtml}
   `;
@@ -9939,9 +10601,9 @@ function renderQuizRightPanel(lastFeedbackHtml = "") {
       <div class="quiz-stat-box"><strong>${ABRSM_QUESTION_BANK.length} 题</strong><span>总题库容量</span></div>
     </div>
     ${lastFeedbackHtml || `
-      <h4>💡 本题考点提示</h4>
-      <p>${state.quiz.hint}</p>
-      <p class="quiz-hint-note">可按上方「1–8 级」与「专项题型」自由组合刷题。</p>
+      <h4>💡 本题考点提示 ${levelBadge()}</h4>
+      <p>${escapeHtml(isBeginnerLevel() ? plainTerm(state.quiz.hint) : state.quiz.hint)}</p>
+      <p class="quiz-hint-note">${escapeHtml(uiText("quiz.lead"))} 可按上方「1–8 级」与「专项题型」自由组合刷题。</p>
     `}
     <div style="margin-top:14px;">
       <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -9979,10 +10641,11 @@ answerQuiz = function (index) {
   }
   renderQuiz();
   renderQuizRightPanel(`
-    <h4>${isCorrect ? "✅ 回答正确！" : "❌ 再记一下"}</h4>
-    <p><strong>正确答案：</strong>${state.quiz.answer}</p>
-    <p>${state.quiz.hint}</p>
-    <p class="quiz-hint-note">稍候自动进入下一题，或点击「下一题」立即跳转……</p>
+    <h4>${isCorrect ? "✅ 回答正确！" : "❌ 再记一下"} ${levelBadge()}</h4>
+    <p class="quiz-level-feedback">${escapeHtml(uiText(isCorrect ? "quiz.correct" : "quiz.wrong"))}</p>
+    <p><strong>正确答案：</strong>${escapeHtml(state.quiz.answer)}</p>
+    <p>${escapeHtml(isBeginnerLevel() ? plainTerm(state.quiz.hint) : state.quiz.hint)}</p>
+    <p class="quiz-hint-note">${escapeHtml(uiText("quiz.autoNext"))} 或点击「下一题」立即跳转……</p>
   `);
   els.quizScore.textContent = `${state.quiz.correct} / ${state.quiz.total}`;
   clearTimeout(state.quizTimer);
@@ -10006,6 +10669,10 @@ bindV4LibraryEvents = function () {
       const atlasPane = document.getElementById("libGuitarAtlasPane");
       if (termsPane) termsPane.hidden = state.libActiveTab !== "terms";
       if (atlasPane) atlasPane.hidden = state.libActiveTab !== "guitar-atlas";
+      if (els.viewLeadText) {
+        els.viewLeadText.textContent = uiText(state.libActiveTab === "guitar-atlas" ? "library.atlasLead" : "library.termsLead");
+        refreshLanguage(els.viewLeadText);
+      }
       return;
     }
 
@@ -10167,9 +10834,11 @@ renderAll = function () {
   _prevRenderAllV3();
   renderMusicLibrary();
   applyLanguage(document);
+  renderLevelChrome();
 };
 
 bindV4LibraryEvents();
 applyTheme();
 renderAll();
 initLanguageObserver();
+renderLevelChrome();
