@@ -4276,13 +4276,15 @@ const VIEW_META = {
   dictionary: { title: "和弦词典", sector: "SECTOR 01 · HARMONY ATLAS", eyebrow: "探索和声与旋律的无限可能", lead: "dictionary.focusLead" },
   theory: { title: "乐理解析", sector: "SECTOR 02 · SCALE SYSTEM", eyebrow: "调式音阶与自然音和弦", lead: "theory.scaleLead" },
   intervals: { title: "音程词典", sector: "SECTOR 03 · INTERVAL RANGE", eyebrow: "音程测算与听辨", lead: "intervals.lead" },
-  progressions: { title: "功能和声", sector: "SECTOR 04 · FUNCTION CHAIN", eyebrow: "经典和声范式与功能评估", lead: "progressions.lead" },
-  modes: { title: "调式大全", sector: "SECTOR 05 · MODAL SPECTRUM", eyebrow: "调式色彩与即兴指南", lead: "modes.galleryLead" },
-  voice: { title: "声部进行", sector: "SECTOR 06 · VOICE ORBIT", eyebrow: "四部和声与导向音连接", lead: "voice.lead" },
-  library: { title: "乐理图书馆", sector: "SECTOR 07 · TERM ARCHIVE", eyebrow: "五语术语与指法图鉴", lead: "library.termsLead" },
-  phrases: { title: "乐句工坊", sector: "SECTOR 08 · PHRASE FORGE", eyebrow: "结构化语汇与创作工坊", lead: "phrases.lead" },
-  quiz: { title: "测验闯关", sector: "SECTOR 09 · TRIAL DECK", eyebrow: "互动题库与听辨强化", lead: "quiz.lead" },
-  scores: { title: "谱例编辑", sector: "SECTOR 10 · SCORE LAB", eyebrow: "六线谱与钢琴双声部工作台", lead: "scores.lead" },
+  fifths: { title: "五度圈", sector: "SECTOR 04 · CIRCLE OF FIFTHS", eyebrow: "12 个调、调号与关系大小调", leadText: "沿着五度圈读调号、找关系大小调、规划转调路径，并直接试听 I–IV–V–I。" },
+  progressions: { title: "功能和声", sector: "SECTOR 05 · FUNCTION CHAIN", eyebrow: "经典和声范式与功能评估", lead: "progressions.lead" },
+  modes: { title: "调式大全", sector: "SECTOR 06 · MODAL SPECTRUM", eyebrow: "调式色彩与即兴指南", lead: "modes.galleryLead" },
+  analysis: { title: "声谱分析", sector: "SECTOR 07 · SIGNAL LAB", eyebrow: "对数频谱、泛音列与十二半音色度", leadText: "以对数坐标即时观察低、中、高频能量，拆解泛音结构，并把能量对应到 12 个半音。" },
+  voice: { title: "声部进行", sector: "SECTOR 08 · VOICE ORBIT", eyebrow: "四部和声与导向音连接", lead: "voice.lead" },
+  library: { title: "乐理图书馆", sector: "SECTOR 09 · TERM ARCHIVE", eyebrow: "五语术语与指法图鉴", lead: "library.termsLead" },
+  phrases: { title: "乐句工坊", sector: "SECTOR 10 · PHRASE FORGE", eyebrow: "结构化语汇与创作工坊", lead: "phrases.lead" },
+  quiz: { title: "测验闯关", sector: "SECTOR 11 · TRIAL DECK", eyebrow: "互动题库与听辨强化", lead: "quiz.lead" },
+  scores: { title: "谱例编辑", sector: "SECTOR 12 · SCORE LAB", eyebrow: "六线谱与钢琴双声部工作台", lead: "scores.lead" },
 };
 const VIEW_ORDER = Object.keys(VIEW_META);
 let currentViewId = "dictionary";
@@ -4310,7 +4312,7 @@ function renderLevelChrome() {
   }
   const metaView = VIEW_META[currentViewId] || VIEW_META.dictionary;
   const leadPath = currentViewId === "library" && state.libActiveTab === "guitar-atlas" ? "library.atlasLead" : metaView.lead;
-  if (els.viewLeadText) els.viewLeadText.textContent = uiText(leadPath);
+  if (els.viewLeadText) els.viewLeadText.textContent = metaView.leadText || uiText(leadPath);
   if (els.viewCoord) els.viewCoord.textContent = metaView.sector;
   if (els.topbarEyebrow) els.topbarEyebrow.textContent = metaView.eyebrow;
   refreshLanguage(els.viewLeadText, els.viewCoord, els.topbarEyebrow, els.levelChipText);
@@ -5474,10 +5476,20 @@ function bindEvents() {
 function applyTheme() {
   const theme = THEME_OPTIONS.includes(state.theme) ? state.theme : "nebula";
   document.body.dataset.theme = theme;
-  document.body.classList.toggle("dark-mode", theme !== "pearl");
+  document.body.classList.toggle("dark-mode", theme !== "industrial");
+  document.documentElement.style.colorScheme = theme === "industrial" ? "light" : "dark";
   document.querySelectorAll("[data-theme-choice]").forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.themeChoice === theme);
+    const active = btn.dataset.themeChoice === theme;
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-pressed", String(active));
   });
+  if (typeof window !== "undefined" && typeof window.CustomEvent === "function") {
+    try {
+      window.dispatchEvent(new CustomEvent("nebula:themechange", { detail: { theme } }));
+    } catch {
+      // ignore event dispatch restrictions
+    }
+  }
 }
 
 function renderAll() {
@@ -5543,7 +5555,7 @@ function renderAll() {
    多格式导出（MIDI / MusicXML / PDF 打印 / GP Tab）、撤销重做与回载
    ============================================================ */
 
-const THEME_OPTIONS = ["nebula"];
+const THEME_OPTIONS = ["nebula", "industrial", "studio"];
 
 const GUITAR_TUNINGS = {
   standard: { label: "标准调弦 (E A D G B e)", midi: [40, 45, 50, 55, 59, 64], names: ["E", "A", "D", "G", "B", "e"] },
@@ -8898,7 +8910,6 @@ renderAll();
    5. 全站文案精简通俗化 + 简繁切换零残余全量同步
    ============================================================================ */
 
-state.theme = "nebula";
 state.libActiveTab = "terms";
 state.termCategory = "all";
 state.termSearch = "";
@@ -8923,12 +8934,6 @@ function clearModeAnim() {
   modeAnimTimers.forEach((t) => clearTimeout(t));
   modeAnimTimers = [];
   document.querySelectorAll(".playing-mode-note").forEach((el) => el.classList.remove("playing-mode-note"));
-}
-
-applyTheme = function () {
-  state.theme = "nebula";
-  document.body.dataset.theme = "nebula";
-  document.body.classList.add("dark-mode");
 }
 
 // ── 四：精简全站核心文案（一句话秒懂 + 核心公式 + 实战场景） ──

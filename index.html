@@ -4,7 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nebula · 乐理与创作的星际地图</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%236366f1'/%3E%3Ccircle cx='25' cy='43' r='7' fill='%23f59e0b'/%3E%3Crect x='30' y='17' width='3' height='26' fill='%23f59e0b'/%3E%3Cpath d='M33 18c7 2 10 6 9 13-3-4-6-6-9-7z' fill='%23f59e0b'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="themes.css" />
   </head>
   <body>
     <a class="skip-link" href="#mainWorkspace">跳到主要内容</a>
@@ -82,8 +84,10 @@
           <button class="nav-button active" data-view="dictionary" type="button" aria-current="page">和弦词典</button>
           <button class="nav-button" data-view="theory" type="button">乐理解析</button>
           <button class="nav-button" data-view="intervals" type="button">音程词典</button>
+          <button class="nav-button" data-view="fifths" type="button">五度圈</button>
           <button class="nav-button" data-view="progressions" type="button">功能和声</button>
           <button class="nav-button" data-view="modes" type="button">调式大全</button>
+          <button class="nav-button" data-view="analysis" type="button">声谱分析</button>
           <button class="nav-button" data-view="voice" type="button">声部进行</button>
           <button class="nav-button" data-view="library" type="button">乐理图书馆</button>
           <button class="nav-button" data-view="phrases" type="button">乐句工坊</button>
@@ -109,7 +113,18 @@
               <h2 id="viewTitle" tabindex="-1">和弦词典</h2>
             </div>
           </div>
-          <div class="topbar-actions" aria-label="全局显示与风格设置">
+          <div class="topbar-actions" aria-label="全局显示、主题与风格设置">
+            <div class="theme-switch" id="themeSwitch" role="group" aria-label="界面主题切换">
+              <button class="theme-chip active" type="button" data-theme-choice="nebula" aria-pressed="true" title="星云：原有星际深色主题">
+                <span class="theme-dot nebula" aria-hidden="true"></span><span class="theme-chip-text">星云</span>
+              </button>
+              <button class="theme-chip" type="button" data-theme-choice="industrial" aria-pressed="false" title="硬体极简工业风：雾面铝金属、高饱和橘黄、1px 网格与等宽技术字体">
+                <span class="theme-dot industrial" aria-hidden="true"></span><span class="theme-chip-text">工业</span>
+              </button>
+              <button class="theme-chip" type="button" data-theme-choice="studio" aria-pressed="false" title="录音室深色护眼模式：极低眩光、示波器荧光绿／琥珀／电光蓝微发光讯号线">
+                <span class="theme-dot studio" aria-hidden="true"></span><span class="theme-chip-text">录音室</span>
+              </button>
+            </div>
             <div class="level-switch-wrap">
               <span class="level-switch-label">解说层级</span>
               <div class="style-switch level-switch" id="levelSwitch" role="group" aria-label="切换解说深度">
@@ -989,8 +1004,192 @@
             </section>
           </div>
         </section>
+
+        <section id="analysis" class="view" aria-labelledby="viewTitle">
+          <header class="analysis-header">
+            <div>
+              <h3>把声音拆成看得见的结构</h3>
+              <p class="analysis-lead">
+                即时 FFT 以对数坐标显示 20 Hz – 20 kHz 的低、中、高频能量分布；右栏拆解当前和弦的泛音列；下方色度图把能量对应到 12 个半音，适合编曲、混音与音色教学。
+              </p>
+            </div>
+            <div class="analysis-actions">
+              <button id="analyserDroneBtn" class="primary-button" type="button" aria-pressed="false">⏻ 持续发声</button>
+              <button id="analyserPlayChordBtn" class="secondary-button" type="button">▶ 播放当前和弦</button>
+              <button id="analyserPlayScaleBtn" class="secondary-button" type="button">↗ 播放当前音阶</button>
+            </div>
+          </header>
+
+          <div class="analysis-layout">
+            <section class="spectrum-card theory-panel">
+              <div class="viz-card-head">
+                <div>
+                  <h4>实时频谱 · Real-time FFT</h4>
+                  <p class="viz-sub">对数频率轴 · 低 / 中 / 高频能量分区</p>
+                </div>
+                <div class="viz-legend" aria-hidden="true">
+                  <span class="viz-key low"></span>低频
+                  <span class="viz-key mid"></span>中频
+                  <span class="viz-key high"></span>高频
+                </div>
+              </div>
+              <div class="spectrum-canvas-wrap">
+                <canvas id="spectrumCanvas" aria-label="对数坐标实时频谱图"></canvas>
+                <p class="viz-empty" id="spectrumEmpty">按「持续发声」或演奏任一音符，即会在此显示频谱</p>
+              </div>
+              <div class="band-meters" id="bandMeters"></div>
+            </section>
+
+            <section class="harmonic-card theory-panel">
+              <div class="viz-card-head">
+                <div>
+                  <h4>泛音列 · Harmonic Series</h4>
+                  <p class="viz-sub" id="harmonicSub">当前和弦根音 —</p>
+                </div>
+              </div>
+              <div class="harmonic-matrix" id="harmonicMatrix"></div>
+              <p class="viz-note">每一根柱代表一个泛音（2×、3×…）；虚线轮廓为理论 1/n 衰减，实心为当前实际能量。</p>
+            </section>
+          </div>
+
+          <section class="chroma-card theory-panel">
+            <div class="viz-card-head">
+              <div>
+                <h4>色度图 · Chroma / 12 半音能量</h4>
+                <p class="viz-sub">声音能量映射到 12 个半音，并与当前和弦的理论音对照</p>
+              </div>
+              <div class="chroma-badges">
+                <span class="viz-badge" id="chromaChordBadge">和弦理论音</span>
+                <span class="viz-badge detected" id="chromaDetectedBadge">实时侦测：—</span>
+              </div>
+            </div>
+            <div class="chroma-layout">
+              <div class="chroma-wheel" id="chromaWheel" aria-label="十二半音色度轮"></div>
+              <div class="chroma-bars" id="chromaBars" aria-label="十二半音能量条"></div>
+              <aside class="chroma-readout" id="chromaReadout"></aside>
+            </div>
+          </section>
+        </section>
+
+        <section id="fifths" class="view" aria-labelledby="viewTitle">
+          <div class="fifths-layout">
+            <section class="fifths-stage theory-panel">
+              <div class="viz-card-head">
+                <div>
+                  <h4>12 个调 × 关系大小调 × 调号</h4>
+                </div>
+                <div class="segmented" id="fifthsModeSwitch" role="tablist" aria-label="大小调切换">
+                  <button class="segment active" type="button" data-fifths-mode="major">大调</button>
+                  <button class="segment" type="button" data-fifths-mode="minor">关系小调</button>
+                </div>
+              </div>
+              <div class="fifths-wheel" id="fifthsWheel" aria-label="互动五度圈"></div>
+              <div class="fifths-legend">
+                <span><i class="dot major"></i>外圈：大调主音</span>
+                <span><i class="dot minor"></i>内圈：关系小调</span>
+                <span><i class="dot current"></i>目前主音</span>
+                <span class="fifths-tip">点击音区选择调性 · 双击立即套用为主音</span>
+              </div>
+            </section>
+            <aside class="fifths-panel theory-panel">
+              <div id="fifthsDetail"></div>
+              <div class="fifths-actions">
+                <button id="fifthsApplyBtn" class="primary-button" type="button">☞ 设为主音</button>
+                <button id="fifthsCadenceBtn" class="secondary-button" type="button">▶ I–IV–V–I</button>
+                <button id="fifthsRelativeBtn" class="secondary-button" type="button">⇄ 关系小调</button>
+              </div>
+              <div class="fifths-chords" id="fifthsChords" aria-label="调内和弦"></div>
+              <div class="fifths-modulation" id="fifthsModulation"></div>
+            </aside>
+          </div>
+        </section>
       </section>
     </main>
+
+    <div class="transport-bar" id="transportBar" role="region" aria-label="悬浮播放控制条：速度、节拍器与 AB 段循环">
+      <button id="transportCollapseBtn" class="transport-collapse" type="button" aria-expanded="true" aria-controls="transportBody" title="收合 / 展开控制条">⌄</button>
+      <div class="transport-body" id="transportBody">
+        <div class="transport-group transport-main">
+          <button id="transportPlayBtn" class="transport-pad pad-play" type="button" aria-pressed="false" aria-label="播放 / 暂停">
+            <span class="pad-icon" aria-hidden="true">▶</span>
+          </button>
+          <button id="transportStopBtn" class="transport-pad" type="button" aria-label="停止并回到 A 段">
+            <span class="pad-icon" aria-hidden="true">■</span>
+          </button>
+          <div class="transport-reading">
+            <span class="transport-kicker">TRANSPORT</span>
+            <strong id="transportPosition">A 段 · 1 / 3</strong>
+          </div>
+        </div>
+
+        <div class="transport-divider" aria-hidden="true"></div>
+
+        <div class="transport-group transport-tempo">
+          <div class="knob-unit">
+            <div class="knob" id="bpmKnob" tabindex="0" role="slider" aria-label="速度 BPM（可拖曳、滚轮或方向键调整）" aria-valuemin="40" aria-valuemax="220" aria-valuenow="100" aria-valuetext="100 BPM">
+              <span class="knob-ticks" aria-hidden="true"></span>
+              <span class="knob-face" aria-hidden="true"><span class="knob-indicator"></span></span>
+            </div>
+            <div class="knob-caption"><span>BPM</span><strong id="bpmReadout">100</strong></div>
+          </div>
+          <button id="tapTempoBtn" class="transport-pad pad-text" type="button" title="连续点击测速 Tap Tempo">TAP</button>
+        </div>
+
+        <div class="transport-divider" aria-hidden="true"></div>
+
+        <div class="transport-group transport-metro">
+          <button id="metronomeBtn" class="transport-pad pad-metro" type="button" aria-pressed="false" aria-label="节拍器开关">
+            <span class="pad-icon" aria-hidden="true">♩</span>
+          </button>
+          <div class="beat-leds" id="beatLeds" aria-hidden="true"></div>
+          <label class="transport-select">
+            <span>拍号</span>
+            <select id="transportTimeSig" aria-label="节拍器拍号">
+              <option value="4/4" selected>4/4</option>
+              <option value="3/4">3/4</option>
+              <option value="2/4">2/4</option>
+              <option value="6/8">6/8</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="transport-divider" aria-hidden="true"></div>
+
+        <div class="transport-group transport-loop">
+          <div class="loop-head">
+            <span class="transport-kicker">A/B 段循环</span>
+            <div class="loop-buttons">
+              <button id="loopABtn" class="transport-pad pad-text" type="button" title="把当前小节设为 A 段起点">SET A</button>
+              <button id="loopBBtn" class="transport-pad pad-text" type="button" title="把当前小节设为 B 段终点">SET B</button>
+              <button id="loopToggleBtn" class="transport-pad" type="button" aria-pressed="false" aria-label="AB 循环开关">
+                <span class="pad-icon" aria-hidden="true">↻</span>
+              </button>
+              <button id="loopClearBtn" class="transport-pad pad-text" type="button" title="清除 AB 段">CLR</button>
+            </div>
+          </div>
+          <div class="loop-track" id="loopTrack" aria-label="AB 段循环区间"></div>
+        </div>
+
+        <div class="transport-divider" aria-hidden="true"></div>
+
+        <div class="transport-group transport-volume">
+          <label for="masterVolume">音量</label>
+          <input id="masterVolume" class="fader" type="range" min="0" max="100" step="1" value="55" aria-label="总音量" />
+          <output id="volumeReadout" for="masterVolume">55</output>
+        </div>
+
+        <div class="transport-divider" aria-hidden="true"></div>
+
+        <div class="transport-group transport-end">
+          <span id="transportChordName" class="transport-chord" aria-live="polite">—</span>
+        </div>
+      </div>
+      <button id="practiceModeBtn" class="transport-pad pad-practice" type="button" aria-pressed="false" title="一键切换到无干扰练琴模式（Alt + P）">
+        <span class="pad-icon" aria-hidden="true">⛶</span>
+      </button>
+    </div>
+
+    <button id="practiceExitBtn" class="practice-exit" type="button" hidden>退出练琴模式 · Esc</button>
 
         <div id="printModal" class="print-modal" hidden role="dialog" aria-modal="true" aria-label="打印与 PDF 导出预览">
       <div class="print-modal-dialog">
@@ -1028,7 +1227,10 @@
           <div><kbd>[</kbd><span>/</span><kbd>]</kbd><p>上一个 / 下一个星区</p></div>
           <div><kbd>←</kbd><span>/</span><kbd>→</kbd><p>导航聚焦时切换星区</p></div>
           <div><kbd>A–L</kbd><p>弹奏互动钢琴</p></div>
-          <div><kbd>Esc</kbd><p>关闭弹窗 / 清空搜索</p></div>
+          <div><kbd>Alt</kbd><span>+</span><kbd>P</kbd><p>无干扰练琴模式开关</p></div>
+          <div><kbd>Alt</kbd><span>+</span><kbd>T</kbd><p>循环切换主题风格</p></div>
+          <div><kbd>Shift</kbd><span>+</span><kbd>Space</kbd><p>播放控制条 播／停</p></div>
+          <div><kbd>Esc</kbd><p>关闭弹窗 / 清空搜索 / 退出练琴模式</p></div>
           <div><kbd>Ctrl</kbd><span>+</span><kbd>Z</kbd><p>谱例编辑器撤销</p></div>
         </div>
         <p class="shortcut-note">提示：在输入框中打字时，按键快捷键会自动让位给文字输入。</p>
@@ -1037,5 +1239,6 @@
 
     <script src="levels.js"></script>
     <script src="app.js"></script>
+    <script src="studio.js"></script>
   </body>
 </html>
