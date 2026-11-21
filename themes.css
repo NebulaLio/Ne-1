@@ -3028,7 +3028,481 @@ body[data-theme="studio"] .term-cat-pill {
   }
 }
 
-/* ── 8. 響應式 ───────────────────────────────────────────────────────────── */
+body:has(#dictionary.active) .view-lead {
+  display: none;
+}
+
+#dictionary .staff-card-header {
+  display: none;
+}
+
+#dictionary .root-select {
+  flex: 0 0 150px;
+  width: 150px;
+  max-width: 150px;
+}
+
+@media (max-width: 720px) {
+  #dictionary .root-select {
+    flex: 1 1 auto;
+    width: auto;
+    max-width: none;
+  }
+}
+
+#dictionary .hero-tool {
+  margin-bottom: 18px;
+}
+
+@media (min-width: 1281px) {
+  #dictionary .hero-tool {
+    grid-template-columns: minmax(240px, 0.72fr) minmax(400px, 1.2fr) minmax(240px, 0.55fr) !important;
+    align-items: start;
+  }
+
+  #dictionary .hero-tool .theory-sidebar {
+    grid-column: auto !important;
+    max-height: 640px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 4px;
+  }
+}
+
+#chordStaffVisual .staff-svg,
+#chordStaffVisual svg {
+  max-height: 128px;
+}
+
+@media (max-width: 720px) {
+  #chordStaffVisual .staff-svg,
+  #chordStaffVisual svg {
+    max-height: 112px;
+  }
+}
+
+body .topbar {
+  gap: 12px;
+  padding: 8px 10px;
+  flex-wrap: nowrap;
+}
+
+body .topbar h2 {
+  font-size: clamp(24px, 2.6vw, 36px);
+}
+
+body .topbar-title {
+  width: auto;
+  min-width: 0;
+}
+
+body .topbar-actions {
+  width: auto;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+}
+
+.topbar-settings {
+  position: relative;
+}
+
+.topbar-settings > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.topbar-settings > summary::-webkit-details-marker {
+  display: none;
+}
+
+.topbar-settings[open] .settings-summary {
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
+.settings-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 90;
+  display: grid;
+  gap: 10px;
+  min-width: 280px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-strong);
+  box-shadow: var(--shadow);
+}
+
+body[data-theme="industrial"] .settings-panel {
+  background: #f4f5f6;
+  border-color: #b8bcc1;
+}
+
+@media (min-width: 1281px) {
+  body .hero-tool {
+    grid-template-columns: minmax(260px, 0.78fr) minmax(440px, 1.25fr) minmax(260px, 0.6fr);
+    gap: 18px;
+  }
+
+  body .hero-tool .theory-sidebar {
+    grid-column: auto;
+  }
+
+  .chord-focus {
+    padding: 20px;
+  }
+
+  .focus-header h3 {
+    font-size: clamp(42px, 5vw, 66px);
+  }
+
+  .construction-step {
+    padding: 8px 10px;
+  }
+
+  .analysis-text {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+}
+
+@media (max-width: 1280px) {
+  body .topbar {
+    flex-wrap: wrap;
+  }
+}
+
+.staff-visual-card {
+  padding: 8px 10px;
+}
+
+#chordStaffVisual .staff-svg,
+#chordStaffVisual svg {
+  max-height: 128px;
+}
+
+.piano-visual {
+  height: 164px;
+}
+
+.piano-key {
+  height: 128px;
+}
+
+.piano-key.black {
+  height: 84px;
+}
+
+body[data-theme="nebula"] .chord-rail,
+body[data-theme="nebula"] .picker-dock .toolbar {
+  color: var(--ink);
+}
+
+@media (max-width: 720px) {
+  body .topbar {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  body .topbar-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .settings-panel {
+    position: fixed;
+    top: 64px;
+    right: 10px;
+    left: 10px;
+    min-width: 0;
+  }
+
+  #chordStaffVisual .staff-svg,
+  #chordStaffVisual svg {
+    max-height: 112px;
+  }
+}
+
+:root {
+  font-family: "PingFang TC", "Noto Sans CJK TC", "Microsoft JhengHei", "PingFang SC",
+    "Noto Sans CJK SC", "Microsoft YaHei", Inter, system-ui, sans-serif;
+}
+
+body[data-theme="nebula"] .topbar {
+  background: rgba(10, 15, 34, 0.98);
+  backdrop-filter: blur(10px);
+}
+
+body[data-theme="industrial"] .topbar {
+  background: #f0f1f3;
+}
+
+body[data-theme="studio"] .topbar {
+  background: #050a0a;
+}
+
+body .topbar {
+  z-index: 40;
+}
+
+/* 主音改成單一選擇 + 快速和弦列，讓「搜、選、看、聽」留在首屏 */
+.picker-dock {
+  position: relative;
+  z-index: 20;
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.picker-dock .toolbar {
+  margin: 0;
+}
+
+.root-strip {
+  position: static;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  grid-template-columns: none;
+  margin-bottom: 0;
+  padding: 7px 12px;
+  border-radius: 10px;
+  top: auto;
+}
+
+.root-select-label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.root-select {
+  min-height: 32px;
+  min-width: 118px;
+  padding: 0 10px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.root-hint {
+  color: var(--subtle);
+  font-size: 11px;
+}
+
+.chord-rail {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 2px 2px 6px;
+  scrollbar-width: thin;
+}
+
+.chord-chip {
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 0 11px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--glass);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+  white-space: nowrap;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.chord-chip:hover {
+  color: var(--ink);
+  border-color: var(--accent);
+}
+
+.chord-chip.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--ink);
+  box-shadow: var(--glow);
+}
+
+/* 和弦符號不從中間折行 */
+.chord-card h4,
+.focus-header h3,
+.chord-chip,
+.transport-chord,
+.fifths-chord,
+.lane-chord strong {
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: keep-all;
+}
+
+/* 搜尋框只留一個自訂清除鈕 */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+/* 回到頂部不被右側理論欄或播放條蓋住 */
+.back-to-top {
+  z-index: 95;
+}
+
+/* 互動鋼琴：真實黑白鍵比例、單排可左右滑（不再折成兩行） */
+.piano-visual {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  height: 164px;
+  padding: 12px 10px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.piano-key {
+  flex: 1 1 0;
+  min-width: 26px;
+  height: 128px;
+  border-radius: 0 0 6px 6px;
+}
+
+.piano-key.black {
+  flex: 0 0 24px;
+  min-width: 24px;
+  height: 84px;
+  margin: 0 -12px;
+  z-index: 2;
+  border-radius: 0 0 4px 4px;
+  align-self: flex-start;
+}
+
+@media (max-width: 720px) {
+  .piano-visual {
+    height: 152px;
+    padding: 8px 6px;
+  }
+
+  .piano-key {
+    flex: 0 0 34px;
+    min-width: 34px;
+    height: 116px;
+  }
+
+  .piano-key.black {
+    flex: 0 0 22px;
+    min-width: 22px;
+    height: 76px;
+    margin: 0 -11px;
+  }
+
+  .picker-dock {
+    gap: 8px;
+  }
+
+  .picker-dock .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .root-select {
+    flex: 1;
+  }
+}
+
+/* 列印：白紙黑譜，不把深色介面送進印表機 */
+.print-modal-dialog {
+  background: #fff;
+  color: #111;
+}
+
+.print-sheet-preview {
+  background: #fff;
+  color: #111;
+}
+
+.print-sheet {
+  background: #fff;
+  color: #111;
+  padding: 14px;
+  border: 1px solid #d6d6d6;
+  border-radius: 8px;
+}
+
+.print-sheet svg {
+  background: #fff;
+}
+
+.print-sheet svg text {
+  fill: #111 !important;
+}
+
+.print-sheet svg line,
+.print-sheet svg path,
+.print-sheet svg circle,
+.print-sheet svg ellipse,
+.print-sheet svg rect,
+.print-sheet svg polyline {
+  stroke: #111 !important;
+}
+
+.print-sheet svg circle,
+.print-sheet svg ellipse,
+.print-sheet svg rect {
+  fill: #111 !important;
+}
+
+.print-meta {
+  color: #444;
+}
+
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  body > *:not(.print-modal) {
+    display: none !important;
+  }
+
+  .print-modal {
+    position: static !important;
+    display: block !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  .print-modal-dialog {
+    max-width: none;
+    width: 100%;
+    box-shadow: none;
+    border: 0;
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  .print-modal-actions,
+  .print-modal .eyebrow {
+    display: none !important;
+  }
+
+  .print-sheet-preview,
+  .print-sheet {
+    background: #fff !important;
+    color: #111 !important;
+    border: 0;
+  }
+
+  .print-sheet svg {
+    width: 100% !important;
+    height: auto !important;
+  }
+}
+
 @media (max-width: 1280px) {
   .transport-bar {
     max-width: calc(100vw - 20px);
@@ -3174,3 +3648,4 @@ body[data-theme="studio"] .term-cat-pill {
     animation: none;
   }
 }
+

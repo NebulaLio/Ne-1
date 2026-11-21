@@ -3,6 +3,161 @@ const NOTE_NAMES = {
   flat: ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"],
 };
 
+/* ── 共用和聲資料：搜尋別名、和弦音標籤、級數解析 ─────────────── */
+const CHORD_SEARCH_ALIASES = {
+  maj: ["大三和弦", "大三", "major", "maj"],
+  min: ["小三和弦", "小三", "minor", "min", "-"],
+  dim: ["减三和弦", "減三和弦", "减三", "減三", "diminished"],
+  aug: ["增三和弦", "增三", "augmented", "plus"],
+  "5": ["强力和弦", "強力和弦", "power", "空五"],
+  sus2: ["挂二", "掛二", "挂留二", "掛留二", "sus2", "挂留"],
+  sus4: ["挂四", "掛四", "挂留四", "掛留四", "sus4", "挂留"],
+  "6": ["六和弦", "加六"],
+  m6: ["小六和弦", "小六"],
+  "69": ["六九和弦", "六九", "6/9"],
+  "7": ["属七", "屬七", "属七和弦", "dominant7"],
+  maj7: ["大七", "大七和弦", "major7"],
+  m7: ["小七", "小七和弦", "minor7"],
+  mMaj7: ["小大七", "小大七和弦", "minorMajor7"],
+  halfDim: ["半减", "半減", "半减七", "半減七", "m7b5", "ø7"],
+  dim7: ["减七", "減七", "减七和弦", "減七和弦", "diminished7"],
+  "9": ["属九", "屬九", "九和弦"],
+  maj9: ["大九", "大九和弦"],
+  m9: ["小九", "小九和弦"],
+  "11": ["属十一", "屬十一", "十一和弦"],
+  m11: ["小十一", "小十一和弦"],
+  "13": ["属十三", "屬十三", "十三和弦"],
+  maj13: ["大十三", "大十三和弦"],
+  add9: ["加九", "加九和弦"],
+  alt: ["变化属", "變化屬", "变化属和弦", "變化屬和弦", "altered", "7alt"],
+  "7b9": ["降九属", "降九屬", "降九属七"],
+  "7sharp9": ["升九属", "升九屬", "升九属七"],
+  "7b13": ["降十三属", "降十三屬", "降十三属七"],
+  "7sus4": ["属七挂四", "屬七掛四", "挂留属七", "掛留屬七"],
+  "9sus4": ["属九挂四", "屬九掛四", "挂留属九", "掛留屬九"],
+};
+
+const CHORD_TONE_LABEL_OVERRIDES = {
+  alt: { 1: "b9", 3: "#9" },
+  "7sharp9": { 3: "#9" },
+  "7b9": { 1: "b9" },
+  "7b13": { 8: "b13" },
+  dim7: { 9: "bb7" },
+  "6": { 9: "6" },
+  m6: { 9: "6" },
+  "69": { 2: "9", 9: "6" },
+  sus2: { 2: "2" },
+  sus4: { 5: "4" },
+  "7sus4": { 5: "4" },
+  "9sus4": { 5: "4", 2: "9" },
+  add9: { 2: "9" },
+  "11": { 2: "9", 5: "11" },
+  "13": { 2: "9", 9: "13" },
+  maj13: { 2: "9", 9: "13" },
+  m11: { 2: "9", 5: "11" },
+};
+
+const CHORD_TONE_ROLES = {
+  "1": "根音",
+  "b3": "小三音",
+  "3": "大三音",
+  "5": "五音",
+  "b5": "減五音",
+  "#5": "增五音",
+  "b7": "小七音",
+  "maj7": "大七音",
+  "bb7": "減七音",
+  "b9": "小九音",
+  "9": "大九音",
+  "#9": "增九音",
+  "11": "十一音",
+  "#11": "增十一音",
+  "b13": "小十三音",
+  "13": "大十三音",
+  "6": "六音",
+  "4": "掛四音",
+  "2": "掛二音",
+};
+
+const CHORD_QUALITY_SUFFIX = {
+  maj: "",
+  min: "m",
+  dim: "dim",
+  aug: "aug",
+  "5": "5",
+  sus2: "sus2",
+  sus4: "sus4",
+  "6": "6",
+  m6: "m6",
+  "69": "6/9",
+  "7": "7",
+  maj7: "maj7",
+  m7: "m7",
+  mMaj7: "mMaj7",
+  halfDim: "m7b5",
+  dim7: "dim7",
+  "9": "9",
+  maj9: "maj9",
+  m9: "m9",
+  "11": "11",
+  m11: "m11",
+  "13": "13",
+  maj13: "maj13",
+  add9: "add9",
+  alt: "alt",
+  "7b9": "7b9",
+  "7sharp9": "7#9",
+  "7b13": "7b13",
+  "7sus4": "7sus4",
+  "9sus4": "9sus4",
+};
+
+const CHORD_SUFFIX_TO_QUALITY = {
+  "": null,
+  m: "min",
+  min: "min",
+  dim: "dim",
+  aug: "aug",
+  "5": "5",
+  sus2: "sus2",
+  sus4: "sus4",
+  "6": "6",
+  m6: "m6",
+  "6/9": "69",
+  "69": "69",
+  "7": "7",
+  "9": "9",
+  "11": "11",
+  "13": "13",
+  maj7: "maj7",
+  M7: "maj7",
+  m7: "m7",
+  min7: "m7",
+  m7b5: "halfDim",
+  "ø7": "halfDim",
+  mMaj7: "mMaj7",
+  mM7: "mMaj7",
+  dim7: "dim7",
+  alt: "alt",
+  "7alt": "alt",
+  "7b9": "7b9",
+  "7#9": "7sharp9",
+  "7sharp9": "7sharp9",
+  "7b13": "7b13",
+  "7sus4": "7sus4",
+  "9sus4": "9sus4",
+  add9: "add9",
+  maj9: "maj9",
+  m9: "m9",
+  m11: "m11",
+  maj13: "maj13",
+};
+
+const ROMAN_DEGREE_INDEX = { I: 0, II: 1, III: 2, IV: 3, V: 4, VI: 5, VII: 6 };
+const DEGREE_FUNCTIONS_MAJOR = ["T", "S", "T", "S", "D", "T", "D"];
+const DEGREE_FUNCTIONS_MINOR = ["T", "S", "T", "S", "D", "S", "D"];
+const FUNCTION_LABELS = { T: "主功能 (T)", S: "下属功能 (S)", D: "属功能 (D)", N: "那不勒斯 (N)", color: "色彩和声" };
+
 const CHORD_QUALITY_LIBRARY = [
   {
     id: "maj",
@@ -176,11 +331,11 @@ const CHORD_QUALITY_LIBRARY = [
     id: "11",
     name: "11",
     symbols: ["11"],
-    intervals: [0, 4, 7, 10, 14, 17],
+    intervals: [0, 7, 10, 14, 17],
     category: "extended",
     color: "base",
     theory:
-      "十一和弦，空间感强，实际编配中经常省略三音或五音以避免冲突。",
+      "十一和弦實務版：省略三音，只留 1-5-b7-9-11，避免三音與十一音擠成小九度；想標明完整結構時應寫成 9sus4 或註明三音。",
     function: "扩展",
     guitar: "适合上方结构和色彩性配器。",
   },
@@ -188,11 +343,11 @@ const CHORD_QUALITY_LIBRARY = [
     id: "13",
     name: "13",
     symbols: ["13"],
-    intervals: [0, 4, 7, 10, 14, 17, 21],
+    intervals: [0, 4, 7, 10, 14, 21],
     category: "extended",
     color: "base",
     theory:
-      "十三和弦是完整属扩展，爵士功能感强，音色丰富。",
+      "十三和弦（實務版）：保留 3、b7、9、13，省略十一音，避免 3 與 11 的小九度衝突；這是最常見的屬十三排列。",
     function: "属/扩展",
     guitar: "常省略十一或五音，保留三音、七音与十三音。",
   },
@@ -204,7 +359,7 @@ const CHORD_QUALITY_LIBRARY = [
     category: "altered",
     color: "altered",
     theory:
-      "变化属和弦，适合强烈解决到目标主和弦，常包含 b9/#9/b5/#5。",
+      "变化属和弦的五音精简示范：1-3-b7-b9-#9（本页实际发声只有这五个音）。实务上可再加入 b5 或 #5，形成更完整的 altered 音集；本工具不把未发声的变化五音写进和弦定义。",
     function: "属功能强化",
     guitar: "爵士吉他最常见的张力集合之一。",
   },
@@ -348,10 +503,11 @@ CHORD_QUALITY_LIBRARY.push(
     id: "7b13",
     name: "7b13",
     symbols: ["7b13"],
-    intervals: [0, 4, 7, 10, 20],
+    intervals: [0, 4, 10, 20],
     category: "altered",
     color: "altered",
-    theory: "降十三属和弦有和声小调色彩，常解决到小调主和弦。",
+    theory:
+      "降十三属和弦：保留 3 与 b7，b13（同音异名的 #5）取代纯五音，避免同时保留纯五与 b13 的重复与碰撞；常解决到小调主和弦。",
     function: "属功能强化",
     guitar: "保留三音七音，加 b13 就有清楚方向。",
   }
@@ -563,8 +719,8 @@ const MODE_DETAILS = [
     id: "ultralocrian",
     category: "和聲小調調式",
     label: "Ultra Locrian / 超洛克里亚",
-    intervals: [0, 1, 3, 4, 6, 7, 9],
-    feature: "变化音最密集的音阶之一，几乎全是张力。",
+    intervals: [0, 1, 3, 4, 6, 8, 9],
+    feature: "变化音最密集的音阶之一，几乎全是张力：1-b2-b3-b4-b5-b6-bb7。",
     progression: "VII°7 替代属",
     improv: "适合 dim7 到属和弦的半音连接。",
   },
@@ -793,12 +949,12 @@ const PHRASE_LIBRARY = [
   },
   {
     id: "piano-02",
-    title: "卡农式下行",
+    title: "抒情下行四和弦（vi–IV–I–V）",
     style: "古典钢琴",
     progression: "vi - IV - I - V",
     notes: "A C E | F A C | C E G | G B D",
     description:
-      "非常常见的流行与古典兼容进行，适合做重复动机和低音线条。",
+      "常見的流行與古典兼容進行，適合做重複動機和低音線條；它不是帕赫貝爾卡農（卡農是 I–V–vi–iii–IV–I–IV–V）。",
   },
   {
     id: "piano-03",
@@ -887,13 +1043,14 @@ PHRASE_LIBRARY.push(
 );
 
 const INTERVAL_REFERENCE = [
-  ["P1", "纯一度", 0, "完全稳定，同音或八度内重复。"],
+  ["P1", "纯一度", 0, "同音重复，音高完全相同，没有张力。"],
   ["m2", "小二度", 1, "最紧张的邻接音，常需要解决。"],
   ["M2", "大二度", 2, "旋律级进，适合经过音。"],
   ["m3", "小三度", 3, "小调性质核心。"],
   ["M3", "大三度", 4, "大调性质核心。"],
   ["P4", "纯四度", 5, "可作挂留，也可作开放结构。"],
-  ["TT", "三全音", 6, "属七核心张力，强烈需要解决。"],
+  ["A4", "增四度", 6, "三个全音，张力强；拼写为四度（如 C–F♯）。"],
+  ["d5", "减五度", 6, "三个全音，听感与增四度相同但拼写为五度（如 C–G♭）。"],
   ["P5", "纯五度", 7, "稳定骨架，和声支柱。"],
   ["m6", "小六度", 8, "暗色张力，可视为增五。"],
   ["M6", "大六度", 9, "温暖、流动，常用于六和弦。"],
@@ -912,7 +1069,7 @@ const ABRSM_KNOWLEDGE = [
       { title: "音符時值", points: ["全音符、二分音符、四分音符、八分音符、十六分音符及其休止符。", "附點二分音符 = 3 拍（以四分音符為一拍）。", "時值換算：1 個全音符 = 2 個二分 = 4 個四分 = 8 個八分。"] },
       { title: "拍號與小節", points: ["本級拍號：2/4、3/4、4/4（單拍子）。", "上方數字＝每小節拍數，下方數字＝以哪種音符為一拍。", "小節線、終止線、反覆記號。"] },
       { title: "半音、全音與升降號", points: ["半音是西方音樂最小的常用音程；全音 = 2 個半音。", "升號（♯）升半音、降號（♭）降半音、還原號（♮）取消升降。", "一組八度共 12 個半音。"] },
-      { title: "調與音階", points: ["本級大調：C、G、D、F、B♭ 大調；關係小調：A、D 和聲小調。", "大調音階音程結構：全 全 半 全 全 全 半。", "主音、屬音（第 5 級）等基本音級名稱。"] },
+      { title: "調與音階", points: ["本級大調：C、G、D、F 大調；關係小調：A 小調（自然小調與和聲小調）。", "大調音階音程結構：全 全 半 全 全 全 半。", "主音、屬音（第 5 級）等基本音級名稱。"] },
       { title: "音程與三和弦", points: ["能計算音程的度數（1–8 度）。", "主音上的三和弦（主三和弦）與其八度位置。", "認識 I、IV、V 三和弦的根音。"] },
       { title: "術語與記號", points: ["力度：p、f、mf、mp、cresc.、dim.。", "速度：allegro、andante、adagio 等。", "奏法：legato、staccato、圓滑線、連結線（tie）。"] },
     ],
@@ -1064,7 +1221,7 @@ const ABRSM_QUESTION_BANK = [
   { grade: 6, prompt: "四部和聲中「SATB」依次指？", options: ["女高、女低、男高、男低", "女高、男高、女低、男低", "男高、女高、女低、男低", "獨唱、合唱、器樂、低音"], answer: "女高、女低、男高、男低", hint: "Soprano、Alto、Tenor、Bass。" },
   { grade: 6, prompt: "數字低音「6」（6/3）表示？", options: ["原位三和弦", "三和弦第一轉位", "三和弦第二轉位", "七和弦原位"], answer: "三和弦第一轉位", hint: "低音上方有六度與三度音程。" },
   { grade: 6, prompt: "數字低音「6/4」表示？", options: ["原位三和弦", "第一轉位", "第二轉位", "第三轉位"], answer: "第二轉位", hint: "低音上方有六度與四度音程。" },
-  { grade: 6, prompt: "大調中的超級屬七和弦（ii7）是什麼性質？", options: ["大七和弦", "小七和弦", "屬七和弦", "半減七和弦"], answer: "小七和弦", hint: "如 C 大調 Dm7 = D-F-A-C。" },
+  { grade: 6, prompt: "大調中的上主音七和弦（ii7）是什麼性質？", options: ["大七和弦", "小七和弦", "屬七和弦", "半減七和弦"], answer: "小七和弦", hint: "如 C 大調 Dm7 = D-F-A-C，是上主音上的小七和弦，不是「超級屬七」。" },
   { grade: 6, prompt: "四部和聲為什麼要避免平行五度？", options: ["聲音太小", "兩聲部失去獨立性，音響空洞", "節奏不整齊", "會造成轉調"], answer: "兩聲部失去獨立性，音響空洞", hint: "平行五度與八度會使聲部「黏在一起」。" },
   { grade: 6, prompt: "原位三和弦通常重複哪個音？", options: ["根音", "三音", "五音", "七音"], answer: "根音", hint: "重複根音最穩定。" },
   { grade: 6, prompt: "屬七和弦的七音通常如何解決？", options: ["上行級進", "下行級進", "保持不動", "跳進八度"], answer: "下行級進", hint: "如 G7 的 F 下行解決到 E。" },
@@ -1179,7 +1336,9 @@ const PROGRESSION_PRESETS = [
   { title: "古典正格终止", degrees: ["I", "IV", "V", "I"], note: "T-S-D-T，最清楚的调性闭合。" },
   { title: "爵士 ii-V-I", degrees: ["ii7", "V7", "Imaj7"], note: "导向音最短连接，爵士核心语法。" },
   { title: "小调 iiø-V-i", degrees: ["iiø7", "V7alt", "imMaj7"], note: "小调强解决，变化属推动很强。" },
-  { title: "流行循环", degrees: ["I", "V", "vi", "IV"], note: "稳定、歌唱性强，适合副歌。" },
+  { title: "流行循环（I–V–vi–IV）", degrees: ["I", "V", "vi", "IV"], note: "稳定、歌唱性强，适合副歌。" },
+  { title: "抒情四和弦（I–vi–IV–V）", degrees: ["I", "vi", "IV", "V"], note: "50 年代进行的现代版，旋律弹性大。" },
+  { title: "王道进行（IV–V–iii–vi）", degrees: ["IV", "V", "iii", "vi"], note: "日系流行核心；iii 是主功能替代，不是下属。" },
   { title: "三全音替代", degrees: ["ii7", "bII7", "Imaj7"], note: "低音半音下行，爵士再和声常用。" },
   { title: "借用和弦", degrees: ["Imaj7", "bVImaj7", "bVII7", "Imaj7"], note: "Modal interchange，色彩鲜明。" },
 ];
@@ -1188,8 +1347,10 @@ const PROGRESSION_PALETTE = [
   { degree: "I", quality: "maj7", function: "T", label: "主功能" },
   { degree: "i", quality: "m7", function: "T", label: "小调主功能" },
   { degree: "ii7", quality: "m7", function: "S", label: "前属/下属" },
+  { degree: "iii", quality: "min", function: "T", label: "中音/主替代" },
   { degree: "iv", quality: "m7", function: "S", label: "小下属借用" },
   { degree: "IV", quality: "maj7", function: "S", label: "下属功能" },
+  { degree: "V", quality: "maj", function: "D", label: "属三和弦" },
   { degree: "V7", quality: "7", function: "D", label: "属功能" },
   { degree: "V7alt", quality: "alt", function: "D", label: "变化属" },
   { degree: "V7/ii", quality: "7", function: "D", label: "次属到 ii" },
@@ -1198,9 +1359,17 @@ const PROGRESSION_PALETTE = [
   { degree: "iiø7", quality: "halfDim", function: "S", label: "小调前属" },
   { degree: "bII7", quality: "7", function: "D", label: "三全音替代" },
   { degree: "bIIImaj7", quality: "maj7", function: "color", label: "同主小调借用" },
+  { degree: "bVI", quality: "maj", function: "S", label: "借用下中音" },
   { degree: "bVImaj7", quality: "maj7", function: "color", label: "借用色彩" },
+  { degree: "bVII", quality: "maj", function: "D", label: "借用下主音" },
   { degree: "bVII7", quality: "7", function: "color", label: "借用/摇摆" },
 ];
+
+const GUITAR_FRIENDLY_IDS = new Set([
+  "maj", "min", "dim", "aug", "5", "sus2", "sus4", "6", "m6", "69",
+  "7", "maj7", "m7", "mMaj7", "halfDim", "dim7", "9", "add9", "m9",
+  "11", "13", "7sus4", "9sus4", "7b9", "7sharp9", "7b13", "alt",
+]);
 
 const TOOLBOX_ITEMS = [
   {
@@ -1627,9 +1796,12 @@ const state = {
   humanize: true,
   theoryFocus: "chord",
   selectedModeId: "ionian",
-  progression: ["ii7", "V7", "Imaj7"],
+  progression: ["I", "vi", "IV", "V"],
   voiceAdjustments: [0, 0, 0, 0],
   voiceExample: "good",
+  voiceAValue: null,
+  voiceBValue: null,
+  voiceVoicingB: null,
   quiz: { total: 0, correct: 0, answer: "", type: "chord", answered: false, grade: 0 },
   quizGrade: 0,
   quizCategory: "all",
@@ -1785,6 +1957,7 @@ const els = {
   knowledgeGrid: document.getElementById("knowledgeGrid"),
   intervalNoteA: document.getElementById("intervalNoteA"),
   intervalNoteB: document.getElementById("intervalNoteB"),
+  intervalOctaveB: document.getElementById("intervalOctaveB"),
   intervalResult: document.getElementById("intervalResult"),
   intervalReference: document.getElementById("intervalReference"),
   playIntervalBtn: document.getElementById("playIntervalBtn"),
@@ -1981,30 +2154,136 @@ function getAudioProfile() {
 function noteStartOffset(index, mode, duration, gap) {
   const base = mode === "arp" ? index * (duration + gap) : mode === "strum" ? index * 0.028 : 0;
   const swing = state.swing && mode === "arp" && index % 2 === 1 ? duration * 0.32 : 0;
-  const humanize = state.humanize ? (Math.random() - 0.5) * 0.018 : 0;
+  // 人性化只作用於分解／掃弦，柱式和弦必須同時響，不可讓各聲部錯位
+  const humanize = state.humanize && mode !== "block" ? (Math.random() - 0.5) * 0.018 : 0;
   return Math.max(0, base + swing + humanize);
 }
 
-function triggerMidi(midi, at, duration, velocity = 0.7) {
+const activeAudioVoices = new Set();
+const heldPianoVoices = new Map();
+
+function buildAudioVoice(midi, at, velocity = 0.7) {
   const ctx = getAudioContext();
   const profile = getAudioProfile();
+  const start = Math.max(Number.isFinite(at) ? at : ctx.currentTime, ctx.currentTime + 0.002);
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
   const filter = ctx.createBiquadFilter();
   osc.type = profile.osc;
   osc.frequency.value = pitchToFrequency(midi);
   filter.type = "lowpass";
-  filter.frequency.setValueAtTime(profile.filter, at);
-  filter.frequency.exponentialRampToValueAtTime(Math.max(420, profile.filter * 0.45), at + duration);
+  filter.frequency.setValueAtTime(profile.filter, start);
+  filter.frequency.exponentialRampToValueAtTime(Math.max(420, profile.filter * 0.45), start + 0.9);
   const peak = Math.max(0.03, Math.min(0.9, velocity * profile.velocity));
-  gain.gain.setValueAtTime(0.0001, at);
-  gain.gain.exponentialRampToValueAtTime(peak, at + profile.attack);
-  gain.gain.exponentialRampToValueAtTime(0.0001, at + Math.max(profile.attack + 0.05, duration * profile.decay));
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.exponentialRampToValueAtTime(peak, start + profile.attack);
   osc.connect(filter);
   filter.connect(gain);
   gain.connect(masterGain);
-  osc.start(at);
-  osc.stop(at + duration * profile.decay + 0.08);
+  const voice = { osc, gain, filter, start, released: false };
+  activeAudioVoices.add(voice);
+  osc.onended = () => {
+    activeAudioVoices.delete(voice);
+    try {
+      osc.disconnect();
+      gain.disconnect();
+      filter.disconnect();
+    } catch {
+      /* ignore */
+    }
+  };
+  osc.start(start);
+  return voice;
+}
+
+function releaseAudioVoice(voice) {
+  if (!voice || voice.released) return;
+  voice.released = true;
+  try {
+    const ctx = getAudioContext();
+    const now = Math.max(ctx.currentTime + 0.004, voice.start + 0.02);
+    voice.gain.gain.cancelScheduledValues(now);
+    voice.gain.gain.setTargetAtTime(0.0001, now, 0.03);
+    voice.osc.stop(now + 0.14);
+  } catch {
+    /* ignore */
+  }
+}
+
+function triggerMidi(midi, at, duration, velocity = 0.7) {
+  const voice = buildAudioVoice(midi, at, velocity);
+  const profile = getAudioProfile();
+  const end = voice.start + Math.max(0.1, duration * profile.decay);
+  try {
+    voice.gain.gain.setTargetAtTime(0.0001, Math.max(voice.start + profile.attack + 0.02, end - 0.1), 0.05);
+    voice.osc.stop(end + 0.12);
+  } catch {
+    /* ignore */
+  }
+}
+
+function stopAllAudio() {
+  if (!audioContext) return;
+  heldPianoVoices.clear();
+  activeAudioVoices.forEach((voice) => releaseAudioVoice(voice));
+}
+
+let muteNoiseBuffer = null;
+function triggerMuteClick(at, velocity = 0.22) {
+  const ctx = getAudioContext();
+  if (!muteNoiseBuffer) {
+    const length = Math.max(1, Math.ceil(ctx.sampleRate * 0.055));
+    const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < length; i += 1) {
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 3);
+    }
+    muteNoiseBuffer = buffer;
+  }
+  const source = ctx.createBufferSource();
+  source.buffer = muteNoiseBuffer;
+  const filter = ctx.createBiquadFilter();
+  filter.type = "bandpass";
+  filter.frequency.value = 1100;
+  filter.Q.value = 0.7;
+  const gain = ctx.createGain();
+  gain.gain.value = Math.max(0.02, velocity * 0.5);
+  source.connect(filter);
+  filter.connect(gain);
+  gain.connect(masterGain);
+  const start = Math.max(at, ctx.currentTime + 0.002);
+  source.start(start);
+  const voice = { osc: source, gain, filter, start, released: true };
+  activeAudioVoices.add(voice);
+  source.onended = () => {
+    activeAudioVoices.delete(voice);
+    try {
+      source.disconnect();
+      gain.disconnect();
+      filter.disconnect();
+    } catch {
+      /* ignore */
+    }
+  };
+}
+
+function startPianoVoice(midi, velocity = 0.85) {
+  if (!Number.isFinite(midi)) return null;
+  if (heldPianoVoices.has(midi)) return heldPianoVoices.get(midi);
+  const voice = buildAudioVoice(midi, getAudioContext().currentTime + 0.005, velocity);
+  heldPianoVoices.set(midi, voice);
+  return voice;
+}
+
+function stopPianoVoice(midi) {
+  const voice = heldPianoVoices.get(midi);
+  if (!voice) return;
+  heldPianoVoices.delete(midi);
+  releaseAudioVoice(voice);
+}
+
+function releaseAllPianoVoices() {
+  [...heldPianoVoices.keys()].forEach((midi) => stopPianoVoice(midi));
 }
 
 function midiToNoteName(midi) {
@@ -2022,6 +2301,7 @@ function parseNoteToken(token, fallbackOctave = 4) {
 }
 
 function playNotes(sequence, { duration = 0.34, gap = 0.05, mode = "block", velocity = 0.7, startAt = 0 } = {}) {
+  if (!startAt) stopAllAudio();
   const ctx = getAudioContext();
   const now = ctx.currentTime + 0.04 + startAt;
   sequence.forEach((item, index) => {
@@ -2042,6 +2322,7 @@ function playChordNotes(notes, { arpeggio = false, octave = 4, octaveLift = 0 } 
 }
 
 function playSequence(noteNames, { ascending = true, tempo = 0.26 } = {}) {
+  stopAllAudio();
   const seq = ascending ? noteNames : [...noteNames].reverse();
   const ctx = getAudioContext();
   const now = ctx.currentTime + 0.04;
@@ -2079,8 +2360,41 @@ function intervalToLabel(interval) {
   return `${normalized}`;
 }
 
+// 依和弦性質決定單一正確標籤，避免同一音同時出現 m3 / b3 / #9 / b2 等互相打架的寫法
+function chordToneLabel(chord, interval) {
+  const semitone = mod(interval, 12);
+  const overrides = chord && CHORD_TONE_LABEL_OVERRIDES[chord.id];
+  if (overrides && overrides[semitone]) return overrides[semitone];
+  const extended = chord && ["seventh", "extended", "altered"].includes(chord.category);
+  const map = {
+    0: "1",
+    1: "b9",
+    2: extended ? "9" : "2",
+    3: "b3",
+    4: "3",
+    5: extended ? "11" : "4",
+    6: "b5",
+    7: "5",
+    8: "#5",
+    9: extended ? "13" : "6",
+    10: "b7",
+    11: "maj7",
+  };
+  return map[semitone] || `${semitone}`;
+}
+
+function chordToneRole(label) {
+  return CHORD_TONE_ROLES[label] || "延伸音";
+}
+
+function chordToneNote(chord, interval) {
+  const label = chordToneLabel(chord, interval);
+  const preferFlats = label.startsWith("b") || (!label.startsWith("#") && state.useFlats);
+  return noteName(state.root + interval, preferFlats);
+}
+
 function intervalToDegree(interval, mode = state.mode) {
-  const scale = SCALE_LIBRARY[mode] || SCALE_LIBRARY.major;
+  const scale = getScaleSteps(mode);
   const target = mod(interval, 12);
   const idx = scale.indexOf(target);
   if (idx >= 0) return DEGREE_NAMES[idx];
@@ -2096,12 +2410,15 @@ function intervalToDegree(interval, mode = state.mode) {
 }
 
 function getModeLabel() {
-  return MODE_LABELS[state.mode] || state.mode;
+  return MODE_LABELS[state.mode] || MODE_DETAILS.find((mode) => mode.id === state.mode)?.label || state.mode;
+}
+
+function getScaleSteps(mode = state.mode) {
+  return SCALE_LIBRARY[mode] || MODE_DETAILS.find((item) => item.id === mode)?.intervals || SCALE_LIBRARY.major;
 }
 
 function getScaleNotes() {
-  const steps = SCALE_LIBRARY[state.mode] || SCALE_LIBRARY.major;
-  return steps.map((step) => mod(state.root + step, 12));
+  return getScaleSteps().map((step) => mod(state.root + step, 12));
 }
 
 function getDegreeLabels() {
@@ -2125,7 +2442,7 @@ function chordMatchesQuery(chord, query) {
 }
 
 function getChordNoteNames(chord) {
-  return chord.intervals.map((interval) => noteName(state.root + interval));
+  return chord.intervals.map((interval) => chordToneNote(chord, interval));
 }
 
 function getChordPitchClasses(chord) {
@@ -2136,6 +2453,84 @@ function getChordMidi(chord, baseOctave = 4) {
   return chord.intervals.map((interval) => {
     const midi = 12 * (baseOctave + 1) + state.root + interval;
     return midi < 60 ? midi + 12 : midi;
+  });
+}
+
+function normalizeSearch(value) {
+  return String(value == null ? "" : value)
+    .toLowerCase()
+    .replace(/[♯]/g, "#")
+    .replace(/[♭]/g, "b")
+    .replace(/[，、,／]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function noteNameToPc(name) {
+  const cleaned = String(name || "").replace(/♯/g, "#").replace(/♭/g, "b");
+  const match = cleaned.match(/^([A-Ga-g])([#b]?)$/);
+  if (!match) return null;
+  const base = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 }[match[1].toUpperCase()];
+  const accidental = match[2] === "#" ? 1 : match[2] === "b" ? -1 : 0;
+  return mod(base + accidental, 12);
+}
+
+function chordQualityTokens(chord) {
+  const tokens = new Set();
+  const addToken = (value) => {
+    const raw = String(value == null ? "" : value).trim();
+    if (!raw) return;
+    let normalized;
+    if (raw === "M") normalized = "maj";
+    else if (raw === "M7") normalized = "maj7";
+    else if (raw === "Δ7" || raw === "△7" || raw === "Δ") normalized = "maj7";
+    else if (raw === "mM7" || raw === "mMaj7") normalized = "mmaj7";
+    else normalized = normalizeSearch(raw).replace(/\s+/g, "");
+    if (normalized) tokens.add(normalized);
+  };
+  [chord.id, chord.name, ...(chord.symbols || [])].forEach(addToken);
+  return tokens;
+}
+
+function chordChineseText(chord) {
+  return normalizeSearch(
+    [
+      ...(CHORD_SEARCH_ALIASES[chord.id] || []),
+      chord.theory,
+      chord.function,
+      chord.guitar,
+      chordCategoryLabel(chord.category),
+    ].join(" ")
+  );
+}
+
+// 解析「根音＋性質」形式的查詢（Cm7 / Calt / C9sus4）；供搜尋與主音自動切換使用
+function parseRootQualifiedQuery(query) {
+  const normalized = normalizeSearch(query).replace(/\s+/g, "");
+  const match = normalized.match(/^([a-g])([#b]?)(.+)$/);
+  if (!match) return null;
+  const pc = noteNameToPc(`${match[1]}${match[2]}`);
+  if (pc === null) return null;
+  const suffix = match[3];
+  const knownQuality = CHORD_QUALITY_LIBRARY.some((chord) => chordQualityTokens(chord).has(suffix));
+  if (!knownQuality && !(suffix in CHORD_SUFFIX_TO_QUALITY)) return null;
+  return { pc, suffix };
+}
+
+function chordMatchesQuery(chord, query) {
+  const normalized = normalizeSearch(query);
+  if (!normalized) return true;
+  const tokens = chordQualityTokens(chord);
+  const text = chordChineseText(chord);
+  const rootQualified = parseRootQualifiedQuery(normalized);
+  if (rootQualified) {
+    if (mod(rootQualified.pc, 12) !== mod(state.root, 12)) return false;
+    return tokens.has(rootQualified.suffix) || normalizeSearch(chord.id) === rootQualified.suffix || (CHORD_SUFFIX_TO_QUALITY[rootQualified.suffix] || "") === chord.id;
+  }
+  const terms = normalized.split(/\s+/).filter(Boolean);
+  return terms.every((term) => {
+    if (/[\u3400-\u9fff]/.test(term)) return text.includes(term);
+    return tokens.has(term);
   });
 }
 
@@ -2279,7 +2674,7 @@ function getResolutionAdvice(chord) {
 function getTensionSummary(chord) {
   const tensions = chord.intervals
     .filter((interval) => Math.abs(interval) > 7 || [1, 2, 5, 6, 8, 9, 10, 11].includes(mod(interval, 12)))
-    .map((interval) => `${intervalToLabel(interval)} ${noteName(state.root + interval)}`);
+    .map((interval) => `${chordToneLabel(chord, interval)} ${chordToneNote(chord, interval)}`);
   if (isBeginnerLevel()) {
     if (!tensions.length) return "它只用最核心的几个音，听起来干净、不紧绷。";
     if (chord.intervals.length <= 3) {
@@ -2445,33 +2840,79 @@ function chordById(id) {
   return CHORD_QUALITY_LIBRARY.find((chord) => chord.id === id) || CHORD_QUALITY_LIBRARY[0];
 }
 
+function parseDegreeToken(token) {
+  const raw = String(token == null ? "" : token).trim();
+  const fallback = { raw, semitone: 0, quality: "maj", romanIndex: 0, borrowed: false, secondary: null, suffix: "" };
+  if (!raw) return fallback;
+  const parts = raw.split("/");
+  const head = parts[0].trim();
+  const targetToken = parts[1] ? parts[1].trim() : null;
+  const match = head.match(/^([b#]*)([ivIV]+)(.*)$/);
+  if (!match) return fallback;
+  const accidental = match[1] || "";
+  const romanLetters = match[2];
+  const suffix = (match[3] || "").trim();
+  const romanIndex = ROMAN_DEGREE_INDEX[romanLetters.toUpperCase()] ?? 0;
+  const modeSteps = SCALE_LIBRARY[state.mode] || SCALE_LIBRARY.major;
+  const accidentalOffset = accidental.split("").reduce((sum, ch) => sum + (ch === "b" ? -1 : ch === "#" ? 1 : 0), 0);
+  const isLowerCase = romanLetters === romanLetters.toLowerCase();
+  const quality = suffix
+    ? CHORD_SUFFIX_TO_QUALITY[suffix] ?? (isLowerCase ? "min" : "maj")
+    : isLowerCase ? "min" : "maj";
+  const semitone = mod((modeSteps[romanIndex] ?? 0) + accidentalOffset, 12);
+  if (targetToken) {
+    const target = parseDegreeToken(targetToken);
+    return {
+      raw,
+      semitone: mod(target.semitone + 7, 12),
+      quality: "7",
+      romanIndex,
+      borrowed: false,
+      secondary: targetToken,
+      target,
+      suffix,
+    };
+  }
+  return { raw, semitone, quality, romanIndex, borrowed: accidental.length > 0, secondary: null, suffix, accidental, isLowerCase };
+}
+
+function degreeFunctionInfo(degree) {
+  const parsed = parseDegreeToken(degree);
+  if (parsed.secondary) return { ...parsed, fn: "D" };
+  const pattern = state.mode === "minor" ? DEGREE_FUNCTIONS_MINOR : DEGREE_FUNCTIONS_MAJOR;
+  let fn = pattern[parsed.romanIndex] || "color";
+  if (parsed.borrowed) {
+    const roman = ["I", "II", "III", "IV", "V", "VI", "VII"][parsed.romanIndex];
+    if (roman === "II") fn = "N";
+    else if (roman === "III") fn = "T";
+    else if (roman === "VI") fn = "S";
+    else if (roman === "VII") fn = "D";
+    else fn = pattern[parsed.romanIndex] || "color";
+  }
+  return { ...parsed, fn };
+}
+
 function degreeFunction(degree) {
-  const token = String(degree);
-  const lower = token.toLowerCase();
-  if (/^v7\//i.test(token)) return "D";
-  if (/^bii/.test(lower) || /^v(?!i|ii)/.test(lower) || /^vii/.test(lower) || lower.startsWith("alt")) return "D";
-  if (/^ii/.test(lower) || /^iv/.test(lower) || lower.startsWith("sus")) return "S";
-  if (lower.startsWith("bii") || lower.startsWith("v7") || lower.startsWith("vii") || lower.startsWith("alt") || lower === "v") return "D";
-  if (lower.startsWith("vi") || lower.startsWith("bvi") || lower.startsWith("biii")) return "T";
-  if (/^i(?!i|v)/.test(lower) || /^im/.test(lower) || /^imaj/.test(lower)) return "T";
-  return "color";
+  return degreeFunctionInfo(degree).fn;
 }
 
 function detectProgressionEvents(degrees, functions) {
   const events = [];
+  const infos = degrees.map((degree) => degreeFunctionInfo(degree));
   degrees.forEach((degree, index) => {
-    const token = String(degree);
-    if (/V7\//.test(token)) events.push(`${token}：次属和弦（Secondary Dominant），临时离调强化目标级。`);
-    if (token === "bII7") events.push("bII7：三全音替代属（Tritone Sub），共享导向音并半音下行解决至主和弦。");
-    if (["bVImaj7", "bVII7", "bIIImaj7", "iv"].includes(token)) events.push(`${token}：调式互换借用和弦（Modal Interchange），源自同主音小调色彩。`);
-    if (/alt|b9|#9|b13/.test(token)) events.push(`${token}：变化属和弦（Altered Dominant），变化张力音宜半音级进解决。`);
-    const next = degrees[index + 1];
-    if (token === "V7/V" && next && String(next).startsWith("V")) events.push("V7/V → V：重属到属的经典功能推进。");
-    if (functions[index] === "D" && functions[index + 1] === "D") events.push("连续属功能链（Extended Dominants）：按五度圈循环持续积蓄解决动力。");
+    const info = infos[index];
+    if (info.secondary) events.push(`${degree}：次属和弦（Secondary Dominant），临时离调强化 ${info.secondary}。`);
+    if (String(degree) === "bII7") events.push("bII7：三全音替代属（Tritone Sub），共享导向音并半音下行解决至主和弦。");
+    if (info.borrowed) events.push(`${degree}：调式互换借用和弦（Modal Interchange），功能为${FUNCTION_LABELS[info.fn] || "色彩"}。`);
+    if (/alt|b9|#9|b13/.test(String(degree))) events.push(`${degree}：变化属和弦（Altered Dominant），变化张力音宜半音级进解决。`);
+    if (info.fn === "D" && functions[index + 1] === "D") {
+      events.push("连续属功能链（Extended Dominants）：持续积蓄解决动力，注意别让张力停留太久。");
+    }
+    if (info.fn === "D" && functions[index + 1] === "T") {
+      events.push(`${degree} → ${degrees[index + 1]}：属到主的功能解决，是调性闭合的核心。`);
+    }
   });
-  if (degrees.includes("I") && degrees.includes("bVImaj7") && degrees.includes("bVII7")) {
-    events.push("I - bVI - bVII - I：经典同主音大小调混合进行，常见于影视配乐与现代灵魂乐。");
-  }
+  if (infos.some((info) => info.fn === "N")) events.push("那不勒斯和弦（bII）：以下屬色彩準備屬和弦，常见于小调与古典终止。");
   return [...new Set(events)];
 }
 
@@ -2506,47 +2947,101 @@ function renderScoreLine(scores) {
 }
 
 function getNextChordSuggestions(degrees, functions) {
+  if (!degrees.length) return ["I", "vi", "IV", "V"];
   const lastFn = functions.at(-1);
-  const lastDegree = degrees.at(-1) || "";
-  if (!degrees.length) return ["I", "ii7", "V7"];
-  if (lastFn === "T") return state.styleMode === "classical" ? ["IV", "ii7", "V7"] : ["ii7", "IV", "bVImaj7"];
-  if (lastFn === "S") return ["V7", "V7alt", "bII7"];
-  if (lastFn === "D") return /V7\/ii/.test(lastDegree) ? ["ii7"] : /V7\/V/.test(lastDegree) ? ["V7"] : ["Imaj7", "i", "vi"];
+  if (lastFn === "T") return state.styleMode === "classical" ? ["IV", "ii7", "V"] : ["ii7", "IV", "V7", "vi"];
+  if (lastFn === "S") return ["V", "V7", "V7alt"];
+  if (lastFn === "D") return ["I", "Imaj7", "vi"];
+  if (lastFn === "N") return ["V", "I"];
   return ["ii7", "V7", "Imaj7"];
 }
 
 function analyzeProgression(degrees = []) {
-  const functions = degrees.map((degree) => degreeFunction(degree));
-  const chain = functions.join("-");
+  if (!degrees.length) {
+    return {
+      empty: true,
+      roman: "尚未添加和弦",
+      functions: "尚未建立功能链",
+      score: 0,
+      scores: { voiceLeading: 0, functionalStrength: 0, tensionRelease: 0, styleUsage: 0 },
+      events: [],
+      nextSuggestions: ["I", "vi", "IV", "V"],
+      suggestion: "先在右侧或下方点选级数，建立 2–4 个和弦的进行，再让系统评估功能链与声部连接。",
+    };
+  }
+  const infos = degrees.map((degree) => degreeFunctionInfo(degree));
+  const functions = infos.map((info) => info.fn);
   const events = detectProgressionEvents(degrees, functions);
   const scores = {
     voiceLeading: progressionVoiceSmoothness(degrees),
-    functionalStrength: 45,
-    tensionRelease: 42,
-    styleUsage: 48,
+    functionalStrength: 50,
+    tensionRelease: 50,
+    styleUsage: 50,
   };
-  if (chain.includes("S-D-T")) scores.functionalStrength += 34;
-  if (chain.includes("T-S-D-T")) scores.functionalStrength += 26;
-  if (chain.includes("D-T")) scores.tensionRelease += 30;
-  if (degrees.some((degree) => /alt|b9|#9|b13|bII/.test(degree))) scores.tensionRelease += 14;
-  if (degrees.length >= 4) scores.styleUsage += 10;
-  if (events.some((event) => event.includes("secondary"))) scores.functionalStrength += 10;
-  if (events.some((event) => event.includes("modal interchange"))) scores.styleUsage += 10;
-  if (state.styleMode === "jazz" && degrees.some((degree) => /ii|V7|bII|alt/.test(degree))) scores.styleUsage += 18;
-  if (state.styleMode === "classical" && !degrees.some((degree) => /alt|#9|b13|bII/.test(degree))) scores.styleUsage += 14;
+  for (let i = 0; i < functions.length - 1; i += 1) {
+    const a = functions[i];
+    const b = functions[i + 1];
+    if (a === "T" && b === "S") scores.functionalStrength += 5;
+    if (a === "S" && b === "D") {
+      scores.functionalStrength += 9;
+      scores.tensionRelease += 6;
+    }
+    if (a === "D" && b === "T") {
+      scores.functionalStrength += 12;
+      scores.tensionRelease += 14;
+    }
+    if (a === "T" && b === "D") {
+      scores.functionalStrength += 5;
+      scores.tensionRelease += 3;
+    }
+    if (a === "D" && b === "S") {
+      scores.functionalStrength -= 6;
+      scores.tensionRelease -= 4;
+    }
+    if (a === "S" && b === "T") scores.functionalStrength += 3;
+    if (a === "D" && b === "D") {
+      scores.functionalStrength += 4;
+      scores.tensionRelease += 4;
+    }
+  }
+  if (functions.at(-1) === "T") scores.tensionRelease += 6;
+  const borrowedCount = infos.filter((info) => info.borrowed).length;
+  const secondaryCount = infos.filter((info) => info.secondary).length;
+  const alteredCount = degrees.filter((degree) => /alt|b9|#9|b13/.test(String(degree))).length;
+  scores.functionalStrength -= borrowedCount * 3;
+  scores.styleUsage += borrowedCount * 6;
+  scores.functionalStrength += secondaryCount * 6;
+  scores.tensionRelease += alteredCount * 4;
+  scores.styleUsage += alteredCount * 3;
+  if (degrees.length >= 4) scores.styleUsage += 6;
+  const joined = degrees.join("-");
+  if (state.styleMode === "jazz" && infos.some((info) => ["maj7", "m7", "7", "9", "13", "alt", "m9", "m11"].includes(info.quality))) {
+    scores.styleUsage += 14;
+  }
+  if (state.styleMode === "classical") {
+    const triadic = infos.every((info) => ["maj", "min", "dim", "aug"].includes(info.quality));
+    scores.styleUsage += triadic ? 12 : -10;
+  }
+  if (state.styleMode === "pop" && /^I(-V|-vi|-IV){3}$/.test(joined)) scores.styleUsage += 12;
   Object.keys(scores).forEach((key) => {
     scores[key] = Math.max(20, Math.min(100, Math.round(scores[key])));
   });
-  const score = Math.round((scores.voiceLeading + scores.functionalStrength + scores.tensionRelease + scores.styleUsage) / 4);
+  const score = Math.round(
+    scores.voiceLeading * 0.35 + scores.functionalStrength * 0.3 + scores.tensionRelease * 0.2 + scores.styleUsage * 0.15
+  );
   const suggestion = (() => {
-    if (!functions.includes("D")) return "加入 V7 或 tritone sub bII7，進行會更有解決感。";
-    if (!functions.includes("S")) return "在屬和弦前加入 ii7 或 IV，可讓推進更自然。";
-    if (!degrees.some((degree) => degree.includes("alt"))) return "爵士化可把 V7 換成 V7alt、7b9 或 bII7。";
-    return "進行已有清楚功能鏈，可嘗試 modal interchange：bVImaj7 或 bVII7。";
+    if (!functions.includes("D")) return "加入 V 或 V7（也可用 bII7 三全音替代），进行会更有解决感。";
+    if (!functions.includes("S")) return "在属和弦前加入 ii7 或 IV，可让推进更自然。";
+    if (functions.at(-1) !== "T") return "目前停在非主功能；可再补一个 I / Imaj7 让终止更完整。";
+    if (state.styleMode === "jazz" && !degrees.some((degree) => /alt|b9|#9|b13/.test(String(degree)))) {
+      return "爵士化可把 V7 换成 V7alt、7b9；注意 alt 在本站的精簡定义只含 b9/#9。";
+    }
+    return "进行已有清楚功能链，可尝试 modal interchange：bVImaj7 或 bVII7。";
   })();
   return {
-    roman: degrees.join(" - ") || "尚未添加和弦",
-    functions: functions.map((fn) => ({ T: "主功能 (T)", S: "下属功能 (S)", D: "属功能 (D)", color: "色彩和声" })[fn]).join(" → ") || "尚未建立功能链",
+    empty: false,
+    roman: degrees.join(" - "),
+    functions: functions.map((fn) => FUNCTION_LABELS[fn] || "色彩和声").join(" → "),
     score,
     scores,
     events,
@@ -2556,74 +3051,11 @@ function analyzeProgression(degrees = []) {
 }
 
 function degreeToChordName(degree) {
-  const root = state.root;
-  const majorMap = {
-    I: [0, ""],
-    i: [0, "m"],
-    Imaj7: [0, "maj7"],
-    imMaj7: [0, "mMaj7"],
-    ii7: [2, "m7"],
-    "iiø7": [2, "m7b5"],
-    IV: [5, ""],
-    V: [7, ""],
-    V7: [7, "7"],
-    V7alt: [7, "alt"],
-    "V7/ii": [9, "7"],
-    "V7/V": [2, "7"],
-    vi: [9, "m"],
-    bII7: [1, "7"],
-    bIIImaj7: [3, "maj7"],
-    bVImaj7: [8, "maj7"],
-    bVII7: [10, "7"],
-    iv: [5, "m"],
-    "iø7": [0, "m7b5"],
-    "ii7": [2, "m7"],
-    "bVI7": [8, "7"],
-  };
-  if (majorMap[degree]) {
-    const [offset, suffix] = majorMap[degree];
-    return `${noteName(root + offset)}${suffix}`;
-  }
-  if (/^I(?!V)/.test(String(degree))) {
-    const suffix = String(degree).slice(1);
-    const suffixMap = {
-      "": "",
-      m: "m",
-      min: "m",
-      maj7: "maj7",
-      maj9: "maj9",
-      maj13: "maj13",
-      m7: "m7",
-      m9: "m9",
-      m11: "m11",
-      m6: "m6",
-      m69: "m6",
-      mMaj7: "mMaj7",
-      m7b5: "m7b5",
-      dim: "dim",
-      dim7: "dim7",
-      aug: "aug",
-      sus2: "sus2",
-      sus4: "sus4",
-      "7": "7",
-      "6": "6",
-      "69": "6/9",
-      "9": "9",
-      "11": "11",
-      "13": "13",
-      add9: "add9",
-      alt: "alt",
-      "7alt": "alt",
-      "7b9": "7b9",
-      "7#9": "7#9",
-      "7b13": "7b13",
-      "7sus4": "7sus4",
-      "9sus4": "9sus4",
-    };
-    return `${noteName(root)}${suffixMap[suffix] || suffix}`;
-  }
-  const [offset, suffix] = majorMap[degree] || [0, ""];
-  return `${noteName(root + offset)}${suffix}`;
+  const info = parseDegreeToken(degree);
+  const suffix = CHORD_QUALITY_SUFFIX[info.quality] ?? "";
+  const head = String(degree).split("/")[0];
+  const preferFlats = head.includes("b") || (state.useFlats && !head.includes("#"));
+  return `${noteName(state.root + info.semitone, preferFlats)}${suffix}`;
 }
 
 function chordNameToMidiSet(name) {
@@ -2684,21 +3116,69 @@ function detectParallelPerfects(moves, hidden = false) {
   return issues;
 }
 
-function evaluateVoiceLeading(chordA, chordB, moves) {
+function chordPitchClassSet(chord, rootPc) {
+  return new Set(chord.intervals.map((interval) => mod(rootPc + interval, 12)));
+}
+
+function nearestMidiForPc(pc, targetMidi) {
+  let midi = targetMidi - mod(targetMidi, 12) + mod(pc, 12);
+  while (midi - targetMidi > 6) midi -= 12;
+  while (targetMidi - midi > 6) midi += 12;
+  return midi;
+}
+
+function voiceCorePcs(chord, rootPc) {
+  const pcs = chord.intervals.map((interval) => mod(rootPc + interval, 12));
+  const priority = [];
+  const add = (pc) => {
+    if (pc !== undefined && !priority.includes(pc)) priority.push(pc);
+  };
+  add(pcs[0]);
+  add(pcs.find((pc) => [3, 4].includes(mod(pc - rootPc, 12))));
+  add(pcs.find((pc) => [10, 11].includes(mod(pc - rootPc, 12))));
+  pcs.forEach(add);
+  return priority;
+}
+
+function chordDisplayFor(chord, rootPc) {
+  return `${noteName(rootPc)}${CHORD_QUALITY_SUFFIX[chord.id] ?? chord.name}`;
+}
+
+function evaluateVoiceLeading(chordA, chordB, moves, context = {}) {
+  const rootA = Number.isFinite(context.rootA) ? context.rootA : state.root;
+  const rootB = Number.isFinite(context.rootB) ? context.rootB : state.root;
+  const targetPcs = chordPitchClassSet(chordB, rootB);
+  const covered = new Set(moves.map((move) => mod(move.to, 12)));
   const maxMove = Math.max(...moves.map((move) => Math.abs(move.distance)));
   const commonTones = moves.filter((move) => mod(move.from, 12) === mod(move.to, 12)).length;
   const stepwise = moves.filter((move) => Math.abs(move.distance) <= 2).length;
   const issues = [];
   const advice = [];
   const severe = [];
-  const leadingTone = mod(state.root + 11, 12);
-  const tonic = mod(state.root, 12);
+  const outside = moves
+    .map((move, index) => ({ ...move, voiceIndex: index }))
+    .filter((move) => !targetPcs.has(mod(move.to, 12)));
+  outside.forEach((move) => {
+    severe.push(
+      `第 ${move.voiceIndex + 1} 声部目标音 ${midiToNoteName(move.to)} 不属于 ${chordDisplayFor(chordB, rootB)}；请先修正目标音，再谈平滑。`
+    );
+  });
+  const corePcs = voiceCorePcs(chordB, rootB).slice(0, Math.min(3, moves.length));
+  const missingCore = corePcs.filter((pc) => !covered.has(pc));
+  if (missingCore.length) {
+    issues.push(`目标排列缺少 ${missingCore.map((pc) => noteName(pc)).join("、")}，至少保留根音、三音与七音。`);
+  }
+  const dominantRootPc = mod(rootB + 7, 12);
+  const isDominantToTarget = mod(rootA, 12) === dominantRootPc || (chordA.id === "dim" && mod(rootA, 12) === mod(rootB + 11, 12));
+  const leadingPc = mod(rootB + 11, 12);
+  const flat7Pc = mod(rootA + 10, 12);
+  const hasFlat7 = chordA.intervals.some((interval) => mod(interval, 12) === 10);
   moves.forEach((move, index) => {
-    if (mod(move.from, 12) === leadingTone && mod(move.to, 12) !== tonic) {
-      const text = `第 ${index + 1} 声部：导音 ${midiToNoteName(move.from)} 建议上行解决到 ${noteName(tonic)}。`;
+    if (isDominantToTarget && !targetPcs.has(leadingPc) && mod(move.from, 12) === leadingPc && mod(move.to, 12) !== mod(rootB, 12)) {
+      const text = `第 ${index + 1} 声部：导音 ${midiToNoteName(move.from)} 在这里应上行解决到 ${noteName(rootB)}。`;
       (state.styleMode === "classical" ? severe : issues).push(text);
     }
-    if (getFunctionClass(chordA) === "Dominant" && mod(move.from, 12) === mod(state.root + 10, 12) && move.distance >= 0) {
+    if (isDominantToTarget && hasFlat7 && mod(move.from, 12) === flat7Pc && move.distance > 0) {
       const text = `第 ${index + 1} 声部：属七的七音 ${midiToNoteName(move.from)} 通常下行解决。`;
       (state.styleMode === "jazz" ? issues : severe).push(text);
     }
@@ -2710,59 +3190,139 @@ function evaluateVoiceLeading(chordA, chordB, moves) {
   if (stepwise < Math.max(2, moves.length - 1)) advice.push("可尝试让更多内声级进，级进优于跳进。");
   if (state.styleMode === "jazz") advice.push("爵士 comping 可接受较开放声部，但 3-7/7-3 guide tones 要保持清楚。");
   if (state.styleMode === "classical") advice.push("古典模式按 chorale style 更严格：导音、七音、平行与隐藏五八度都要检查。");
-  const rating = Math.max(20, Math.min(100, 100 - maxMove * 8 + commonTones * 9 + stepwise * 5 - severe.length * 18 - issues.length * 8));
-  const summary = `最大移动 ${maxMove} 半音；共同音 ${commonTones} 个；级进/保留 ${stepwise}/${moves.length}。${rating >= 82 ? "声部非常平滑。" : rating >= 62 ? "可用，但还能优化。" : "教育性地暴露了需要修正的声部问题。"}`;
-  return { maxMove, commonTones, stepwise, severe, issues, advice, rating: Math.round(rating), summary };
+  let rating = 80 + commonTones * 8 + stepwise * 4 - maxMove * 6 - severe.length * 24 - issues.length * 7;
+  rating = Math.max(20, Math.min(100, Math.round(rating)));
+  if (outside.length) rating = Math.min(rating, 45);
+  const summary = `最大移动 ${maxMove} 半音；共同音 ${commonTones} 个；级进/保留 ${stepwise}/${moves.length}${outside.length ? `；${outside.length} 个目标音不属于目标和弦` : ""}。${rating >= 82 ? "声部非常平滑。" : rating >= 62 ? "可用，但还能优化。" : "目标音或声部进行仍需修正。"}`;
+  return { maxMove, commonTones, stepwise, severe, issues, advice, outside, rating, summary };
 }
 
 function compareVoiceLeading(chordA, chordB, options = {}) {
-  const source = getCompactVoicing(chordA);
-  const targetRaw = getCompactVoicing(chordB);
+  const rootA = Number.isFinite(options.rootA) ? options.rootA : state.root;
+  const rootB = Number.isFinite(options.rootB) ? options.rootB : state.root;
+  const source = getCompactVoicing(chordA, rootA);
+  const targetRaw = getCompactVoicing(chordB, rootB);
   normalizeVoiceAdjustments(source.length);
-  const adjustments = options.adjustments || state.voiceAdjustments;
-  const moves = buildVoiceMoves(source, targetRaw, adjustments);
-  const check = evaluateVoiceLeading(chordA, chordB, moves);
+  let moves;
+  if (Array.isArray(options.voicingB) && options.voicingB.length === source.length) {
+    moves = source.map((from, index) => ({ from, to: options.voicingB[index], distance: options.voicingB[index] - from }));
+  } else {
+    const adjustments = options.adjustments || state.voiceAdjustments;
+    moves = buildVoiceMoves(source, targetRaw, adjustments);
+  }
+  const check = evaluateVoiceLeading(chordA, chordB, moves, { rootA, rootB });
   return {
     source,
-    target: moves.map((m) => m.to),
+    target: moves.map((move) => move.to),
     moves,
     summary: check.summary,
     parallelRisk: check.severe.some((item) => item.includes("平行")),
     check,
+    rootA,
+    rootB,
   };
 }
 
 function resetVoiceAdjustments() {
   state.voiceAdjustments = [0, 0, 0, 0];
+  state.voiceVoicingB = null;
 }
 
-function optimizeVoiceLeadingAdjustments(chordA, chordB) {
-  const source = getCompactVoicing(chordA);
-  const target = getCompactVoicing(chordB);
-  state.voiceAdjustments = source.map((from, index) => {
-    const raw = target[index % target.length] || target[0];
-    const candidates = [-12, -7, -5, -2, -1, 0, 1, 2, 5, 7, 12].map((offset) => {
-      let to = raw;
-      while (to - from > 6) to -= 12;
-      while (from - to > 6) to += 12;
-      return offset + to - (raw + (to - raw));
+function optimizeVoiceLeadingAdjustments(chordA, chordB, options = {}) {
+  const rootA = Number.isFinite(options.rootA) ? options.rootA : state.root;
+  const rootB = Number.isFinite(options.rootB) ? options.rootB : state.root;
+  const source = getCompactVoicing(chordA, rootA);
+  const core = voiceCorePcs(chordB, rootB);
+  const targetPcs = core.slice(0, Math.min(source.length, Math.max(1, chordB.intervals.length)));
+  const permutations = [];
+  const build = (remaining, prefix) => {
+    if (!remaining.length) {
+      permutations.push(prefix);
+      return;
+    }
+    remaining.forEach((pc, index) => {
+      build([...remaining.slice(0, index), ...remaining.slice(index + 1)], [...prefix, pc]);
     });
-    return candidates.sort((a, b) => {
-      const moveA = buildVoiceMoves([from], [raw], [a])[0];
-      const moveB = buildVoiceMoves([from], [raw], [b])[0];
-      return Math.abs(moveA.distance) - Math.abs(moveB.distance);
-    })[0] || 0;
+  };
+  build(targetPcs, []);
+  let best = null;
+  const seen = new Set();
+  permutations.forEach((order) => {
+    const key = order.join(",");
+    if (seen.has(key)) return;
+    seen.add(key);
+    const voicing = source.map((from, index) => nearestMidiForPc(order[index % order.length], from));
+    const moves = voicing.map((to, index) => ({ from: source[index], to, distance: to - source[index] }));
+    const check = evaluateVoiceLeading(chordA, chordB, moves, { rootA, rootB });
+    if (!best || check.rating > best.rating || (check.rating === best.rating && check.severe.length < best.severeCount)) {
+      best = { voicing, rating: check.rating, severeCount: check.severe.length };
+    }
   });
+  state.voiceVoicingB = best ? best.voicing : source;
+  state.voiceAdjustments = [0, 0, 0, 0];
+  return state.voiceVoicingB;
 }
 
-function getIntervalInfo(a, b) {
-  const semitones = mod(b - a, 12);
-  const simple = INTERVAL_REFERENCE.find((item) => item[2] === semitones) || INTERVAL_REFERENCE[0];
+const INTERVAL_LETTERS = ["C", "D", "E", "F", "G", "A", "B"];
+const INTERVAL_LETTER_PC = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+const INTERVAL_BASE_STEPS = [0, 2, 4, 5, 7, 9, 11];
+
+function parseSpelledNote(name) {
+  const match = String(name || "").trim().match(/^([A-Ga-g])([#b♯♭]?)$/);
+  if (!match) return null;
+  const letter = INTERVAL_LETTERS.indexOf(match[1].toUpperCase());
+  const accidental = match[2] === "#" || match[2] === "♯" ? 1 : match[2] === "b" || match[2] === "♭" ? -1 : 0;
   return {
-    code: simple[0],
-    name: simple[1],
+    letter,
+    accidental,
+    pc: mod(INTERVAL_LETTER_PC[match[1].toUpperCase()] + accidental, 12),
+  };
+}
+
+function getIntervalInfo(a, b, options = {}) {
+  if (typeof a === "string" && typeof b === "string" && parseSpelledNote(a) && parseSpelledNote(b)) {
+    const parsedA = parseSpelledNote(a);
+    const parsedB = parseSpelledNote(b);
+    const octA = Number.isFinite(options.octA) ? options.octA : 4;
+    const octB = Number.isFinite(options.octB) ? options.octB : 4;
+    const midiA = 12 * (octA + 1) + parsedA.pc;
+    const midiB = 12 * (octB + 1) + parsedB.pc;
+    let shift = 0;
+    while (midiB + shift * 12 <= midiA) shift += 1;
+    const semitones = midiB + shift * 12 - midiA;
+    const diatonicA = parsedA.letter + 7 * octA;
+    const diatonicB = parsedB.letter + 7 * (octB + shift);
+    const degree = diatonicB - diatonicA + 1;
+    const simpleIndex = (degree - 1) % 7;
+    const expected = INTERVAL_BASE_STEPS[simpleIndex] + 12 * Math.floor((degree - 1) / 7);
+    const diff = semitones - expected;
+    const perfectBase = [0, 3, 4].includes(simpleIndex);
+    let quality;
+    if (perfectBase) {
+      quality = diff === 0 ? "perfect" : diff === 1 ? "augmented" : diff === -1 ? "diminished" : diff > 1 ? "augmented" : "diminished";
+    } else {
+      quality = diff === 0 ? "major" : diff === 1 ? "augmented" : diff === -1 ? "minor" : diff < -1 ? "diminished" : "augmented";
+    }
+    const prefix = { perfect: "P", major: "M", minor: "m", augmented: "A", diminished: "d" }[quality];
+    const qualityLabel = { perfect: "纯", major: "大", minor: "小", augmented: "增", diminished: "减" }[quality];
+    const code = `${prefix}${degree}`;
+    const reference = INTERVAL_REFERENCE.find((item) => item[0] === code);
+    const simpleReference = INTERVAL_REFERENCE.find((item) => item[2] === semitones && item[0] !== "A4" && item[0] !== "d5");
+    return {
+      code,
+      name: `${qualityLabel}${degree}度`,
+      semitones,
+      degree,
+      text: reference ? reference[3] : simpleReference ? simpleReference[3] : "复合音程：先算八度，再看剩余音程的性质。",
+    };
+  }
+  const semitones = mod(Number(b) - Number(a), 12);
+  const simple = INTERVAL_REFERENCE.find((item) => item[2] === semitones && !["A4", "d5"].includes(item[0])) || INTERVAL_REFERENCE[0];
+  return {
+    code: semitones === 6 ? "TT" : simple[0],
+    name: semitones === 6 ? "三全音（增四／减五）" : simple[1],
     semitones,
-    text: simple[3],
+    text: semitones === 6 ? "六個半音；拼写决定是增四度还是减五度。" : simple[3],
   };
 }
 function createEmptyTabGrid(beats = 4) {
@@ -2780,7 +3340,7 @@ function normalizeTabGrid(grid, beats) {
 
 function getChordDisplayName(chord) {
   const rootName = noteName(state.root);
-  return `${rootName}${chord.name}`;
+  return `${rootName}${CHORD_QUALITY_SUFFIX[chord.id] ?? chord.name}`;
 }
 
 function getSelectedChord() {
@@ -2804,14 +3364,23 @@ function rootLabel(note) {
 
 function renderRootStrip() {
   const roots = Array.from({ length: 12 }, (_, i) => i);
-  els.rootStrip.innerHTML = roots
-    .map(
-      (note) => `
-        <button class="root-button ${note === state.root ? "active" : ""}" data-root="${note}" type="button">
-          ${rootLabel(note)}
-        </button>
-      `
-    )
+  els.rootStrip.innerHTML = `
+    <label class="root-select-label" for="rootSelect">目前主音</label>
+    <select id="rootSelect" class="root-select" aria-label="选择当前主音">
+      ${roots.map((note) => `<option value="${note}" ${note === state.root ? "selected" : ""}>${rootLabel(note)}</option>`).join("")}
+    </select>
+    <span class="root-hint">${escapeHtml(getModeLabel())} · ${escapeHtml(getDegreeLabels()[0] || "I")}</span>
+  `;
+}
+
+function renderChordRail(chords) {
+  const rail = document.getElementById("chordRail");
+  if (!rail) return;
+  rail.innerHTML = chords
+    .map((chord) => {
+      const active = chord.id === state.selectedChordId;
+      return `<button type="button" class="chord-chip ${active ? "active" : ""}" data-chord="${chord.id}" aria-pressed="${active}">${escapeHtml(getChordDisplayName(chord))}</button>`;
+    })
     .join("");
 }
 
@@ -2823,14 +3392,16 @@ function renderChordDetails(chord) {
   const selectedDegree = getDegreeLabels()[0];
   const lv = chordLevelText(chord);
   const meta = levelMeta();
-  const construction = chord.intervals.map((interval, index) => {
-    const label = ["根音", "三音", "五音", "七音", "九音", "十一音", "十三音"][index] || `${index + 1}`;
-    return `${label} +${intervalToLabel(interval)} = ${noteName(state.root + interval)}`;
+  const construction = chord.intervals.map((interval) => {
+    const label = chordToneLabel(chord, interval);
+    const role = chordToneRole(label);
+    const note = chordToneNote(chord, interval);
+    return `${role} ${label} = ${note}（${interval} 半音）`;
   });
   const pitchInfo = notes
     .map((note, index) => {
       const interval = chord.intervals[index];
-      const label = intervalToLabel(interval);
+      const label = chordToneLabel(chord, interval);
       return `${label}:${note}`;
     })
     .join(" · ");
@@ -2847,10 +3418,10 @@ function renderChordDetails(chord) {
   els.selectedChordTones.innerHTML = notes
     .map((note, index) => {
       const interval = chord.intervals[index];
-      const label = intervalToLabel(interval);
-      const degree = intervalToDegree(interval);
-      const cls = interval === 1 || interval === 6 || interval === 8 ? "altered" : interval === 3 || interval === 10 ? "degree" : "";
-      return `<span class="tone-pill ${cls}">${label} ${note}<small>${degree}</small></span>`;
+      const label = chordToneLabel(chord, interval);
+      const role = chordToneRole(label);
+      const cls = label.includes("#") || label.includes("b") ? "altered" : label === "3" || label === "b3" || label === "b7" || label === "maj7" ? "degree" : "";
+      return `<span class="tone-pill ${cls}" title="${role}">${label} ${note}</span>`;
     })
     .join("");
   els.constructionStrip.innerHTML = construction
@@ -2873,12 +3444,12 @@ function analyzeChordFunction(chord) {
   const seventh = chord.intervals.find((value) => mod(value, 12) === 10 || mod(value, 12) === 11);
   const tension = chord.intervals
     .filter((interval) => [1, 5, 6, 8, 9, 13, 14, 15, 17, 21].includes(interval))
-    .map((interval) => intervalToLabel(interval))
+    .map((interval) => chordToneLabel(chord, interval))
     .join("、");
   const signature = `${noteName(state.root)}${chord.name}`;
   const extras = [];
-  if (third !== undefined) extras.push(`三音 ${intervalToLabel(third)} 决定性质`);
-  if (seventh !== undefined) extras.push(`七音 ${intervalToLabel(seventh)} 提供走向`);
+  if (third !== undefined) extras.push(`三音 ${chordToneLabel(chord, third)} 决定性质`);
+  if (seventh !== undefined) extras.push(`七音 ${chordToneLabel(chord, seventh)} 提供走向`);
   if (tension) extras.push(`张力音 ${tension}`);
   const base = chord.function || "色彩功能";
 
@@ -2919,14 +3490,27 @@ const KEYBOARD_SHORTCUT_TO_OFFSET = Object.fromEntries(
   PIANO_KEY_LAYOUT.map((item) => [item.shortcut.toLowerCase(), item.offset])
 );
 
+// 互動鋼琴擴展到 C3–C#5（約兩個八度），短鍵盤映射仍只覆蓋中央 C 附近
+function getPianoRenderLayout() {
+  const layout = [];
+  for (let offset = -12; offset <= 13; offset += 1) {
+    const pitch = mod(offset, 12);
+    const matched = PIANO_KEY_LAYOUT.find((item) => item.offset === offset);
+    layout.push({
+      offset,
+      pitch,
+      black: [1, 3, 6, 8, 10].includes(pitch),
+      shortcut: matched ? matched.shortcut : "",
+    });
+  }
+  return layout;
+}
+
 let isPianoPointerDown = false;
 let lastPointerMidi = null;
 const activeKeyTimers = new WeakMap();
 
-function playInteractivePianoKey(midi, keyEl) {
-  if (!Number.isFinite(midi)) return;
-  const ctx = getAudioContext();
-  triggerMidi(midi, ctx.currentTime + 0.008, 0.72, 0.88);
+function updatePlayedNoteBadge(midi) {
   const pc = mod(midi, 12);
   const relSemitones = mod(pc - state.root, 12);
   const intervalInfo = getIntervalInfo(state.root, pc);
@@ -2938,22 +3522,30 @@ function playInteractivePianoKey(midi, keyEl) {
     badge.textContent = convertText(`♪ ${fullNote} · ${freq} Hz · ${roleLabel}`, state.lang);
     badge.classList.add("active");
   }
-  if (keyEl) {
-    keyEl.classList.add("playing");
-    const prevTimer = activeKeyTimers.get(keyEl);
-    if (prevTimer) clearTimeout(prevTimer);
-    const timer = window.setTimeout(() => {
-      keyEl.classList.remove("playing");
-    }, 280);
-    activeKeyTimers.set(keyEl, timer);
-  }
+}
+
+function pressPianoKey(midi, keyEl) {
+  if (!Number.isFinite(midi)) return;
+  updatePlayedNoteBadge(midi);
+  startPianoVoice(midi, 0.85);
+  if (keyEl) keyEl.classList.add("playing");
+}
+
+function releasePianoKey(midi, keyEl) {
+  stopPianoVoice(midi);
+  if (keyEl) keyEl.classList.remove("playing");
+}
+
+function playInteractivePianoKey(midi, keyEl) {
+  pressPianoKey(midi, keyEl);
+  window.setTimeout(() => releasePianoKey(midi, keyEl), 340);
 }
 
 function renderPianoVisual(chord) {
   const activePitches = getChordPitchClasses(chord);
   const scalePitches = new Set(getScaleNotes().map((note) => mod(note, 12)));
   const baseMidi = 60; // C4
-  els.pianoVisual.innerHTML = PIANO_KEY_LAYOUT
+  els.pianoVisual.innerHTML = getPianoRenderLayout()
     .map((key) => {
       const midi = baseMidi + key.offset;
       const octaveNum = Math.floor(midi / 12) - 1;
@@ -3011,28 +3603,34 @@ function renderVoicings(chord) {
   const tones = getChordNoteNames(chord);
   const midi = getChordMidi(chord);
   const compact = midi.slice(0, 4).map((note) => midiToNoteName(note)).join(" ");
-  const drop2 = midi.slice(0, 4);
-  if (drop2.length >= 4) drop2[1] -= 12;
-  const drop3 = midi.slice(0, 4);
-  if (drop3.length >= 4) drop3[0] -= 12;
+  const drop2 = midi.slice(0, 4).sort((a, b) => a - b);
+  if (drop2.length >= 4) drop2[drop2.length - 2] -= 12;
+  drop2.sort((a, b) => a - b);
+  const drop3 = midi.slice(0, 4).sort((a, b) => a - b);
+  if (drop3.length >= 4) drop3[drop3.length - 3] -= 12;
+  drop3.sort((a, b) => a - b);
   const rootless37 = chord.intervals
     .filter((interval) => [3, 4, 9, 10, 11, 13, 14, 15, 17, 20, 21].includes(interval))
     .slice(0, 4)
-    .map((interval) => noteName(state.root + interval));
-  const quartal = [0, 5, 10, 15].map((interval) => noteName(state.root + interval));
+    .map((interval) => chordToneNote(chord, interval));
+  const quartal = [0, 5, 10, 15].map((interval) => chordToneNote(chord, interval));
   const upperStructure = getFunctionClass(chord) === "Dominant"
-    ? [14, 18, 21].map((interval) => noteName(state.root + interval))
-    : [14, 18, 23].map((interval) => noteName(state.root + interval));
+    ? [14, 18, 21].map((interval) => chordToneNote(chord, interval))
+    : [14, 18, 23].map((interval) => chordToneNote(chord, interval));
   const chorale = getCompactVoicing(chord, state.root, 3).map((note) => midiToNoteName(note));
+  const guitarOmit = chord.intervals
+    .filter((interval) => mod(interval, 12) !== 7)
+    .slice(0, 4)
+    .map((interval) => chordToneNote(chord, interval));
   const cards = [
     ["close", "键盘密集排列", compact, "音区集中，适合听辨和弦基本性质与键盘柱式伴奏。"],
-    ["drop2", "Drop 2 开放排列", drop2.map((note) => midiToNoteName(note)).join(" "), "将次高音降低八度，适合抒情慢板伴奏与吉他四声部把位。"],
-    ["drop3", "Drop 3 宽广排列", drop3.map((note) => midiToNoteName(note)).join(" "), "低音间距更开阔，适合吉他中低把位或钢琴双手分配。"],
+    ["drop2", "Drop 2 开放排列", drop2.map((note) => midiToNoteName(note)).join(" "), "将次高音降低八度（四音以上才成立），适合抒情慢板伴奏与吉他四声部把位。"],
+    ["drop3", "Drop 3 宽广排列", drop3.map((note) => midiToNoteName(note)).join(" "), "将第三高音降低八度（四音以上才成立），低音间距更开阔。"],
     ["rootless", "无根音导向排列", rootless37.join(" ") || tones.slice(1).join(" "), "省去根音（交由贝斯承担），凸显三音、七音与高叠张力。"],
     ["upper", "上方三和弦结构", upperStructure.join(" "), "在属和弦上方叠置三和弦，快速构建变化属与利底亚属色彩。"],
     ["quartal", "四度叠置排列", quartal.join(" "), "以纯四度/增四度叠置打破三度框架，呈现现代调式爵士空间感。"],
     ["chorale", "四部合唱排列", chorale.join(" "), "古典四部和声均衡分布，便于检验声部平滑度与导音解决。"],
-    ["guitar", "吉他实用简省", tones.slice(0, 4).join(" "), "保留根音、三音与七音核心骨架，适度省略五音以利按弦。"],
+    ["guitar", "吉他实用简省（省略五音）", guitarOmit.join(" "), "真正省略纯五音，保留根音、三音与七音等核心骨架以利按弦。"],
   ];
   els.voicingStrip.innerHTML = cards
     .map(([key, title, body, fallback]) => {
@@ -3061,18 +3659,17 @@ function renderTheoryPanel() {
 
 function renderChordGrid() {
   const filtered = CHORD_QUALITY_LIBRARY.filter((chord) => {
-    const guitarFriendly = ["seventh", "extended", "altered", "sus2", "sus4", "dim7", "halfDim", "maj7", "m7", "7", "add9", "9", "13"].includes(chord.id) || ["seventh", "extended", "altered"].includes(chord.category);
     const byCategory =
       state.category === "all" ||
       chord.category === state.category ||
-      (state.category === "guitar" && guitarFriendly);
+      (state.category === "guitar" && GUITAR_FRIENDLY_IDS.has(chord.id));
     return byCategory && chordMatchesQuery(chord, state.chordSearch);
   });
   els.chordGrid.innerHTML = filtered
     .map((chord) => {
       const active = chord.id === state.selectedChordId;
       const tones = getChordNoteNames(chord)
-        .map((note, index) => `<span class="tone-pill">${intervalToLabel(chord.intervals[index])} ${note}</span>`)
+        .map((note, index) => `<span class="tone-pill">${chordToneLabel(chord, chord.intervals[index])} ${note}</span>`)
         .join("");
       const functionClass = getFunctionClass(chord);
       const lv = chordLevelText(chord);
@@ -3089,6 +3686,7 @@ function renderChordGrid() {
   if (els.chordCount) {
     els.chordCount.textContent = `${filtered.length} 个和弦`;
   }
+  renderChordRail(filtered);
   if (!filtered.length) {
     els.chordGrid.innerHTML = `<div class="empty-state">${escapeHtml(uiText("empty.noMatch"))} </div>`;
   }
@@ -3157,22 +3755,30 @@ function renderScaleView() {
 
 function renderIntervalTool() {
   if (!els.intervalNoteA) return;
-  const options = NOTE_NAMES.sharp.map((name, index) => `<option value="${index}">${name}</option>`).join("");
+  const spellings = [
+    ["C", "C"], ["C#", "C♯"], ["Db", "D♭"], ["D", "D"], ["D#", "D♯"], ["Eb", "E♭"],
+    ["E", "E"], ["F", "F"], ["F#", "F♯"], ["Gb", "G♭"], ["G", "G"], ["G#", "G♯"],
+    ["Ab", "A♭"], ["A", "A"], ["A#", "A♯"], ["Bb", "B♭"], ["B", "B"],
+  ];
+  const options = spellings.map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
   if (!els.intervalNoteA.innerHTML) {
     els.intervalNoteA.innerHTML = options;
     els.intervalNoteB.innerHTML = options;
-    els.intervalNoteB.value = "7";
+    els.intervalNoteA.value = "C";
+    els.intervalNoteB.value = "G";
   }
-  const a = Number(els.intervalNoteA.value || 0);
-  const b = Number(els.intervalNoteB.value || 7);
-  const info = getIntervalInfo(a, b);
+  const aName = els.intervalNoteA.value || "C";
+  const bName = els.intervalNoteB.value || "G";
+  const octB = Number(els.intervalOctaveB?.value || 4);
+  const info = getIntervalInfo(aName, bName, { octA: 4, octB });
   const lv = intervalLevelText(info.code);
   const soundLabel = isBeginnerLevel() ? "听起来" : isProLevel() ? "音响与倾向" : "听感";
+  const compoundLabel = info.degree > 7 ? "复合音程（跨八度）" : "单音程";
   els.intervalResult.innerHTML = `
-    <h4>${noteName(a)} → ${noteName(b)} ${levelBadge()}</h4>
+    <h4>${aName}4 → ${bName}${octB} ${levelBadge()}</h4>
     <p class="theory-lead">${escapeHtml(uiText("intervals.lead"))}</p>
     <ul>
-      <li><strong>音程：</strong>${info.name}（${info.code}）</li>
+      <li><strong>音程：</strong>${info.name}（${info.code}）· ${compoundLabel}</li>
       <li><strong>半音数：</strong>${info.semitones}</li>
       <li><strong>${soundLabel}：</strong>${escapeHtml(lv.sound || info.text)}</li>
       <li><strong>怎么用：</strong>${escapeHtml(lv.use || "")}</li>
@@ -3182,7 +3788,7 @@ function renderIntervalTool() {
     ([code, name, semitones, text]) => {
       const item = (NBL && NBL.intervalText(code, levelKey())) || { sound: text, use: "" };
       return `
-        <article class="interval-item">
+        <article class="interval-item" data-interval-ref="${semitones}" data-interval-code="${code}" role="button" tabindex="0" title="点击载入这个音程">
           <strong>${code}</strong>
           <span>${name} · ${semitones} 半音 · ${escapeHtml(item.sound)}</span>
           ${isBeginnerLevel() ? "" : `<small>${escapeHtml(item.use)}</small>`}
@@ -3226,10 +3832,19 @@ function renderProgressionBuilder() {
       `).join("")
     : `<div class="empty-state">${escapeHtml(uiText("progressions.emptyLane"))}</div>`;
   const analysis = analyzeProgression(state.progression);
-  const levelSummary = isBeginnerLevel()
-    ? (() => {
-        const feel = analysis.score >= 80 ? "很顺、很有回家的感觉" : analysis.score >= 60 ? "大致顺，但中间会拐一下" : "走向比较意外，适合想要惊喜的段落";
-        return `
+  const levelSummary = analysis.empty
+    ? `
+      <p class="theory-lead">${escapeHtml(uiText("progressions.lead"))}</p>
+      <ul>
+        <li><strong>进行状态：</strong>尚未建立和弦，所以不显示分数（不是 46 分，也不是 0 分）。</li>
+        <li><strong>建议起手：</strong>I → vi → IV → V，或 I → IV → V → I。</li>
+        <li><strong>下一步：</strong>从左侧素材点选级数，或直接拖进轨道。</li>
+      </ul>
+    `
+    : isBeginnerLevel()
+      ? (() => {
+          const feel = analysis.score >= 80 ? "很顺、很有回家的感觉" : analysis.score >= 60 ? "大致顺，但中间会拐一下" : "走向比较意外，适合想要惊喜的段落";
+          return `
           <p class="theory-lead">${escapeHtml(uiText("progressions.lead"))}</p>
           <ul>
             <li><strong>实际和弦：</strong>${state.progression.map(degreeToChordName).join(" - ") || "还没有和弦"}</li>
@@ -3237,8 +3852,8 @@ function renderProgressionBuilder() {
             <li><strong>下一步：</strong>可以试试接 ${analysis.nextSuggestions.slice(0, 2).join(" 或 ") || "主和弦"}。</li>
           </ul>
         `;
-      })()
-    : `
+        })()
+      : `
       <ul>
         <li><strong>功能链：</strong>${analysis.functions}</li>
         <li><strong>${isProLevel() ? "四维评分" : "综合评分"}：</strong>${isProLevel() ? renderScoreLine(analysis.scores) : `${analysis.score}/100`}</li>
@@ -3317,19 +3932,42 @@ function renderModes() {
   `;
 }
 
+function voiceSelectValue(rootPc, qualityId) {
+  return `${mod(rootPc, 12)}|${qualityId}`;
+}
+
+function parseVoiceSelect(select, fallbackRoot, fallbackQuality) {
+  const value = String(select && select.value ? select.value : "");
+  const [pcRaw, qualityId] = value.split("|");
+  const pc = Number(pcRaw);
+  return {
+    chord: chordById(qualityId || fallbackQuality),
+    root: Number.isFinite(pc) ? mod(pc, 12) : mod(fallbackRoot, 12),
+  };
+}
+
 function renderVoiceControls() {
   if (!els.voiceChordA) return;
-  const options = CHORD_QUALITY_LIBRARY.map((chord) => `<option value="${chord.id}">${noteName(state.root)}${chord.name}</option>`).join("");
-  const previousA = els.voiceChordA.value || "maj7";
-  const previousB = els.voiceChordB.value || "7";
+  const root = state.root;
+  const options = Array.from({ length: 12 }, (_, pc) => {
+    const items = CHORD_QUALITY_LIBRARY.map((chord) => {
+      const label = `${noteName(pc)}${CHORD_QUALITY_SUFFIX[chord.id] ?? chord.name}`;
+      return `<option value="${voiceSelectValue(pc, chord.id)}">${label}</option>`;
+    }).join("");
+    return `<optgroup label="${noteName(pc)}">${items}</optgroup>`;
+  }).join("");
+  const defaultA = voiceSelectValue(root + 7, "7");
+  const defaultB = voiceSelectValue(root, "maj7");
+  const valueA = state.voiceAValue && state.voiceAValue.includes("|") ? state.voiceAValue : defaultA;
+  const valueB = state.voiceBValue && state.voiceBValue.includes("|") ? state.voiceBValue : defaultB;
   els.voiceChordA.innerHTML = options;
   els.voiceChordB.innerHTML = options;
-  els.voiceChordA.value = previousA;
-  els.voiceChordB.value = previousB;
-  if (state.voiceExample === "good") {
-    els.voiceChordA.value = els.voiceChordA.value || "7";
-    els.voiceChordB.value = els.voiceChordB.value || "maj7";
-  }
+  els.voiceChordA.value = valueA;
+  els.voiceChordB.value = valueB;
+  if (!els.voiceChordA.value) els.voiceChordA.value = defaultA;
+  if (!els.voiceChordB.value) els.voiceChordB.value = defaultB;
+  state.voiceAValue = els.voiceChordA.value;
+  state.voiceBValue = els.voiceChordB.value;
   document.querySelectorAll("[data-voice-example]").forEach((button) => {
     button.classList.toggle("active", button.dataset.voiceExample === state.voiceExample);
   });
@@ -3355,9 +3993,15 @@ function renderVoiceAdjusters(comparison) {
 
 function renderVoiceVisual() {
   if (!els.voiceVisual) return;
-  const chordA = chordById(els.voiceChordA.value || "maj7");
-  const chordB = chordById(els.voiceChordB.value || "7");
-  const comparison = compareVoiceLeading(chordA, chordB);
+  const selectionA = parseVoiceSelect(els.voiceChordA, state.root + 7, "7");
+  const selectionB = parseVoiceSelect(els.voiceChordB, state.root, "maj7");
+  const chordA = selectionA.chord;
+  const chordB = selectionB.chord;
+  const comparison = compareVoiceLeading(chordA, chordB, {
+    rootA: selectionA.root,
+    rootB: selectionB.root,
+    voicingB: state.voiceVoicingB,
+  });
   renderVoiceAdjusters(comparison);
   const laneYs = [94, 174, 254, 334];
   const x1 = 170;
@@ -3474,22 +4118,24 @@ function renderVoiceCheck() {
 
 function updateVoiceExampleState(example) {
   state.voiceExample = example;
+  const root = state.root;
+  state.voiceAValue = voiceSelectValue(root + 7, "7");
+  state.voiceBValue = voiceSelectValue(root, "maj7");
+  state.voiceVoicingB = null;
   if (example === "bad") {
     state.voiceAdjustments = [7, -5, 7, -5];
-    els.voiceChordA.value = "maj7";
-    els.voiceChordB.value = "maj7";
   } else {
-    state.voiceAdjustments = [0, -1, 0, 0];
-    els.voiceChordA.value = "m7";
-    els.voiceChordB.value = "maj7";
+    state.voiceAdjustments = [0, 0, 0, 0];
   }
+  renderVoiceControls();
   renderVoiceVisual();
   persist();
 }
 
 function renderQuiz() {
   if (!state.quiz.answer) nextQuiz();
-  els.quizScore.textContent = `${state.quiz.correct} / ${state.quiz.total}`;
+  const answeredCount = state.quiz.answered ? state.quiz.total : Math.max(0, state.quiz.total - 1);
+  els.quizScore.textContent = `${state.quiz.correct} / ${answeredCount}`;
   document.querySelectorAll("[data-quiz-grade]").forEach((tab) => {
     tab.classList.toggle("active", Number(tab.dataset.quizGrade) === state.quizGrade);
   });
@@ -3519,9 +4165,9 @@ function renderQuiz() {
     .join("");
   if (!state.quiz.answered) {
     els.quizNotes.innerHTML = `
-      <h4>學習提示</h4>
-      <p>${state.quiz.hint}</p>
-      <p class="quiz-hint-note">每題只能選擇一次，作答後會自動跳往下一題。</p>
+      <h4>作答提示</h4>
+      <p>${state.quiz.preHint || "先看清楚題目問的是和弦、音程還是級數，再從選項中判斷。"}</p>
+      <p class="quiz-hint-note">作答前不顯示答案提示；選答後才會出現解析。</p>
     `;
   }
 }
@@ -3537,10 +4183,11 @@ function makeChordQuestion() {
     type: "chord",
     prompt: isBeginnerLevel()
       ? `${getChordNoteNames(chord).join("、")}，这几个音叠起来最像哪种和弦？`
-      : `${getChordNoteNames(chord).join("、")}，功能 ${getFunctionClass(chord)}。`,
+      : `${getChordNoteNames(chord).join("、")}，这些音组成哪一个和弦？`,
     options: [correct, ...wrongs].sort(() => Math.random() - 0.5),
     answer: correct,
-    hint: getTheoryHtml(chord).replace(/<[^>]+>/g, " "),
+    preHint: "先找出根音，再看三音与七音；延伸音（9、11、13）通常不改变和弦的基本名称。",
+    hint: `${getChordDisplayName(chord)}：${getChordNoteNames(chord).join("、")}。${chord.theory}`,
   };
 }
 
@@ -3558,7 +4205,8 @@ function makeIntervalQuestion() {
     prompt: `${a} → ${b}`,
     options: [answer, ...wrongs].sort(() => Math.random() - 0.5),
     answer,
-    hint: `答案是 ${interval[0]}，${interval[3]}`,
+    preHint: "先數半音數，再判斷是幾度與什麼性質；大小音程與純音程的稱呼不同。",
+    hint: `答案是 ${interval[0]} ${interval[1]}：${interval[3]}`,
   };
 }
 
@@ -3570,7 +4218,9 @@ function makeAbrsmQuestion(grade) {
     prompt: picked.prompt,
     options: [...picked.options].sort(() => Math.random() - 0.5),
     answer: picked.answer,
+    preHint: "先確認題目問的是調號、級數、和弦性質還是終止式，再排除明顯不合的選項。",
     hint: picked.hint,
+    staffMidis: picked.staffMidis,
   };
 }
 
@@ -4201,6 +4851,8 @@ function persist() {
       progression: state.progression,
       voiceAdjustments: state.voiceAdjustments,
       voiceExample: state.voiceExample,
+      voiceAValue: state.voiceAValue,
+      voiceBValue: state.voiceBValue,
       tabBeats: state.tabBeats,
       tabGrid: state.tabGrid,
       quizGrade: state.quizGrade,
@@ -4215,7 +4867,10 @@ function persist() {
   localStorage.setItem(STORAGE_KEYS.customPhrases, JSON.stringify(state.customPhrases));
   localStorage.setItem(STORAGE_KEYS.scores, JSON.stringify(state.scores));
   } catch {
-    // ignore storage restrictions in sandboxed environments
+    if (!persist.warned) {
+      persist.warned = true;
+      showToast("本机保存失败（浏览器可能限制储存）。请用右上角「导出工作区」备份，否则重开后会丢失内容。", "error");
+    }
   }
 }
 
@@ -4249,9 +4904,11 @@ function loadState() {
     state.humanize = prefs.humanize !== false;
     state.theoryFocus = prefs.theoryFocus || "chord";
     state.selectedModeId = prefs.selectedModeId || "ionian";
-    state.progression = Array.isArray(prefs.progression) ? prefs.progression : ["ii7", "V7", "Imaj7"];
+    state.progression = Array.isArray(prefs.progression) ? prefs.progression : ["I", "vi", "IV", "V"];
     state.voiceAdjustments = Array.isArray(prefs.voiceAdjustments) ? prefs.voiceAdjustments : [0, 0, 0, 0];
     state.voiceExample = prefs.voiceExample || "good";
+    state.voiceAValue = typeof prefs.voiceAValue === "string" ? prefs.voiceAValue : null;
+    state.voiceBValue = typeof prefs.voiceBValue === "string" ? prefs.voiceBValue : null;
     state.tabBeats = Number.isFinite(prefs.tabBeats) ? prefs.tabBeats : 4;
     state.tabGrid = normalizeTabGrid(prefs.tabGrid, state.tabBeats);
     state.quizGrade = Number.isFinite(prefs.quizGrade) ? Math.min(8, Math.max(0, prefs.quizGrade)) : 0;
@@ -4333,6 +4990,7 @@ function openMobileNav() {
 }
 
 function setView(name, options = {}) {
+  stopAllAudio();
   const next = VIEW_META[name] ? name : "dictionary";
   const { push = true, scroll = true, focus = true, animate = true } = options;
   const changed = next !== currentViewId;
@@ -4722,7 +5380,13 @@ function bindEvents() {
   });
 
   const runChordSearch = debounce(() => {
-    renderChordGrid();
+    const rootInfo = parseRootQualifiedQuery(state.chordSearch);
+    if (rootInfo && mod(rootInfo.pc, 12) !== mod(state.root, 12)) {
+      state.root = rootInfo.pc;
+      renderAll();
+    } else {
+      renderChordGrid();
+    }
     persist();
   }, 120);
 
@@ -4743,6 +5407,14 @@ function bindEvents() {
     state.chordSearch = els.chordSearch.value.trim();
     syncSearchClear();
     runChordSearch();
+  });
+
+  els.rootStrip.addEventListener("change", (event) => {
+    const select = event.target.closest("#rootSelect");
+    if (!select) return;
+    state.root = Number(select.value) || 0;
+    renderAll();
+    persist();
   });
 
   els.chordSearch.addEventListener("keydown", (event) => {
@@ -4967,7 +5639,7 @@ function bindEvents() {
     isPianoPointerDown = true;
     const midi = Number(keyEl.dataset.pianoMidi);
     lastPointerMidi = midi;
-    playInteractivePianoKey(midi, keyEl);
+    pressPianoKey(midi, keyEl);
   });
 
   els.pianoVisual.addEventListener("pointerover", (event) => {
@@ -4976,27 +5648,37 @@ function bindEvents() {
     if (!keyEl) return;
     const midi = Number(keyEl.dataset.pianoMidi);
     if (midi !== lastPointerMidi) {
+      const previousEl = lastPointerMidi === null ? null : els.pianoVisual.querySelector(`[data-piano-midi="${lastPointerMidi}"]`);
+      if (previousEl) previousEl.classList.remove("playing");
+      if (lastPointerMidi !== null) stopPianoVoice(lastPointerMidi);
       lastPointerMidi = midi;
-      playInteractivePianoKey(midi, keyEl);
+      pressPianoKey(midi, keyEl);
     }
   });
 
-  window.addEventListener("pointerup", () => {
+  const endPianoPointer = () => {
     isPianoPointerDown = false;
+    releaseAllPianoVoices();
+    els.pianoVisual.querySelectorAll(".piano-key.playing").forEach((key) => key.classList.remove("playing"));
     lastPointerMidi = null;
-  });
+  };
 
-  window.addEventListener("pointercancel", () => {
-    isPianoPointerDown = false;
-    lastPointerMidi = null;
-  });
+  window.addEventListener("pointerup", endPianoPointer);
+  window.addEventListener("pointercancel", endPianoPointer);
 
   els.pianoVisual.addEventListener("keydown", (event) => {
     const keyEl = event.target.closest("[data-piano-midi]");
     if (!keyEl) return;
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      playInteractivePianoKey(Number(keyEl.dataset.pianoMidi), keyEl);
+      pressPianoKey(Number(keyEl.dataset.pianoMidi), keyEl);
+    }
+  });
+  els.pianoVisual.addEventListener("keyup", (event) => {
+    const keyEl = event.target.closest("[data-piano-midi]");
+    if (!keyEl) return;
+    if (event.key === "Enter" || event.key === " ") {
+      releasePianoKey(Number(keyEl.dataset.pianoMidi), keyEl);
     }
   });
 
@@ -5009,15 +5691,81 @@ function bindEvents() {
     const offset = KEYBOARD_SHORTCUT_TO_OFFSET[event.key.toLowerCase()];
     if (offset === undefined) return;
     const keyEl = els.pianoVisual.querySelector(`[data-piano-offset="${offset}"]`);
-    if (keyEl) {
-      playInteractivePianoKey(Number(keyEl.dataset.pianoMidi), keyEl);
-    }
+    if (keyEl) pressPianoKey(Number(keyEl.dataset.pianoMidi), keyEl);
+  });
+
+  window.addEventListener("keyup", (event) => {
+    const offset = KEYBOARD_SHORTCUT_TO_OFFSET[event.key.toLowerCase()];
+    if (offset === undefined) return;
+    const keyEl = els.pianoVisual.querySelector(`[data-piano-offset="${offset}"]`);
+    if (keyEl) releasePianoKey(Number(keyEl.dataset.pianoMidi), keyEl);
+  });
+
+  window.addEventListener("blur", () => {
+    releaseAllPianoVoices();
+    els.pianoVisual.querySelectorAll(".piano-key.playing").forEach((key) => key.classList.remove("playing"));
   });
 
   els.playChordBtn.addEventListener("click", () => playChordNotes(getChordNoteNames(getSelectedChord()), { arpeggio: false }));
   els.playArpBtn.addEventListener("click", () => playChordNotes(getChordNoteNames(getSelectedChord()), { arpeggio: true }));
   els.playScaleUpBtn.addEventListener("click", () => playSequence(getScaleNotes().map((note) => noteName(note)), { ascending: true }));
   els.playScaleDownBtn.addEventListener("click", () => playSequence(getScaleNotes().map((note) => noteName(note)), { ascending: false }));
+  document.getElementById("stopAllAudioBtn")?.addEventListener("click", () => {
+    stopAllAudio();
+    showToast("已停止所有合成示意音", "info");
+  });
+
+  document.getElementById("exportWorkspaceBtn")?.addEventListener("click", () => {
+    const storage = {};
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("music-dictionary-") || key.startsWith("nebula-studio-")) {
+        storage[key] = localStorage.getItem(key);
+      }
+    });
+    const payload = {
+      app: "nebula.ink",
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      storage,
+    };
+    const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+    downloadTextFile(`Nebula_工作区备份_${stamp}.json`, JSON.stringify(payload, null, 2));
+    showToast("已导出整份工作区备份；清除网站资料前请先保存这份文件", "success");
+  });
+
+  document.getElementById("importWorkspaceBtn")?.addEventListener("click", () => {
+    document.getElementById("importWorkspaceInput")?.click();
+  });
+
+  document.getElementById("importWorkspaceInput")?.addEventListener("change", (event) => {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const payload = JSON.parse(String(reader.result || "{}"));
+        if (!payload || payload.app !== "nebula.ink" || !payload.storage || typeof payload.storage !== "object") {
+          throw new Error("不是有效的 Nebula 工作区备份");
+        }
+        const keys = Object.keys(payload.storage).filter(
+          (key) => key.startsWith("music-dictionary-") || key.startsWith("nebula-studio-")
+        );
+        if (!keys.length) throw new Error("备份内没有可导入的资料");
+        if (!window.confirm(`将导入 ${keys.length} 项资料，并覆盖本机同名的偏好、乐句与谱例。要继续吗？`)) {
+          event.target.value = "";
+          return;
+        }
+        keys.forEach((key) => localStorage.setItem(key, payload.storage[key]));
+        showToast("工作区已导入，正在重新载入…", "success");
+        window.setTimeout(() => window.location.reload(), 500);
+      } catch (error) {
+        showToast(`导入失败：${error.message || "文件格式不正确"}`, "error");
+      } finally {
+        event.target.value = "";
+      }
+    };
+    reader.readAsText(file, "utf-8");
+  });
   els.addCurrentChordBtn.addEventListener("click", () => {
     const chord = getSelectedChord();
     state.progression.push(`I${chord.name}`);
@@ -5028,10 +5776,35 @@ function bindEvents() {
 
   els.intervalNoteA.addEventListener("change", renderIntervalTool);
   els.intervalNoteB.addEventListener("change", renderIntervalTool);
-  els.playIntervalBtn.addEventListener("click", () => {
-    const a = Number(els.intervalNoteA.value || 0);
-    const b = Number(els.intervalNoteB.value || 7);
-    playNotes([60 + a, 60 + b], { mode: "arp", duration: 0.42, gap: 0.1 });
+  els.intervalOctaveB?.addEventListener("change", renderIntervalTool);
+  const playSelectedInterval = (mode) => {
+    const aName = els.intervalNoteA.value || "C";
+    const bName = els.intervalNoteB.value || "G";
+    const octB = Number(els.intervalOctaveB?.value || 4);
+    const midiA = noteToPitch(`${aName}4`);
+    const midiB = noteToPitch(`${bName}${octB}`);
+    if (midiA === null || midiB === null) return;
+    playNotes([midiA, midiB], { mode, duration: mode === "block" ? 1.1 : 0.5, gap: 0.12 });
+  };
+  els.playIntervalBtn.addEventListener("click", () => playSelectedInterval("arp"));
+  document.getElementById("playIntervalHarmonyBtn")?.addEventListener("click", () => playSelectedInterval("block"));
+
+  els.intervalReference.addEventListener("click", (event) => {
+    const card = event.target.closest("[data-interval-ref]");
+    if (!card) return;
+    const semitones = Number(card.dataset.intervalRef);
+    const code = card.dataset.intervalCode || "";
+    const useFlat = code.startsWith("d");
+    els.intervalNoteA.value = "C";
+    els.intervalNoteB.value = (useFlat ? NOTE_NAMES.flat : NOTE_NAMES.sharp)[mod(semitones, 12)];
+    if (els.intervalOctaveB) els.intervalOctaveB.value = String(4 + Math.floor(semitones / 12));
+    renderIntervalTool();
+  });
+  els.intervalReference.addEventListener("keydown", (event) => {
+    const card = event.target.closest("[data-interval-ref]");
+    if (!card || (event.key !== "Enter" && event.key !== " ")) return;
+    event.preventDefault();
+    card.click();
   });
 
   els.clearProgressionBtn.addEventListener("click", () => {
@@ -5042,7 +5815,7 @@ function bindEvents() {
   });
 
   els.loadProgressionBtn.addEventListener("click", () => {
-    state.progression = ["ii7", "V7", "Imaj7"];
+    state.progression = ["I", "vi", "IV", "V"];
     renderProgressionBuilder();
     renderTheoryPanel();
     persist();
@@ -5067,28 +5840,43 @@ function bindEvents() {
     persist();
   });
 
-  els.voiceChordA.addEventListener("change", renderVoiceVisual);
-  els.voiceChordB.addEventListener("change", renderVoiceVisual);
+  els.voiceChordA.addEventListener("change", () => {
+    state.voiceAValue = els.voiceChordA.value;
+    state.voiceVoicingB = null;
+    renderVoiceVisual();
+    persist();
+  });
+  els.voiceChordB.addEventListener("change", () => {
+    state.voiceBValue = els.voiceChordB.value;
+    state.voiceVoicingB = null;
+    renderVoiceVisual();
+    persist();
+  });
   els.visualizeVoiceBtn.addEventListener("click", renderVoiceVisual);
   els.optimizeVoiceBtn.addEventListener("click", () => {
-    const a = chordById(els.voiceChordA.value || "maj7");
-    const b = chordById(els.voiceChordB.value || "7");
-    optimizeVoiceLeadingAdjustments(a, b);
+    const a = parseVoiceSelect(els.voiceChordA, state.root + 7, "7");
+    const b = parseVoiceSelect(els.voiceChordB, state.root, "maj7");
+    optimizeVoiceLeadingAdjustments(a.chord, b.chord, { rootA: a.root, rootB: b.root });
     renderVoiceVisual();
-    showToast("声部轨迹已自动优化", "success");
+    showToast("已保留目标和弦的根音／三音／七音，并把各声部移到最近的合法音", "success");
     persist();
   });
   els.voiceAdjusters.addEventListener("change", (event) => {
     const select = event.target.closest("[data-voice-adjust]");
     if (!select) return;
+    state.voiceVoicingB = null;
     state.voiceAdjustments[Number(select.dataset.voiceAdjust)] = Number(select.value);
     renderVoiceVisual();
     persist();
   });
   els.playVoiceBtn.addEventListener("click", () => {
-    const a = chordById(els.voiceChordA.value || "maj7");
-    const b = chordById(els.voiceChordB.value || "7");
-    const comparison = compareVoiceLeading(a, b);
+    const a = parseVoiceSelect(els.voiceChordA, state.root + 7, "7");
+    const b = parseVoiceSelect(els.voiceChordB, state.root, "maj7");
+    const comparison = compareVoiceLeading(a.chord, b.chord, {
+      rootA: a.root,
+      rootB: b.root,
+      voicingB: state.voiceVoicingB,
+    });
     playNotes(comparison.source, { mode: "block", duration: 0.8, startAt: 0 });
     playNotes(comparison.target, { mode: "block", duration: 0.8, startAt: 0.9 });
   });
@@ -5492,6 +6280,23 @@ function applyTheme() {
   }
 }
 
+function populateModeSelect() {
+  if (!els.modeSelect) return;
+  const entries = [];
+  const seen = new Set();
+  ["major", "minor", "harmonicMinor", "melodicMinor", "dorian", "mixolydian"].forEach((id) => {
+    entries.push({ id, label: MODE_LABELS[id] || id });
+    seen.add(id);
+  });
+  MODE_DETAILS.forEach((mode) => {
+    if (seen.has(mode.id)) return;
+    entries.push({ id: mode.id, label: mode.label });
+    seen.add(mode.id);
+  });
+  els.modeSelect.innerHTML = entries.map((entry) => `<option value="${entry.id}">${entry.label}</option>`).join("");
+  els.modeSelect.value = entries.some((entry) => entry.id === state.mode) ? state.mode : "major";
+}
+
 function renderAll() {
   els.notationToggle.checked = state.useFlats;
   applyTheme();
@@ -5500,6 +6305,7 @@ function renderAll() {
   els.audioToneSelect.value = state.audioTone;
   els.swingToggle.checked = state.swing;
   els.humanizeToggle.checked = state.humanize;
+  populateModeSelect();
   els.modeSelect.value = state.mode;
   els.chordSearch.value = state.chordSearch;
   if (els.clearChordSearch) els.clearChordSearch.hidden = !els.chordSearch.value;
@@ -5634,7 +6440,7 @@ const FULL_A_FORM_SHAPES = {
   sus4: ["x", 0, 2, 2, 3, 0],
   "6": ["x", 0, 2, 2, 2, 2],
   m6: ["x", 0, 2, 2, 1, 2],
-  "69": ["x", 0, 1, 1, 2, 2],
+  "69": ["x", 0, -1, -1, 0, 0],
   "7": ["x", 0, 2, 0, 2, 0],
   maj7: ["x", 0, 2, 1, 2, 0],
   m7: ["x", 0, 2, 0, 1, 0],
@@ -5662,6 +6468,12 @@ function getGuitarChordVariants(rootPc, qualityId, tuningKey = state.tabTuning |
   const chord = chordById(qualityId);
   const tuning = GUITAR_TUNINGS[tuningKey] || GUITAR_TUNINGS.standard;
   const variants = [];
+  const transposeShape = (template, baseFret) => {
+    let fretBase = baseFret;
+    const hasNegative = template.some((value) => typeof value === "number" && value + fretBase < 0);
+    if (hasNegative) fretBase += 12;
+    return template.map((value) => (value === "x" ? "x" : Math.max(0, value + fretBase)));
+  };
 
   if (tuningKey === "standard") {
     const openKey = `${rootPc}:${qualityId}`;
@@ -5670,16 +6482,18 @@ function getGuitarChordVariants(rootPc, qualityId, tuningKey = state.tabTuning |
     }
     const eTemplate = FULL_E_FORM_SHAPES[qualityId];
     if (eTemplate) {
-      let baseFret = mod(rootPc - 4, 12);
-      if (baseFret === 0 && eTemplate.some((v) => typeof v === "number" && v < 0)) baseFret = 12;
-      const shape = eTemplate.map((v) => (v === "x" ? "x" : Math.max(0, v + baseFret)));
+      const rawBase = mod(rootPc - 4, 12);
+      const needsOctave = eTemplate.some((v) => typeof v === "number" && v + rawBase < 0);
+      const baseFret = needsOctave ? rawBase + 12 : rawBase;
+      const shape = transposeShape(eTemplate, rawBase);
       variants.push({ label: `6 弦根音把位 (${baseFret || 1}品)`, shape });
     }
     const aTemplate = FULL_A_FORM_SHAPES[qualityId];
     if (aTemplate) {
-      let baseFret = mod(rootPc - 9, 12);
-      if (baseFret < 2 && aTemplate.some((v) => typeof v === "number" && v < 0)) baseFret += 12;
-      const shape = aTemplate.map((v) => (v === "x" ? "x" : Math.max(0, v + baseFret)));
+      const rawBase = mod(rootPc - 9, 12);
+      const needsOctave = aTemplate.some((v) => typeof v === "number" && v + rawBase < 0);
+      const baseFret = needsOctave ? rawBase + 12 : rawBase;
+      const shape = transposeShape(aTemplate, rawBase);
       variants.push({ label: `5 弦根音把位 (${baseFret || 1}品)`, shape });
     }
   }
@@ -5825,7 +6639,7 @@ function renderDictionaryStaffVisual(chord) {
     const cy = staffStepToY(coord.stepsFromBottomLine, bottomY, lineGap);
     const acc = coord.alter === 1 ? "♯" : coord.alter === -1 ? "♭" : "";
     const noteLabel = midiToNoteName(midi);
-    const ivLabel = intervalToLabel(chord.intervals[i]);
+    const ivLabel = chordToneLabel(chord, chord.intervals[i]);
     return `
       <g class="staff-note-group" data-staff-midi="${midi}">
         ${renderLedgerLinesSvg(coord.stepsFromBottomLine, cx, bottomY, lineGap)}
@@ -6344,7 +7158,13 @@ function stopScorePlayback() {
   scorePlaybackTimers.forEach((id) => clearTimeout(id));
   scorePlaybackTimers = [];
   document.querySelectorAll(".playing-col").forEach((el) => el.classList.remove("playing-col"));
+  stopAllAudio();
 }
+
+window.addEventListener("pagehide", () => stopAllAudio());
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) stopAllAudio();
+});
 
 function playTabScore() {
   stopScorePlayback();
@@ -6381,7 +7201,7 @@ function playTabScore() {
       noteIndex += 1;
 
       if (parsed.muted) {
-        triggerMidi(openMidi, startAt + strumOffset, 0.05, 0.35);
+        triggerMuteClick(startAt + strumOffset, 0.24);
       } else {
         triggerMidi(primaryMidi, startAt + strumOffset, stepDuration * 0.92, 0.82);
         if (parsed.secondaryFret !== null) {
@@ -6464,6 +7284,28 @@ function encodeVarLen(value) {
   return bytes;
 }
 
+function buildMidiTrackData(events, name = "") {
+  const track = [];
+  if (name) {
+    const bytes = [...name].map((ch) => ch.charCodeAt(0) & 0x7f);
+    track.push(0x00, 0xff, 0x03, bytes.length, ...bytes);
+  }
+  const rawMsgs = [];
+  events.forEach((ev) => {
+    rawMsgs.push({ tick: ev.startTick, type: 0x90, midi: ev.midi, vel: ev.velocity || 84 });
+    rawMsgs.push({ tick: ev.startTick + Math.max(60, ev.durationTicks), type: 0x80, midi: ev.midi, vel: 0 });
+  });
+  rawMsgs.sort((a, b) => a.tick - b.tick || a.type - b.type);
+  let lastTick = 0;
+  rawMsgs.forEach((msg) => {
+    const delta = Math.max(0, msg.tick - lastTick);
+    lastTick = msg.tick;
+    track.push(...encodeVarLen(delta), msg.type, msg.midi & 0x7f, msg.vel & 0x7f);
+  });
+  track.push(0x00, 0xff, 0x2f, 0x00);
+  return track;
+}
+
 function buildStandardMidiBytes(events, bpm = 100) {
   // Format 0 single-track standard MIDI file, 480 ticks per quarter note
   const tpq = 480;
@@ -6471,25 +7313,7 @@ function buildStandardMidiBytes(events, bpm = 100) {
   const track = [];
   // Tempo meta event
   track.push(0x00, 0xff, 0x51, 0x03, (mpq >> 16) & 0xff, (mpq >> 8) & 0xff, mpq & 0xff);
-
-  // Convert note events [{ startTick, durationTicks, midi, velocity }] to NoteOn/NoteOff
-  const rawMsgs = [];
-  events.forEach((ev) => {
-    rawMsgs.push({ tick: ev.startTick, type: 0x90, midi: ev.midi, vel: ev.velocity || 84 });
-    rawMsgs.push({ tick: ev.startTick + Math.max(60, ev.durationTicks), type: 0x80, midi: ev.midi, vel: 0 });
-  });
-  rawMsgs.sort((a, b) => a.tick - b.tick || a.type - b.type);
-
-  let lastTick = 0;
-  rawMsgs.forEach((msg) => {
-    const delta = Math.max(0, msg.tick - lastTick);
-    lastTick = msg.tick;
-    track.push(...encodeVarLen(delta), msg.type, msg.midi & 0x7f, msg.vel & 0x7f);
-  });
-
-  // End of track
-  track.push(0x00, 0xff, 0x2f, 0x00);
-
+  track.push(...buildMidiTrackData(events));
   const header = [
     0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06,
     0x00, 0x00, 0x00, 0x01, (tpq >> 8) & 0xff, tpq & 0xff,
@@ -6500,6 +7324,21 @@ function buildStandardMidiBytes(events, bpm = 100) {
     (len >> 24) & 0xff, (len >> 16) & 0xff, (len >> 8) & 0xff, len & 0xff,
   ];
   return new Uint8Array([...header, ...trackHeader, ...track]);
+}
+
+function buildMultiTrackMidiBytes(tracks, bpm = 100) {
+  const tpq = 480;
+  const mpq = Math.round(60000000 / bpm);
+  const tempoTrack = [0x00, 0xff, 0x51, 0x03, (mpq >> 16) & 0xff, (mpq >> 8) & 0xff, mpq & 0xff, 0x00, 0xff, 0x2f, 0x00];
+  const chunks = [tempoTrack, ...tracks.map((track) => buildMidiTrackData(track.events, track.name))];
+  const bytes = [];
+  bytes.push(0x4d, 0x54, 0x68, 0x64, 0x00, 0x00, 0x00, 0x06, 0x00, 0x01);
+  bytes.push((chunks.length >> 8) & 0xff, chunks.length & 0xff, (tpq >> 8) & 0xff, tpq & 0xff);
+  chunks.forEach((chunk) => {
+    const len = chunk.length;
+    bytes.push(0x4d, 0x54, 0x72, 0x6b, (len >> 24) & 0xff, (len >> 16) & 0xff, (len >> 8) & 0xff, len & 0xff, ...chunk);
+  });
+  return new Uint8Array(bytes);
 }
 
 function downloadBinaryFile(filename, uint8Array, mime = "audio/midi") {
@@ -6517,14 +7356,15 @@ function downloadBinaryFile(filename, uint8Array, mime = "audio/midi") {
 function exportScoreAsMidi(type = "tab") {
   const tpq = 480;
   const bpm = Number(state.scoreBpm) || 100;
-  const events = [];
   let title = "";
+  let midiBytes = null;
 
   if (type === "tab") {
     title = els.tabTitleInput?.value.trim() || "Nebula_Guitar_Tab";
     const tuning = GUITAR_TUNINGS[state.tabTuning || "standard"] || GUITAR_TUNINGS.standard;
     const capo = Number(state.tabCapo) || 0;
     const durations = normalizeTabDurations(state.tabDurations, state.tabBeats);
+    const events = [];
     let currentTick = 0;
     for (let col = 0; col < state.tabBeats; col++) {
       const durBeats = DURATION_SPECS[durations[col] || "q"]?.beats || 1;
@@ -6537,42 +7377,63 @@ function exportScoreAsMidi(type = "tab") {
       }
       currentTick += durTicks;
     }
+    midiBytes = buildStandardMidiBytes(events, bpm);
   } else {
     title = els.pianoTitleInput?.value.trim() || "Nebula_Piano_Score";
     const rhMeasures = parsePianoHandMeasures(els.rightHandInput?.value || "", 4);
     const lhMeasures = parsePianoHandMeasures(els.leftHandInput?.value || "", 3);
-    const count = Math.max(rhMeasures.length, lhMeasures.length);
-    let currentTick = 0;
-    for (let m = 0; m < count; m++) {
-      const rhEvs = rhMeasures[m] || [];
-      const lhEvs = lhMeasures[m] || [];
-      const steps = Math.max(1, rhEvs.length, lhEvs.length);
-      for (let s = 0; s < steps; s++) {
-        const durBeats = DURATION_SPECS[rhEvs[s]?.dur || lhEvs[s]?.dur || "h"]?.beats || 2;
-        const durTicks = Math.round(durBeats * tpq);
-        (rhEvs[s]?.midis || []).forEach((midi) => events.push({ startTick: currentTick, durationTicks: durTicks, midi, velocity: 86 }));
-        (lhEvs[s]?.midis || []).forEach((midi) => events.push({ startTick: currentTick, durationTicks: durTicks, midi, velocity: 76 }));
-        currentTick += durTicks;
-      }
+    const count = Math.max(1, rhMeasures.length, lhMeasures.length);
+    const [beatsNum, beatType] = (state.scoreTimeSig || "4/4").split("/");
+    const measureTicks = Math.max(1, Math.round(Number(beatsNum) * ((tpq * 4) / Number(beatType))));
+    const rhEvents = [];
+    const lhEvents = [];
+    const addHand = (evs, target, velocity, measureStart) => {
+      let tick = measureStart;
+      (evs || []).forEach((ev) => {
+        const durTicks = Math.round((DURATION_SPECS[ev.dur]?.beats || 1) * tpq);
+        (ev.midis || []).forEach((midi) => target.push({ startTick: tick, durationTicks: durTicks, midi, velocity }));
+        tick += durTicks;
+      });
+    };
+    for (let m = 0; m < count; m += 1) {
+      const measureStart = m * measureTicks;
+      addHand(rhMeasures[m], rhEvents, 88, measureStart);
+      addHand(lhMeasures[m], lhEvents, 76, measureStart);
     }
+    midiBytes = buildMultiTrackMidiBytes(
+      [
+        { name: "Right Hand", events: rhEvents },
+        { name: "Left Hand", events: lhEvents },
+      ],
+      bpm
+    );
   }
 
-  const midiBytes = buildStandardMidiBytes(events, bpm);
   downloadBinaryFile(`${safeFileName(title)}.mid`, midiBytes, "audio/midi");
-  showToast(`已导出标准 MIDI 文件：${safeFileName(title)}.mid`, "success");
+  showToast(
+    type === "piano" ? `已导出多轨 MIDI（右手／左手分轨）：${safeFileName(title)}.mid` : `已导出标准 MIDI 文件：${safeFileName(title)}.mid`,
+    "success"
+  );
 }
 
-function midiToXmlPitch(midi) {
-  const stepNames = ["C", "C", "D", "D", "E", "F", "F", "G", "G", "A", "A", "B"];
-  const alters = [0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0];
+function midiToXmlPitch(midi, preferFlats = state.useFlats) {
+  const sharpSteps = ["C", "C", "D", "D", "E", "F", "F", "G", "G", "A", "A", "B"];
+  const sharpAlters = [0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0];
+  const flatSteps = ["C", "D", "D", "E", "E", "F", "G", "G", "A", "A", "B", "B"];
+  const flatAlters = [0, -1, 0, -1, 0, 0, -1, 0, -1, 0, -1, 0];
   const pc = mod(midi, 12);
   const octave = Math.floor(midi / 12) - 1;
-  return { step: stepNames[pc], alter: alters[pc], octave };
+  return {
+    step: preferFlats ? flatSteps[pc] : sharpSteps[pc],
+    alter: preferFlats ? flatAlters[pc] : sharpAlters[pc],
+    octave,
+  };
 }
 
 function exportScoreAsMusicXml(type = "tab") {
   const [beatsNum, beatType] = (state.scoreTimeSig || "4/4").split("/");
   const keySpec = KEY_SIGNATURE_SPECS[state.scoreKeySig || "C"] || KEY_SIGNATURE_SPECS.C;
+  const preferFlats = (keySpec.flats && keySpec.flats.length > 0) || (state.useFlats && !(keySpec.sharps && keySpec.sharps.length));
   const title = (type === "tab" ? els.tabTitleInput?.value : els.pianoTitleInput?.value)?.trim() || (type === "tab" ? "Nebula Guitar Tab" : "Nebula Piano Score");
   const bpmCount = getBeatsPerMeasure();
   let measuresXml = "";
@@ -6600,7 +7461,7 @@ function exportScoreAsMusicXml(type = "tab") {
           notesXml += `<note><rest/><duration>${Math.round(durSpec.beats * 4)}</duration><type>${durSpec.xmlType}</type></note>`;
         } else {
           active.forEach((item, idx) => {
-            const p = midiToXmlPitch(item.midi);
+            const p = midiToXmlPitch(item.midi, preferFlats);
             notesXml += `
               <note>
                 ${idx > 0 ? "<chord/>" : ""}
@@ -6620,27 +7481,39 @@ function exportScoreAsMusicXml(type = "tab") {
     }
   } else {
     const rhMeasures = parsePianoHandMeasures(els.rightHandInput?.value || "", 4);
-    const totalMeasures = Math.max(1, rhMeasures.length);
-    for (let m = 0; m < totalMeasures; m++) {
+    const lhMeasures = parsePianoHandMeasures(els.leftHandInput?.value || "", 3);
+    const totalMeasures = Math.max(1, rhMeasures.length, lhMeasures.length);
+    const divisions = 4;
+    const measureDivisions = Math.max(1, Math.round(Number(beatsNum) * (16 / Number(beatType))));
+    const restType = measureDivisions >= 16 ? "whole" : measureDivisions >= 8 ? "half" : "quarter";
+    const renderHandXml = (evs, staff) => {
+      if (!evs || !evs.length) {
+        return `<note><rest/><duration>${measureDivisions}</duration><type>${restType}</type><staff>${staff}</staff></note>`;
+      }
       let notesXml = "";
-      const evs = rhMeasures[m] || [{ midis: [60, 64, 67], dur: "w" }];
       evs.forEach((ev) => {
         const durSpec = DURATION_SPECS[ev.dur || "q"] || DURATION_SPECS.q;
-        ev.midis.forEach((midi, idx) => {
-          const p = midiToXmlPitch(midi);
+        (ev.midis || []).forEach((midi, idx) => {
+          const p = midiToXmlPitch(midi, preferFlats);
           notesXml += `
             <note>
               ${idx > 0 ? "<chord/>" : ""}
               <pitch><step>${p.step}</step>${p.alter ? `<alter>${p.alter}</alter>` : ""}<octave>${p.octave}</octave></pitch>
-              <duration>${Math.round(durSpec.beats * 4)}</duration>
+              <duration>${Math.round(durSpec.beats * divisions)}</duration>
               <type>${durSpec.xmlType}</type>
+              <staff>${staff}</staff>
             </note>`;
         });
       });
+      return notesXml;
+    };
+    for (let m = 0; m < totalMeasures; m += 1) {
       measuresXml += `
         <measure number="${m + 1}">
-          ${m === 0 ? `<attributes><divisions>4</divisions><key><fifths>${keySpec.fifths}</fifths></key><time><beats>${beatsNum}</beats><beat-type>${beatType}</beat-type></time><clef><sign>G</sign><line>2</line></clef></attributes>` : ""}
-          ${notesXml}
+          ${m === 0 ? `<attributes><divisions>${divisions}</divisions><key><fifths>${keySpec.fifths}</fifths></key><time><beats>${beatsNum}</beats><beat-type>${beatType}</beat-type></time><staves>2</staves><clef number="1"><sign>G</sign><line>2</line></clef><clef number="2"><sign>F</sign><line>4</line></clef></attributes>` : ""}
+          ${renderHandXml(rhMeasures[m], 1)}
+          <backup><duration>${measureDivisions}</duration></backup>
+          ${renderHandXml(lhMeasures[m], 2)}
         </measure>`;
     }
   }
@@ -6672,9 +7545,10 @@ function openPrintPreviewModal(type = "tab") {
 
   body.innerHTML = `
     <h3>${escapeHtml(title)}</h3>
-    <p>拍号：${state.scoreTimeSig} · 调号：${state.scoreKeySig} · 速度：${state.scoreBpm} BPM · 备注：${escapeHtml(memo)}</p>
-    <div style="margin:14px 0;background:#0f172a;padding:12px;border-radius:10px;">${staffHtml}</div>
-    <pre>${escapeHtml(textBody)}</pre>
+    <p class="print-meta">拍号：${state.scoreTimeSig} · 调号：${state.scoreKeySig} · 速度：${state.scoreBpm} BPM · 备注：${escapeHtml(memo)}</p>
+    <div class="print-sheet">
+      ${staffHtml ? `<div class="print-staff">${staffHtml}</div>` : `<pre>${escapeHtml(textBody)}</pre>`}
+    </div>
   `;
   modal.hidden = false;
   document.body.classList.add("modal-open");
@@ -6975,13 +7849,13 @@ const V3_PHRASE_LIBRARY = [
   },
   {
     id: "pk-03",
-    title: "日系 City Pop 王道 4536251 华丽加花",
+    title: "日系 City Pop 副歌转折（Fmaj7–G7sus4–Em7–A7b9）",
     style: "流行键盘",
     difficulty: "进阶",
-    tags: ["导向音", "ii-V-I", "挂留解决"],
+    tags: ["导向音", "挂留解决", "副属/半音张力"],
     progression: "Fmaj7 - G7sus4 - Em7 - A7b9",
     notes: "A4/8 G4/8 E4/8 C4/8 | F4/4 D4/4 | G4/8 F#4/8 E4/8 D4/8 | C#4/4 G4/4",
-    description: "G7sus4 保持四音 F 不急于解决，随后在 A7b9 上亮出特征三音 C# 与九音 Bb，引出副歌高潮。",
+    description: "这不是 4536251，而是 Fmaj7–G7sus4–Em7–A7b9 的副歌转折：G7sus4 保持四音 F 不急于解决，随后在 A7b9 上亮出特征三音 C# 与九音 Bb，引出高潮。",
   },
   {
     id: "pk-04",
@@ -8980,12 +9854,12 @@ CHORD_QUALITY_LIBRARY.forEach((c) => {
 // ── 分馆 A：西洋管弦/现代乐器与专业术语五语对照大词典（78 条全编制精选 + 声音示范） ──
 const WESTERN_TERMS_LIBRARY = [
   // 1. 木管乐器与技法 (Woodwinds)
-  { cat: "木管乐器", zh: "短笛", it: "Ottavino / Flauto piccolo", de: "Pikkolöflöte", fr: "Petite flûte / Piccolo", en: "Piccolo", demo: "piccolo", desc: "木管最高音乐器，实际音高比记谱高八度，高音区清脆穿透全场。" },
+  { cat: "木管乐器", zh: "短笛", it: "Ottavino / Flauto piccolo", de: "Piccoloflöte / Kleine Flöte", fr: "Petite flûte / Piccolo", en: "Piccolo", demo: "piccolo", desc: "木管最高音乐器，实际音高比记谱高八度，高音区清脆穿透全场。" },
   { cat: "木管乐器", zh: "长笛", it: "Flauto (Fl.)", de: "Querflöte / Große Flöte", fr: "Flûte traversière", en: "Flute", demo: "flute", desc: "C 调无簧木管，音色清澈灵动，擅长华丽跑动与飘逸长音。" },
   { cat: "木管乐器", zh: "中音长笛 / 低音长笛", it: "Flauto contralto / Flauto basso", de: "Altflöte / Bassflöte", fr: "Flûte en sol / Flûte basse", en: "Alto Flute / Bass Flute", demo: "altoflute", desc: "中音长笛为 G 调移调乐器（实际低纯四度），音色温润幽暗。" },
   { cat: "木管乐器", zh: "双簧管", it: "Oboe (Ob.)", de: "Oboe / Hoboe", fr: "Hautbois", en: "Oboe", demo: "oboe", desc: "双簧木管代表，带醇厚鼻音与田园牧歌感，乐团标准音 A4 (440Hz) 对音基准。" },
   { cat: "木管乐器", zh: "英国管 (中音双簧管)", it: "Corno inglese (C.ing.)", de: "Englischhorn", fr: "Cor anglais", en: "English Horn / Cor Anglais", demo: "ehorn", desc: "F 调双簧乐器（实际音高比记谱低纯五度），梨形贝尔口，音色苍凉深情。" },
-  { cat: "木管乐器", zh: "单簧管 (竖笛 / 黑管)", it: "Clarinetto (Cl.)", de: "Klarinette", fr: "Clarinette", en: "Clarinet", demo: "clarinet", desc: "单簧圆柱闭管，跨近四八度，常用 B♭ 调（低大二度）与 A 调（低小三度）。" },
+  { cat: "木管乐器", zh: "单簧管（黑管）", it: "Clarinetto (Cl.)", de: "Klarinette", fr: "Clarinette", en: "Clarinet", demo: "clarinet", desc: "单簧圆柱闭管，跨近四八度，常用 B♭ 调（低大二度）与 A 调（低小三度）；「竖笛／直笛」是 Recorder，不是单簧管。" },
   { cat: "木管乐器", zh: "高音单簧管 / 低音单簧管", it: "Clarinetto piccolo / Clarinetto basso", de: "Es-Klarinette / Bassklarinette", fr: "Petite clarinette / Clarinette basse", en: "E♭ Clarinet / Bass Clarinet", demo: "bclarinet", desc: "E♭ 高音管尖锐俏皮；B♭ 低音单簧管深沉如丝绒，管弦配器暗色利器。" },
   { cat: "木管乐器", zh: "大管 (巴松管)", it: "Fagotto (Fg.)", de: "Fagott", fr: "Basson", en: "Bassoon", demo: "bassoon", desc: "木管组低音与次中音支柱，断奏诙谐幽默，连奏悲悯深沉。" },
   { cat: "木管乐器", zh: "低音大管 (倍大管)", it: "Controfagotto (Cfg.)", de: "Kontrafagott", fr: "Contrebasson", en: "Contrabassoon", demo: "cbassoon", desc: "木管家族最低音，实际音响比记谱低一个八度，加固管弦乐极低频。" },
@@ -10587,7 +11461,7 @@ renderQuiz = function () {
 function renderQuizRightPanel(lastFeedbackHtml = "") {
   if (!els.quizNotes) return;
   const totalDone = state.quiz.answered ? state.quiz.total : Math.max(0, state.quiz.total - 1);
-  const acc = totalDone > 0 ? Math.round((state.quiz.correct / totalDone) * 100) : 100;
+  const acc = totalDone > 0 ? Math.round((state.quiz.correct / totalDone) * 100) : 0;
   state.quizMistakes = state.quizMistakes || [];
   const mistakesHtml = state.quizMistakes.length
     ? state.quizMistakes.slice(0, 6).map((m) => `
@@ -10601,14 +11475,14 @@ function renderQuizRightPanel(lastFeedbackHtml = "") {
 
   els.quizNotes.innerHTML = `
     <div class="quiz-stats-strip">
-      <div class="quiz-stat-box"><strong>${acc}%</strong><span>答题正确率</span></div>
+      <div class="quiz-stat-box"><strong>${totalDone > 0 ? `${acc}%` : "—"}</strong><span>${totalDone > 0 ? "答题正确率" : "尚未作答"}</span></div>
       <div class="quiz-stat-box"><strong>🔥 ${state.quizStreak || 0}</strong><span>当前连胜</span></div>
       <div class="quiz-stat-box"><strong>${ABRSM_QUESTION_BANK.length} 题</strong><span>总题库容量</span></div>
     </div>
     ${lastFeedbackHtml || `
-      <h4>💡 本题考点提示 ${levelBadge()}</h4>
-      <p>${escapeHtml(isBeginnerLevel() ? plainTerm(state.quiz.hint) : state.quiz.hint)}</p>
-      <p class="quiz-hint-note">${escapeHtml(uiText("quiz.lead"))} 可按上方「1–8 级」与「专项题型」自由组合刷题。</p>
+      <h4>💡 作答提示 ${levelBadge()}</h4>
+      <p>${escapeHtml(isBeginnerLevel() ? plainTerm(state.quiz.preHint || state.quiz.hint) : state.quiz.preHint || "先看清楚題目問的是什麼，再排除明顯不合的選項。")}</p>
+      <p class="quiz-hint-note">${escapeHtml(uiText("quiz.lead"))} 可按上方「1–8 级」与「专项题型」自由组合刷题；作答後才顯示解析。</p>
     `}
     <div style="margin-top:14px;">
       <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -10847,3 +11721,62 @@ applyTheme();
 renderAll();
 initLanguageObserver();
 renderLevelChrome();
+
+/* ── 無障礙收尾：分頁語意、彈窗焦點圈 ───────────────────────── */
+function syncTabA11y() {
+  document.querySelectorAll('[role="tablist"], .segmented').forEach((list) => {
+    const tabs = Array.from(list.querySelectorAll("button"));
+    if (!tabs.length) return;
+    list.setAttribute("role", "tablist");
+    tabs.forEach((tab) => {
+      tab.setAttribute("role", "tab");
+      const active =
+        tab.classList.contains("active") ||
+        tab.getAttribute("aria-pressed") === "true" ||
+        tab.getAttribute("aria-selected") === "true";
+      tab.setAttribute("aria-selected", active ? "true" : "false");
+      if (!tab.hasAttribute("tabindex")) tab.tabIndex = active ? 0 : -1;
+    });
+  });
+}
+
+function getVisibleFocusable(modal) {
+  return Array.from(
+    modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+  ).filter((el) => !el.disabled && el.getAttribute("aria-hidden") !== "true" && el.offsetParent !== null);
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Tab") return;
+  const modal = ["shortcutModal", "printModal"]
+    .map((id) => document.getElementById(id))
+    .find((el) => el && !el.hidden);
+  if (!modal) return;
+  const focusables = getVisibleFocusable(modal);
+  if (!focusables.length) return;
+  const first = focusables[0];
+  const last = focusables[focusables.length - 1];
+  if (!modal.contains(document.activeElement)) {
+    event.preventDefault();
+    first.focus({ preventScroll: true });
+    return;
+  }
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus({ preventScroll: true });
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus({ preventScroll: true });
+  }
+});
+
+document.addEventListener("click", () => {
+  window.setTimeout(syncTabA11y, 0);
+});
+
+syncTabA11y();
+const _prevRenderAllA11y = renderAll;
+renderAll = function () {
+  _prevRenderAllA11y();
+  syncTabA11y();
+};

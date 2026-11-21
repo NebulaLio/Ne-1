@@ -1,9 +1,18 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nebula · 乐理与创作的星际地图</title>
+    <title>Nebula · 樂理與創作的星際地圖</title>
+    <meta name="description" content="Nebula 是不必登入即可使用的樂理工坊：30 種和弦、41 種調式、五度圈、音程與聲部工具、樂句庫、ABRSM 測驗、六線譜與鋼琴譜編輯，支援三檔解說與三種主題。" />
+    <meta name="theme-color" content="#0a0f22" />
+    <link rel="canonical" href="https://www.nebula.ink/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nebula" />
+    <meta property="og:title" content="Nebula · 樂理與創作的星際地圖" />
+    <meta property="og:description" content="不必登入的樂理工坊：和弦、調式、五度圈、聲部、樂句、測驗與譜例編輯。" />
+    <meta property="og:url" content="https://www.nebula.ink/" />
+    <meta name="twitter:card" content="summary" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%236366f1'/%3E%3Ccircle cx='25' cy='43' r='7' fill='%23f59e0b'/%3E%3Crect x='30' y='17' width='3' height='26' fill='%23f59e0b'/%3E%3Cpath d='M33 18c7 2 10 6 9 13-3-4-6-6-9-7z' fill='%23f59e0b'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="themes.css" />
@@ -133,31 +142,38 @@
                 <button class="segment" data-level="pro" type="button" aria-pressed="false" title="音乐人：导向音、张力与编配细节">✵ 音乐人</button>
               </div>
             </div>
-            <label class="switch">
-              <input id="notationToggle" type="checkbox" />
-              <span>降号记谱 (♭)</span>
-            </label>
-
-            <div class="style-switch" id="langSwitch" aria-label="语言切换">
-              <button class="segment" data-lang="zh-CN" type="button">简体</button>
-              <button class="segment active" data-lang="zh-HK" type="button">繁体</button>
-            </div>
-            <div class="style-switch" id="styleSwitch" aria-label="音乐风格切换">
-              <button class="segment active" data-style-mode="jazz" type="button">爵士</button>
-              <button class="segment" data-style-mode="classical" type="button">古典</button>
-              <button class="segment" data-style-mode="pop" type="button">流行</button>
-            </div>
-            <label class="select-label">
-              <span>核心调式</span>
-              <select id="modeSelect">
-                <option value="major">自然大调</option>
-                <option value="minor">自然小调</option>
-                <option value="harmonicMinor">和声小调</option>
-                <option value="melodicMinor">旋律小调</option>
-                <option value="dorian">多利亚调式 (Dorian)</option>
-                <option value="mixolydian">混合利底亚 (Mixolydian)</option>
-              </select>
-            </label>
+            <details class="topbar-settings">
+              <summary class="icon-button settings-summary" title="更多显示、语言与风格设置" aria-label="更多显示、语言与风格设置">⚙</summary>
+              <div class="settings-panel">
+                <label class="switch">
+                  <input id="notationToggle" type="checkbox" />
+                  <span>降号记谱 (♭)</span>
+                </label>
+                <div class="style-switch" id="langSwitch" aria-label="语言切换">
+                  <button class="segment" data-lang="zh-CN" type="button">简体</button>
+                  <button class="segment active" data-lang="zh-HK" type="button">繁体</button>
+                </div>
+                <div class="style-switch" id="styleSwitch" aria-label="音乐风格切换">
+                  <button class="segment active" data-style-mode="jazz" type="button">爵士</button>
+                  <button class="segment" data-style-mode="classical" type="button">古典</button>
+                  <button class="segment" data-style-mode="pop" type="button">流行</button>
+                </div>
+                <label class="select-label">
+                  <span>核心调式</span>
+                  <select id="modeSelect">
+                    <option value="major">自然大调</option>
+                    <option value="minor">自然小调</option>
+                    <option value="harmonicMinor">和声小调</option>
+                    <option value="melodicMinor">旋律小调</option>
+                    <option value="dorian">多利亚调式 (Dorian)</option>
+                    <option value="mixolydian">混合利底亚 (Mixolydian)</option>
+                  </select>
+                </label>
+              </div>
+            </details>
+            <button id="exportWorkspaceBtn" class="icon-button" type="button" title="导出整份工作区（偏好、乐句、谱例、播放设定）" aria-label="导出整份工作区备份">⬇</button>
+            <button id="importWorkspaceBtn" class="icon-button" type="button" title="从备份文件导入工作区（会覆盖本机内容）" aria-label="导入工作区备份">⬆</button>
+            <input id="importWorkspaceInput" type="file" accept="application/json,.json" hidden />
             <button id="shortcutHelpBtn" class="icon-button" type="button" title="键盘快捷键与操作指南（按 ?）" aria-label="打开键盘快捷键指南">⌘</button>
           </div>
         </header>
@@ -174,7 +190,32 @@
         </div>
 
         <section id="dictionary" class="view active" aria-labelledby="viewTitle">
-          <div class="root-strip" id="rootStrip" aria-label="主音选择"></div>
+          <div class="picker-dock">
+            <div class="root-strip" id="rootStrip" aria-label="主音选择"></div>
+
+            <div class="toolbar">
+              <div class="search-box">
+                <label for="chordSearch">快速检索和弦</label>
+                <div class="search-field">
+                  <input id="chordSearch" type="search" placeholder="输入和弦代号、性质或适用场景，如 maj7 / 变化属 / 挂留" autocomplete="off" />
+                  <button id="clearChordSearch" class="search-clear" type="button" aria-label="清空搜索" hidden>✕</button>
+                </div>
+              </div>
+              <div class="filter-cluster">
+                <div class="segmented" role="tablist" aria-label="和弦分类筛选">
+                  <button class="segment active" data-category="all" type="button">全部</button>
+                  <button class="segment" data-category="triad" type="button">三和弦</button>
+                  <button class="segment" data-category="seventh" type="button">七和弦</button>
+                  <button class="segment" data-category="extended" type="button">高叠扩展</button>
+                  <button class="segment" data-category="altered" type="button">变化张力</button>
+                  <button class="segment" data-category="guitar" type="button">吉他常用</button>
+                </div>
+                <span class="result-count" id="chordCount" aria-live="polite">30 个和弦</span>
+              </div>
+            </div>
+
+            <div id="chordRail" class="chord-rail" aria-label="和弦快速选择列"></div>
+          </div>
 
           <section class="hero-tool">
             <div class="chord-focus">
@@ -194,13 +235,13 @@
               <div class="instrument-header">
                 <div>
                   <span class="instrument-title">互动钢琴键盘</span>
-                  <span class="instrument-hint">点击、拖拽滑奏，或使用电脑键盘 A–L 实时弹奏</span>
+                  <span class="instrument-hint">点击、拖拽滑奏，或使用电脑键盘 A S D F G H J K 实时弹奏</span>
                 </div>
                 <span id="lastPlayedNoteBadge" class="played-note-badge">待弹奏</span>
               </div>
               <div class="piano-visual" id="pianoVisual" role="group" aria-label="可弹奏钢琴键盘"></div>
-              <div class="fretboard-visual" id="fretboardVisual" aria-label="吉他指板音位分布"></div>
               <div class="staff-visual-card" id="chordStaffVisual" aria-label="五线谱和弦与音阶展示"></div>
+              <div class="fretboard-visual" id="fretboardVisual" aria-label="吉他指板音位分布"></div>
               <div class="voicing-strip" id="voicingStrip" aria-label="常用声部排列把位"></div>
             </div>
 
@@ -228,12 +269,12 @@
                   </select>
                 </label>
                 <label>
-                  <span>合成音色</span>
+                  <span>合成示意音色</span>
                   <select id="audioToneSelect">
-                    <option value="piano">原声钢琴</option>
-                    <option value="rhodes">复古电钢</option>
-                    <option value="guitar">清音吉他</option>
-                    <option value="synth">现代合成器</option>
+                    <option value="piano">合成钢琴（示意）</option>
+                    <option value="rhodes">合成电钢（示意）</option>
+                    <option value="guitar">合成吉他（示意）</option>
+                    <option value="synth">合成器（示意）</option>
                   </select>
                 </label>
                 <label class="compact-check">
@@ -250,30 +291,10 @@
                 <button id="playArpBtn" class="secondary-button" type="button">♪ 分解琶音</button>
                 <button id="playScaleUpBtn" class="secondary-button" type="button">↗ 上行音阶</button>
                 <button id="playScaleDownBtn" class="secondary-button" type="button">↘ 下行音阶</button>
+                <button id="stopAllAudioBtn" class="ghost-button" type="button" title="立即停止所有合成示意音">■ 停止发声</button>
               </div>
             </aside>
           </section>
-
-          <div class="toolbar">
-            <div class="search-box">
-              <label for="chordSearch">快速检索和弦</label>
-              <div class="search-field">
-                <input id="chordSearch" type="search" placeholder="输入和弦代号、性质或适用场景，如 maj7 / 变化属 / 挂留" autocomplete="off" />
-                <button id="clearChordSearch" class="search-clear" type="button" aria-label="清空搜索" hidden>✕</button>
-              </div>
-            </div>
-            <div class="filter-cluster">
-              <div class="segmented" role="tablist" aria-label="和弦分类筛选">
-                <button class="segment active" data-category="all" type="button">全部</button>
-                <button class="segment" data-category="triad" type="button">三和弦</button>
-                <button class="segment" data-category="seventh" type="button">七和弦</button>
-                <button class="segment" data-category="extended" type="button">高叠扩展</button>
-                <button class="segment" data-category="altered" type="button">变化张力</button>
-                <button class="segment" data-category="guitar" type="button">吉他常用</button>
-              </div>
-              <span class="result-count" id="chordCount" aria-live="polite">30 个和弦</span>
-            </div>
-          </div>
 
           <section class="chord-grid" id="chordGrid" aria-label="和弦图鉴列表"></section>
         </section>
@@ -344,10 +365,19 @@
                   <span>目标音（上方音）</span>
                   <select id="intervalNoteB"></select>
                 </label>
+                <label>
+                  <span>上方音八度（可测复音程）</span>
+                  <select id="intervalOctaveB">
+                    <option value="4" selected>4（简单音程）</option>
+                    <option value="5">5（加一个八度）</option>
+                    <option value="6">6（加两个八度）</option>
+                  </select>
+                </label>
               </div>
               <article id="intervalResult" class="theory-panel"></article>
               <div class="audio-actions">
-                <button id="playIntervalBtn" class="secondary-button" type="button">▶ 试听音程</button>
+                <button id="playIntervalBtn" class="secondary-button" type="button">▶ 先後響</button>
+                <button id="playIntervalHarmonyBtn" class="secondary-button" type="button">♬ 一起響</button>
               </div>
             </section>
             <section class="reference-panel" id="intervalReference"></section>
@@ -1226,7 +1256,7 @@
           <div><kbd>Alt</kbd><span>+</span><kbd>1–0</kbd><p>跳到第 1–10 个星区</p></div>
           <div><kbd>[</kbd><span>/</span><kbd>]</kbd><p>上一个 / 下一个星区</p></div>
           <div><kbd>←</kbd><span>/</span><kbd>→</kbd><p>导航聚焦时切换星区</p></div>
-          <div><kbd>A–L</kbd><p>弹奏互动钢琴</p></div>
+          <div><kbd>A S D F G H J K</kbd><p>弹奏互动钢琴（白键；W E T Y U O 为黑键）</p></div>
           <div><kbd>Alt</kbd><span>+</span><kbd>P</kbd><p>无干扰练琴模式开关</p></div>
           <div><kbd>Alt</kbd><span>+</span><kbd>T</kbd><p>循环切换主题风格</p></div>
           <div><kbd>Shift</kbd><span>+</span><kbd>Space</kbd><p>播放控制条 播／停</p></div>
