@@ -3979,14 +3979,20 @@ function renderVoiceAdjusters(comparison) {
   normalizeVoiceAdjustments(comparison.moves.length);
   els.voiceAdjusters.innerHTML = comparison.moves
     .map((move, index) => `
-      <label>
-        <span>声部 ${index + 1}: ${midiToNoteName(move.from)} → ${midiToNoteName(move.to)}</span>
-        <select data-voice-adjust="${index}">
-          ${[-12, -7, -5, -2, -1, 0, 1, 2, 5, 7, 12].map((value) => `
-            <option value="${value}" ${state.voiceAdjustments[index] === value ? "selected" : ""}>${value > 0 ? "+" : ""}${value} 半音</option>
-          `).join("")}
-        </select>
-      </label>
+      <div class="voice-adjuster" data-voice-row="${index}">
+        <div class="voice-adjuster-name">
+          <strong>聲部 ${index + 1}（V${index + 1}）</strong>
+          <span>${midiToNoteName(move.from)} → ${midiToNoteName(move.to)}</span>
+        </div>
+        <label class="voice-adjuster-field">
+          <span class="voice-field-label">手動偏移</span>
+          <select data-voice-adjust="${index}" aria-label="聲部 ${index + 1} 手動偏移半音數">
+            ${[-12, -7, -5, -2, -1, 0, 1, 2, 5, 7, 12].map((value) => `
+              <option value="${value}" ${state.voiceAdjustments[index] === value ? "selected" : ""}>${value > 0 ? "+" : ""}${value} 半音</option>
+            `).join("")}
+          </select>
+        </label>
+      </div>
     `)
     .join("");
 }
@@ -3997,6 +4003,9 @@ function renderVoiceVisual() {
   const selectionB = parseVoiceSelect(els.voiceChordB, state.root, "maj7");
   const chordA = selectionA.chord;
   const chordB = selectionB.chord;
+  if (!state.voiceVoicingB && state.voiceExample === "good" && state.voiceAdjustments.every((value) => value === 0)) {
+    optimizeVoiceLeadingAdjustments(chordA, chordB, { rootA: selectionA.root, rootB: selectionB.root });
+  }
   const comparison = compareVoiceLeading(chordA, chordB, {
     rootA: selectionA.root,
     rootB: selectionB.root,
@@ -4042,31 +4051,189 @@ function renderVoiceVisual() {
       </marker>
     </defs>
     <rect class="voice-stage" x="24" y="24" width="872" height="372" rx="26"></rect>
-    <text class="voice-title-left" x="${x1}" y="54">${noteName(state.root)}${chordA.name}</text>
-    <text class="voice-title-right" x="${x2}" y="54">${noteName(state.root)}${chordB.name}</text>
+    <text class="voice-title-left" x="${x1}" y="54">${chordDisplayFor(chordA, selectionA.root)}</text>
+    <text class="voice-title-right" x="${x2}" y="54">${chordDisplayFor(chordB, selectionB.root)}</text>
     ${rows}
   `;
-  const severe = comparison.check.severe.length
-    ? comparison.check.severe.map((item) => `<li class="issue-severe">${escapeHtml(isBeginnerLevel() ? plainTerm(item) : item)}</li>`).join("")
-    : `<li class="issue-good">${isBeginnerLevel() ? "没有发现严重的撞音。" : "未发现严重规则问题。"}</li>`;
-  const issues = comparison.check.issues.length
-    ? comparison.check.issues.map((item) => `<li>${escapeHtml(isBeginnerLevel() ? plainTerm(item) : item)}</li>`).join("")
-    : `<li class="issue-good">${isBeginnerLevel() ? "没有明显不舒服的移动。" : "没有明显可疑移动。"}</li>`;
-  const advice = comparison.check.advice.map((item) => `<li>${escapeHtml(isBeginnerLevel() ? plainTerm(item) : item)}</li>`).join("");
-  const intro = isBeginnerLevel()
-    ? "看四条线有没有同方向撞在一起，或某个声部突然跳很远。分数越高，听起来越顺。"
-    : isProLevel()
-      ? "SATB 规则检查：间距、导向音解决、平行与隐伏五八度、声部交叠。"
-      : "检查导向音、共同音与平行五八度的处理。";
+  const moves = comparison.moves;
+  const check = comparison.check;
+  const startName = chordDisplayFor(chordA, selectionA.root);
+  const targetName = chordDisplayFor(chordB, selectionB.root);
+  const commonMoves = moves.filter((move) => mod(move.from, 12) === mod(move.to, 12));
+  const commonNames = [...new Set(commonMoves.map((move) => midiToNoteName(move.from)))];
+  const targetPcs = [...chordPitchClassSet(chordB, selectionB.root)];
+  const targetToneNames = targetPcs.map((pc) => noteName(pc, state.useFlats));
+  const coveredPcs = new Set(moves.map((move) => mod(move.to, 12)));
+  const missingPcs = targetPcs.filter((pc) => !coveredPcs.has(pc));
+  const outside = (check.outside || []).map((move) => ({
+    voice: move.voiceIndex + 1,
+    note: midiToNoteName(move.to),
+  }));
+  const biggestIndex = moves.reduce((best, move, index) => (Math.abs(move.distance) > Math.abs(moves[best].distance) ? index : best), 0);
+  const biggest = moves[biggestIndex] || { from: 60, to: 60, distance: 0 };
+  const maxMove = Math.abs(biggest.distance);
+  const stepwiseCount = moves.filter((move) => Math.abs(move.distance) <= 2).length;
+  const leadingMove = moves.find(
+    (move) => mod(move.from, 12) === mod(selectionB.root + 11, 12) && mod(move.to, 12) === mod(selectionB.root, 12)
+  );
+  const parallelIssue = check.severe.find((item) => item.includes("平行"));
+  const verdict = outside.length || parallelIssue || check.severe.length ? "bad" : check.issues.length || missingPcs.length || check.rating < 80 ? "warn" : "good";
+  const leadingText = leadingMove
+    ? `導音 ${midiToNoteName(leadingMove.from)} → ${midiToNoteName(leadingMove.to)}`
+    : "";
+  const summary = (() => {
+    if (isBeginnerLevel()) {
+      if (verdict === "good") {
+        return `這組 ${startName} → ${targetName} 聽起來很順：${commonNames.length ? `四個聲部一起保留了 ${commonNames.join("、")}，` : ""}最大移動只有 ${maxMove} 半音，沒有突然的大跳。`;
+      }
+      if (verdict === "warn") {
+        return `這組 ${startName} → ${targetName} 大致好聽，還有 ${Math.max(1, check.issues.length + missingPcs.length)} 個地方可以更省力；先照下面第一個建議調整，再按「對比試聽」聽一次。`;
+      }
+      if (outside.length) {
+        return `有聲部停在 ${targetName} 以外的音；先把它移回 ${targetToneNames.join("、")}，聲音會馬上變乾淨。`;
+      }
+      if (parallelIssue) {
+        return "有兩個聲部一起平著走到五度或八度，聲音會突然變空；先照下面建議把其中一個聲部換方向。";
+      }
+      return `有 ${check.severe.length} 個地方需要修正；先處理下面標紅的建議，再按「對比試聽」。`;
+    }
+    if (isProLevel()) {
+      const guide = leadingMove ? `${midiToNoteName(leadingMove.from)}→${midiToNoteName(leadingMove.to)}` : "";
+      if (verdict === "good") {
+        return `Voice-leading ${check.rating}/100｜max motion ${maxMove} semitones；common tones ${commonNames.length ? commonNames.join("、") : "none"}${guide ? `；guide tone ${guide} resolved` : ""}；no parallel/hidden perfect intervals。`;
+      }
+      if (verdict === "warn") {
+        const firstIssue = check.issues[0] || (missingPcs.length ? `missing target tones ${missingPcs.map((pc) => noteName(pc)).join("/")}` : "motion can be smaller");
+        return `Voice-leading ${check.rating}/100｜max motion ${maxMove} semitones；${firstIssue}；先處理再比較評分。`;
+      }
+      if (outside.length) {
+        return `target-membership errors：${outside.map((item) => `V${item.voice} ${item.note}`).join("、")} 不屬於 ${targetName}；先修正再評估 voice-leading。`;
+      }
+      return `${parallelIssue || "severe voice-leading issue"}；先修正規則問題再比較評分。`;
+    }
+    if (verdict === "good") {
+      return `最大移動 ${maxMove} 半音${commonNames.length ? `，共同音 ${commonNames.join("、")} 保持不動` : ""}${leadingText ? `；${leadingText} 依半音傾向解決` : ""}，沒有平行五／八度，功能轉換清楚。`;
+    }
+    if (verdict === "warn") {
+      const firstIssue = check.issues[0] || (missingPcs.length ? `目標和弦的 ${missingPcs.map((pc) => noteName(pc)).join("、")} 還沒有聲部負責` : "聲部移動可以再縮小");
+      return `功能方向合理，但還有 ${Math.max(1, check.issues.length + missingPcs.length)} 個可改進點：${firstIssue}`;
+    }
+    if (outside.length) {
+      return `有 ${outside.length} 個目標音不屬於 ${targetName}；先修正目標音，再評估平滑度。`;
+    }
+    if (parallelIssue) {
+      return `${parallelIssue}先修正平行五／八度，再評估平滑度。`;
+    }
+    return `有 ${check.severe.length} 個規則問題需要修正；先處理標紅項目。`;
+  })();
+  const tips = [];
+  if (outside.length) {
+    tips.push({
+      tone: "bad",
+      title: `先修正 ${outside.length} 個目標音`,
+      text: `${outside.map((item) => `V${item.voice} 的 ${item.note}`).join("、")} 不屬於 ${targetName}；請移到 ${targetToneNames.join("、")}。`,
+    });
+  } else if (commonNames.length) {
+    tips.push({
+      tone: "good",
+      title: "保留共同音",
+      text: `${commonNames.join("、")} 在轉換中保持不動，是這組連接最穩定的地方。${isBeginnerLevel() ? "" : "共同音讓功能轉換保持穩定，內聲部也不必移動。"}`,
+    });
+  } else {
+    tips.push({
+      tone: "good",
+      title: "聲部都有目標音",
+      text: `四個聲部都落在 ${targetName} 的和弦音上；沒有共同音時，讓每個聲部走最近的一格。`,
+    });
+  }
+  if (leadingMove) {
+    tips.push({
+      tone: "good",
+      title: isBeginnerLevel() ? "帶路的音已回家" : "導音已解決",
+      text: isBeginnerLevel()
+        ? `帶路的音 ${midiToNoteName(leadingMove.from)} 上行到 ${midiToNoteName(leadingMove.to)}，照著屬到主的方向回家了。`
+        : `導音 ${midiToNoteName(leadingMove.from)} 依半音傾向解決到 ${midiToNoteName(leadingMove.to)}，這是屬和聲推動到主和弦的關鍵。`,
+    });
+  } else if (maxMove > 7) {
+    tips.push({
+      tone: "warn",
+      title: "把大跳改小",
+      text: `V${biggestIndex + 1} 從 ${midiToNoteName(biggest.from)} 到 ${midiToNoteName(biggest.to)} 移動 ${maxMove} 半音；可試轉位或保留共同音。`,
+    });
+  } else if (stepwiseCount >= Math.max(2, moves.length - 1)) {
+    tips.push({
+      tone: "good",
+      title: "以級進為主",
+      text: `四個聲部中有 ${stepwiseCount} 個只走 1–2 半音，線條聽起來很順。`,
+    });
+  } else {
+    tips.push({
+      tone: "warn",
+      title: "讓內聲部級進",
+      text: `目前有 ${moves.length - stepwiseCount} 個聲部走超過 2 半音；先讓內聲部級進，外聲部再跳。`,
+    });
+  }
+  if (parallelIssue) {
+    tips.push({
+      tone: "bad",
+      title: "平行五／八度",
+      text: isBeginnerLevel()
+        ? "有兩個聲部一起往同方向走到五度或八度，聲音會突然變空；把其中一個聲部換方向或換音就會改善。"
+        : parallelIssue,
+    });
+  } else if (missingPcs.length) {
+    tips.push({
+      tone: "warn",
+      title: "補齊和弦音",
+      text: `${targetName} 的 ${missingPcs.map((pc) => noteName(pc, state.useFlats)).join("、")} 目前沒有聲部負責，可把一個內聲部移過去。`,
+    });
+  } else {
+    tips.push({
+      tone: "good",
+      title: "和弦音齊全",
+      text: `${targetName} 的 ${targetToneNames.join("、")} 都至少由一個聲部負責。`,
+    });
+  }
+  const verdictLabel = verdict === "good" ? "通過 · 銜接流暢" : verdict === "warn" ? "建議 · 可再優化" : "待修正 · 需調整";
+  const scoreCaption = isBeginnerLevel() ? "聽起來的順暢度" : isProLevel() ? "Voice-leading score" : "聲部平滑分數";
+  const lead =
+    isBeginnerLevel()
+      ? "把四個聲部想成四條旋律：能不動就不動，要動就走最近的一格。"
+      : isProLevel()
+        ? "SATB voice-leading audit：目標音正確性、3/7 導向音解決、平行與隱伏五八度、聲部交越。"
+        : "先看共同音與導音，再看最大移動、目標音是否齊全，以及平行五／八度。";
+  const footnote =
+    isBeginnerLevel()
+      ? "分數只看四個聲部走得順不順；和弦選得好不好，會再由功能和聲另外評估。"
+      : isProLevel()
+        ? "評分包含 target-chord membership、voice motion、common tones 與 parallel/hidden perfect intervals。"
+        : "分數綜合目標音正確性、最大移動、共同音與平行五／八度，不代表和弦選擇的藝術評價。";
   els.voiceWarnings.innerHTML = `
-    <h4>检查结果 ${levelBadge()}</h4>
-    <p class="theory-lead">${escapeHtml(intro)}</p>
-    <p>${escapeHtml(isBeginnerLevel() ? plainTerm(comparison.summary) : comparison.summary)} 评分 ${comparison.check.rating}/100。</p>
-    <ul>
-      ${severe}
-      ${issues}
-      ${advice}
-    </ul>
+    <div class="voice-result ${verdict}">
+      <p class="voice-lead">${escapeHtml(lead)}</p>
+      <div class="voice-result-head">
+        <div class="voice-verdict">
+          <span class="voice-verdict-pill ${verdict}">${verdictLabel}</span>
+          <p class="voice-verdict-summary">${escapeHtml(summary)}</p>
+        </div>
+        <div class="voice-score" role="status" aria-label="聲部評分 ${check.rating} 分，滿分 100">
+          <strong>${check.rating}</strong><span>/100</span>
+          <small>${scoreCaption}</small>
+        </div>
+      </div>
+      <ul class="voice-suggestions">
+        ${tips.slice(0, 3).map((tip) => `
+          <li class="voice-tip ${tip.tone}">
+            <span class="voice-tip-dot" aria-hidden="true"></span>
+            <div>
+              <strong>${escapeHtml(isBeginnerLevel() ? plainTerm(tip.title) : tip.title)}</strong>
+              <p>${escapeHtml(isBeginnerLevel() ? plainTerm(tip.text) : tip.text)}</p>
+            </div>
+          </li>
+        `).join("")}
+      </ul>
+      <p class="voice-footnote">${escapeHtml(footnote)}</p>
+    </div>
   `;
   refreshLanguage(els.voiceWarnings);
 }
@@ -6625,7 +6792,7 @@ function renderDictionaryStaffVisual(chord) {
   const lineGap = 11;
   const staffLines = [0, 2, 4, 6, 8].map((s) => {
     const y = staffStepToY(s, bottomY, lineGap);
-    return `<line x1="28" y1="${y}" x2="752" y2="${y}" stroke="rgba(148,163,184,0.38)" stroke-width="1.2" />`;
+    return `<line x1="28" y1="${y}" x2="752" y2="${y}" stroke="var(--staff-line)" stroke-width="1.2" />`;
   }).join("");
 
   // 左侧：和弦音叠置 + 分解展示
@@ -6643,9 +6810,9 @@ function renderDictionaryStaffVisual(chord) {
     return `
       <g class="staff-note-group" data-staff-midi="${midi}">
         ${renderLedgerLinesSvg(coord.stepsFromBottomLine, cx, bottomY, lineGap)}
-        ${acc ? `<text x="${cx - 18}" y="${cy + 4}" fill="#fbbf24" font-size="13" font-weight="800">${acc}</text>` : ""}
-        ${renderNoteHeadSvg(cx, cy, "w", "#818cf8", false)}
-        <text x="${cx + 16 + (i % 2) * 38}" y="${cy + 4}" fill="#e2e8f0" font-size="10.5" font-weight="800">${ivLabel}:${noteLabel}</text>
+        ${acc ? `<text x="${cx - 18}" y="${cy + 4}" fill="var(--staff-acc)" font-size="13" font-weight="800">${acc}</text>` : ""}
+        ${renderNoteHeadSvg(cx, cy, "w", "var(--staff-note)", false)}
+        <text x="${cx + 16 + (i % 2) * 38}" y="${cy + 4}" fill="var(--staff-text)" font-size="10.5" font-weight="800">${ivLabel}:${noteLabel}</text>
       </g>
     `;
   }).join("");
@@ -6662,14 +6829,14 @@ function renderDictionaryStaffVisual(chord) {
     const noteLabel = midiToNoteName(midi);
     const deg = degreeLabels[idx] || `${idx + 1}`;
     const isChordTone = getChordPitchClasses(chord).has(mod(midi, 12));
-    const color = isChordTone ? "#818cf8" : "#f59e0b";
+    const color = isChordTone ? "var(--staff-note)" : "var(--staff-scale)";
     return `
       <g class="staff-note-group" data-staff-midi="${midi}">
         ${renderLedgerLinesSvg(coord.stepsFromBottomLine, cx, bottomY, lineGap)}
-        ${acc ? `<text x="${cx - 15}" y="${cy + 4}" fill="#fbbf24" font-size="12" font-weight="800">${acc}</text>` : ""}
+        ${acc ? `<text x="${cx - 15}" y="${cy + 4}" fill="var(--staff-acc)" font-size="12" font-weight="800">${acc}</text>` : ""}
         ${renderNoteHeadSvg(cx, cy, "q", color, coord.stepsFromBottomLine < 4)}
-        <text x="${cx}" y="136" text-anchor="middle" fill="#cbd5e1" font-size="10.5" font-weight="800">${noteLabel}</text>
-        <text x="${cx}" y="150" text-anchor="middle" fill="#94a3b8" font-size="9.5" font-weight="700">${deg}</text>
+        <text x="${cx}" y="136" text-anchor="middle" fill="var(--staff-text)" font-size="10.5" font-weight="800">${noteLabel}</text>
+        <text x="${cx}" y="150" text-anchor="middle" fill="var(--staff-sub)" font-size="9.5" font-weight="700">${deg}</text>
       </g>
     `;
   }).join("");
@@ -6683,15 +6850,15 @@ function renderDictionaryStaffVisual(chord) {
       <button type="button" class="ghost-button mini-button" data-play-staff-chord="1">▶ 试听五线谱和弦</button>
     </div>
     <div class="staff-svg-wrap">
-      <svg class="staff-svg" viewBox="0 0 780 162" aria-label="和弦与调式五线谱视图">
+      <svg class="staff-svg" viewBox="0 0 780 162" aria-label="和弦与调式五线谱视图" style="color: var(--staff-line)">
         ${staffLines}
-        <text x="36" y="${bottomY - 8}" fill="#818cf8" font-size="42" font-family="serif">𝄞</text>
-        <text x="118" y="34" text-anchor="middle" fill="#c7d2fe" font-size="11.5" font-weight="800">${getChordDisplayName(chord)} 叠置和弦</text>
+        <text x="36" y="${bottomY - 8}" fill="var(--staff-clef)" font-size="42" font-family="serif">𝄞</text>
+        <text x="118" y="34" text-anchor="middle" fill="var(--staff-label)" font-size="11.5" font-weight="800">${getChordDisplayName(chord)} 叠置和弦</text>
         ${chordNotesSvg}
-        <line x1="238" y1="${staffStepToY(8, bottomY, lineGap)}" x2="238" y2="${bottomY}" stroke="rgba(148,163,184,0.55)" stroke-width="1.6" />
-        <text x="480" y="34" text-anchor="middle" fill="#fde68a" font-size="11.5" font-weight="800">${noteName(state.root)} ${getModeLabel()} 音阶（点击单音试听）</text>
+        <line x1="238" y1="${staffStepToY(8, bottomY, lineGap)}" x2="238" y2="${bottomY}" stroke="var(--staff-guide)" stroke-width="1.6" />
+        <text x="480" y="34" text-anchor="middle" fill="var(--staff-scale)" font-size="11.5" font-weight="800">${noteName(state.root)} ${getModeLabel()} 音阶（点击单音试听）</text>
         ${scaleNotesSvg}
-        <line x1="748" y1="${staffStepToY(8, bottomY, lineGap)}" x2="748" y2="${bottomY}" stroke="rgba(148,163,184,0.75)" stroke-width="2.5" />
+        <line x1="748" y1="${staffStepToY(8, bottomY, lineGap)}" x2="748" y2="${bottomY}" stroke="var(--staff-guide-strong)" stroke-width="2.5" />
       </svg>
     </div>
   `;

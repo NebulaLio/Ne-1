@@ -3649,3 +3649,538 @@ input[type="search"]::-webkit-search-decoration {
   }
 }
 
+
+/* ── 14. 主題化品牌標誌與五線譜色彩 ───────────────────────────────────── */
+:root {
+  --staff-line: rgba(148, 163, 184, 0.38);
+  --staff-note: #818cf8;
+  --staff-scale: #f59e0b;
+  --staff-label: #c7d2fe;
+  --staff-text: #e2e8f0;
+  --staff-sub: #94a3b8;
+  --staff-acc: #fbbf24;
+  --staff-clef: #818cf8;
+  --staff-guide: rgba(148, 163, 184, 0.55);
+  --staff-guide-strong: rgba(148, 163, 184, 0.75);
+}
+
+body[data-theme="industrial"] {
+  --staff-line: rgba(27, 31, 37, 0.34);
+  --staff-note: #c2410c;
+  --staff-scale: #b45309;
+  --staff-label: #8a3308;
+  --staff-text: #1b1e22;
+  --staff-sub: #565b62;
+  --staff-acc: #c2410c;
+  --staff-clef: #c2410c;
+  --staff-guide: rgba(27, 31, 37, 0.4);
+  --staff-guide-strong: rgba(27, 31, 37, 0.62);
+}
+
+body[data-theme="studio"] {
+  --staff-line: rgba(74, 255, 175, 0.3);
+  --staff-note: #34f59b;
+  --staff-scale: #ffb648;
+  --staff-label: #9fe8c8;
+  --staff-text: #d6f2e6;
+  --staff-sub: #7b918a;
+  --staff-acc: #ffb648;
+  --staff-clef: #4fc3ff;
+  --staff-guide: rgba(74, 255, 175, 0.34);
+  --staff-guide-strong: rgba(74, 255, 175, 0.62);
+}
+
+body[data-theme="industrial"] #brandSurface stop:first-child {
+  stop-color: #3d4349;
+}
+
+body[data-theme="industrial"] #brandSurface stop:last-child {
+  stop-color: #15181b;
+}
+
+body[data-theme="industrial"] #brandGlow stop {
+  stop-color: #ff5a1f;
+  stop-opacity: 0.2;
+}
+
+body[data-theme="industrial"] .brand-note > ellipse:first-of-type,
+body[data-theme="industrial"] .brand-note > rect,
+body[data-theme="industrial"] .brand-note > path {
+  fill: var(--accent);
+}
+
+body[data-theme="industrial"] .brand-note > ellipse:nth-of-type(2) {
+  fill: #ffd2bd;
+}
+
+body[data-theme="industrial"] .brand-orbit {
+  stroke: var(--accent);
+}
+
+body[data-theme="industrial"] .brand-const {
+  stroke: rgba(27, 31, 37, 0.32);
+}
+
+body[data-theme="industrial"] .brand-stars {
+  fill: #3d4349;
+}
+
+body[data-theme="studio"] #brandSurface stop:first-child {
+  stop-color: #0f3a2c;
+}
+
+body[data-theme="studio"] #brandSurface stop:last-child {
+  stop-color: #05130f;
+}
+
+body[data-theme="studio"] #brandGlow stop {
+  stop-color: #34f59b;
+  stop-opacity: 0.24;
+}
+
+body[data-theme="studio"] .brand-note > ellipse:first-of-type,
+body[data-theme="studio"] .brand-note > rect,
+body[data-theme="studio"] .brand-note > path {
+  fill: var(--accent);
+}
+
+body[data-theme="studio"] .brand-note > ellipse:nth-of-type(2) {
+  fill: #d9ffec;
+}
+
+body[data-theme="studio"] .brand-orbit {
+  stroke: var(--blue);
+}
+
+body[data-theme="studio"] .brand-const {
+  stroke: rgba(52, 245, 155, 0.34);
+}
+
+body[data-theme="studio"] .brand-stars {
+  fill: var(--accent);
+}
+
+/* 其他五線譜（譜例編輯、調式、音程圖）沿用同一組主題色 */
+body[data-theme="industrial"] .staff-svg { color: #1b1e22; }
+body[data-theme="industrial"] .staff-svg [fill="#818cf8"],
+body[data-theme="industrial"] .staff-svg [fill="#6366f1"] { fill: #c2410c; }
+body[data-theme="industrial"] .staff-svg [stroke="#818cf8"],
+body[data-theme="industrial"] .staff-svg [stroke="#6366f1"] { stroke: #c2410c; }
+body[data-theme="industrial"] .staff-svg [fill="#f59e0b"],
+body[data-theme="industrial"] .staff-svg [fill="#fbbf24"] { fill: #b45309; }
+body[data-theme="industrial"] .staff-svg [stroke="#f59e0b"],
+body[data-theme="industrial"] .staff-svg [stroke="#fbbf24"] { stroke: #b45309; }
+body[data-theme="industrial"] .staff-svg [fill="#fde68a"] { fill: #9a3412; }
+body[data-theme="industrial"] .staff-svg [fill="#e2e8f0"],
+body[data-theme="industrial"] .staff-svg [fill="#cbd5e1"] { fill: #1b1e22; }
+body[data-theme="industrial"] .staff-svg [fill="#94a3b8"],
+body[data-theme="industrial"] .staff-svg [fill="#64748b"] { fill: #565b62; }
+body[data-theme="industrial"] .staff-svg [stroke="#94a3b8"],
+body[data-theme="industrial"] .staff-svg [stroke="#64748b"] { stroke: #565b62; }
+body[data-theme="industrial"] .staff-svg [fill="#60a5fa"] { fill: #1f5fd0; }
+body[data-theme="industrial"] .staff-svg [stroke^="rgba(148,163,184"],
+body[data-theme="industrial"] .staff-svg [stroke^="rgba(148, 163, 184"] { stroke: rgba(27, 31, 37, 0.4); }
+
+body[data-theme="studio"] .staff-svg { color: #d6f2e6; }
+body[data-theme="studio"] .staff-svg [fill="#818cf8"],
+body[data-theme="studio"] .staff-svg [fill="#6366f1"] { fill: #34f59b; }
+body[data-theme="studio"] .staff-svg [stroke="#818cf8"],
+body[data-theme="studio"] .staff-svg [stroke="#6366f1"] { stroke: #34f59b; }
+body[data-theme="studio"] .staff-svg [fill="#f59e0b"],
+body[data-theme="studio"] .staff-svg [fill="#fbbf24"] { fill: #ffb648; }
+body[data-theme="studio"] .staff-svg [stroke="#f59e0b"],
+body[data-theme="studio"] .staff-svg [stroke="#fbbf24"] { stroke: #ffb648; }
+body[data-theme="studio"] .staff-svg [fill="#fde68a"] { fill: #ffd79b; }
+body[data-theme="studio"] .staff-svg [fill="#e2e8f0"],
+body[data-theme="studio"] .staff-svg [fill="#cbd5e1"] { fill: #d6f2e6; }
+body[data-theme="studio"] .staff-svg [fill="#94a3b8"],
+body[data-theme="studio"] .staff-svg [fill="#64748b"] { fill: #7b918a; }
+body[data-theme="studio"] .staff-svg [stroke="#94a3b8"],
+body[data-theme="studio"] .staff-svg [stroke="#64748b"] { stroke: #7b918a; }
+body[data-theme="studio"] .staff-svg [fill="#60a5fa"] { fill: #4fc3ff; }
+body[data-theme="studio"] .staff-svg [stroke^="rgba(148,163,184"],
+body[data-theme="studio"] .staff-svg [stroke^="rgba(148, 163, 184"] { stroke: rgba(74, 255, 175, 0.32); }
+
+/* ── 15. 聲部進行：結果卡、對比色、手動偏移欄位 ───────────────────────── */
+:root {
+  --voice-good: #34d399;
+  --voice-warn: #fbbf24;
+  --voice-bad: #fb7185;
+}
+
+body[data-theme="industrial"] {
+  --voice-good: #15803d;
+  --voice-warn: #a16207;
+  --voice-bad: #b91c1c;
+}
+
+body[data-theme="studio"] {
+  --voice-good: #34f59b;
+  --voice-warn: #ffb648;
+  --voice-bad: #ff7a6b;
+}
+
+.voice-adjuster {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--glass);
+}
+
+.voice-adjuster-name {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.voice-adjuster-name strong {
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 800;
+}
+
+.voice-adjuster-name span {
+  color: var(--muted);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.voice-adjusters .voice-adjuster-field {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.voice-field-label {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.voice-adjuster-field select {
+  width: 100%;
+  min-height: 32px;
+}
+
+@media (max-width: 720px) {
+  .voice-adjuster {
+    grid-template-columns: 1fr;
+  }
+}
+
+.voice-result {
+  display: grid;
+  gap: 12px;
+}
+
+.voice-result.good {
+  --voice-tone: var(--voice-good);
+}
+
+.voice-result.warn {
+  --voice-tone: var(--voice-warn);
+}
+
+.voice-result.bad {
+  --voice-tone: var(--voice-bad);
+}
+
+.voice-lead {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.7;
+}
+
+.voice-result-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--voice-tone, var(--voice-good));
+  border-radius: 12px;
+  background: var(--glass);
+}
+
+.voice-verdict {
+  min-width: 0;
+}
+
+.voice-verdict-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 10px;
+  border: 1px solid var(--voice-tone, var(--voice-good));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--voice-tone, var(--voice-good)) 14%, transparent);
+  color: var(--voice-tone, var(--voice-good));
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.voice-verdict-summary {
+  margin: 8px 0 0;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.65;
+}
+
+.voice-score {
+  flex: 0 0 auto;
+  text-align: right;
+  font-family: var(--mono, ui-monospace, monospace);
+}
+
+.voice-score strong {
+  color: var(--voice-tone, var(--voice-good));
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.voice-score > span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.voice-score small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+
+.voice-suggestions {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.voice-tip {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--voice-tone, var(--voice-good));
+  border-radius: 8px;
+  background: var(--glass);
+}
+
+.voice-tip.good {
+  --voice-tone: var(--voice-good);
+}
+
+.voice-tip.warn {
+  --voice-tone: var(--voice-warn);
+}
+
+.voice-tip.bad {
+  --voice-tone: var(--voice-bad);
+}
+
+.voice-tip-dot {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--voice-tone, var(--voice-good));
+  box-shadow: 0 0 8px var(--voice-tone, var(--voice-good));
+}
+
+.voice-tip strong {
+  display: block;
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 800;
+}
+
+.voice-tip p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.voice-footnote {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.issue-good {
+  color: var(--voice-good) !important;
+}
+
+.issue-severe {
+  color: var(--voice-bad) !important;
+}
+
+/* 聲部軌跡圖也跟著主題 */
+body[data-theme="industrial"] .voice-stage {
+  fill: #eef0f1;
+  stroke: #c2c5ca;
+}
+
+body[data-theme="industrial"] .voice-guide {
+  stroke: rgba(27, 31, 37, 0.18);
+}
+
+body[data-theme="industrial"] .voice-line {
+  filter: none;
+}
+
+body[data-theme="industrial"] .voice-line.same {
+  stroke: #8a8f96;
+}
+
+body[data-theme="industrial"] .voice-note {
+  fill: #ffffff;
+  stroke: #c2410c;
+}
+
+body[data-theme="industrial"] .voice-note.source {
+  stroke: #c2410c;
+}
+
+body[data-theme="industrial"] .voice-note.target {
+  stroke: #1f5fd0;
+}
+
+body[data-theme="industrial"] .voice-label,
+body[data-theme="industrial"] .voice-title-left,
+body[data-theme="industrial"] .voice-title-right,
+body[data-theme="industrial"] .voice-distance {
+  fill: #1b1e22;
+}
+
+body[data-theme="industrial"] .voice-index {
+  fill: #565b62;
+}
+
+body[data-theme="industrial"] .voice-distance-pill {
+  fill: #ffffff;
+  stroke: #c2c5ca;
+}
+
+body[data-theme="industrial"] #voiceGradient stop:first-child {
+  stop-color: #ff5a1f;
+}
+
+body[data-theme="industrial"] #voiceGradient stop:last-child {
+  stop-color: #c2410c;
+}
+
+body[data-theme="industrial"] #voiceGoldGradient stop:first-child {
+  stop-color: #b45309;
+}
+
+body[data-theme="industrial"] #voiceGoldGradient stop:last-child {
+  stop-color: #a16207;
+}
+
+body[data-theme="studio"] .voice-stage {
+  fill: #060b0b;
+  stroke: rgba(74, 255, 175, 0.18);
+}
+
+body[data-theme="studio"] .voice-guide {
+  stroke: rgba(74, 255, 175, 0.18);
+}
+
+body[data-theme="studio"] .voice-line {
+  filter: drop-shadow(0 0 8px rgba(52, 245, 155, 0.3));
+}
+
+body[data-theme="studio"] .voice-line.same {
+  stroke: rgba(180, 255, 220, 0.5);
+}
+
+body[data-theme="studio"] .voice-note {
+  fill: #04110c;
+  stroke: #34f59b;
+}
+
+body[data-theme="studio"] .voice-note.source {
+  stroke: #34f59b;
+}
+
+body[data-theme="studio"] .voice-note.target {
+  stroke: #4fc3ff;
+}
+
+body[data-theme="studio"] .voice-label,
+body[data-theme="studio"] .voice-title-left,
+body[data-theme="studio"] .voice-title-right,
+body[data-theme="studio"] .voice-distance {
+  fill: #d6f2e6;
+}
+
+body[data-theme="studio"] .voice-index {
+  fill: #7b918a;
+}
+
+body[data-theme="studio"] .voice-distance-pill {
+  fill: #0b1211;
+  stroke: rgba(74, 255, 175, 0.22);
+}
+
+body[data-theme="studio"] #voiceGradient stop:first-child {
+  stop-color: #34f59b;
+}
+
+body[data-theme="studio"] #voiceGradient stop:last-child {
+  stop-color: #4fc3ff;
+}
+
+body[data-theme="studio"] #voiceGoldGradient stop:first-child {
+  stop-color: #ffb648;
+}
+
+body[data-theme="studio"] #voiceGoldGradient stop:last-child {
+  stop-color: #ffd79b;
+}
+
+/* 吉他指盤：和弦音與音階音分成兩種顏色 */
+body[data-theme="industrial"] .fret-dot.chord-dot {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+body[data-theme="industrial"] .fret-dot.scale-dot {
+  background: #e0a200;
+  color: #241a00;
+  box-shadow: inset 0 0 0 1px rgba(27, 31, 37, 0.18);
+}
+
+body[data-theme="studio"] .fret-dot.chord-dot {
+  background: var(--accent);
+  color: #04140d;
+}
+
+body[data-theme="studio"] .fret-dot.scale-dot {
+  background: #ffb648;
+  color: #241505;
+  box-shadow: 0 0 10px rgba(255, 182, 72, 0.35);
+}
+
+.voice-index { fill: var(--muted); }
+

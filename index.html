@@ -450,16 +450,16 @@
                 </label>
               </div>
               <div class="audio-actions">
-                <button id="visualizeVoiceBtn" class="primary-button" type="button">刷新轨迹</button>
-                <button id="playVoiceBtn" class="secondary-button" type="button">▶ 试听连接对比</button>
-                <button id="optimizeVoiceBtn" class="secondary-button" type="button">一键平滑声部</button>
+                <button id="visualizeVoiceBtn" class="primary-button" type="button">↻ 更新聲部軌跡</button>
+                <button id="playVoiceBtn" class="secondary-button" type="button">▶ 對比試聽</button>
+                <button id="optimizeVoiceBtn" class="secondary-button" type="button">✨ 自動平滑配置</button>
               </div>
               <div class="theory-tabs" id="voiceExampleTabs" aria-label="连接范例切换">
                 <button class="segment active" data-voice-example="good" type="button">平滑连接范例</button>
                 <button class="segment" data-voice-example="bad" type="button">问题声部对照</button>
               </div>
+              <article id="voiceWarnings" class="theory-panel" aria-live="polite"></article>
               <div id="voiceAdjusters" class="voice-adjusters" aria-label="分声部音高微调"></div>
-              <article id="voiceWarnings" class="theory-panel"></article>
             </section>
             <section class="voice-visual-wrap">
               <svg id="voiceVisual" viewBox="0 0 920 420" preserveAspectRatio="none" aria-label="声部运动轨迹图"></svg>
