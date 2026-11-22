@@ -1,0 +1,104 @@
+{
+  "locrianSharp2": {
+    "beginner": {
+      "mood": "Tense, but a small relief after the darkest of scales, like a light at the end of a hallway late at night.",
+      "use": "The go-to scale for half-diminished chords in minor keys, and very common in jazz standards.",
+      "improv": "It stings a little less than the other dark scales, so you can linger a moment longer in transitional sections."
+    },
+    "learner": {
+      "mood": "The standard scale for half-diminished chords: the 9 replaces b9, so the tension eases slightly. Highly practical, and a common starting point for minor ii–V. Suited to transition and hovering in minor ii–V.",
+      "use": "The iiø section of iø7–V7–i, or the minor ii–V of iiø–V7alt–i; it also works as a static vamp on m7b5. Swap iiø7 for iiø11 before moving to V7alt: the bass walks a second and the piano stacks fourths.",
+      "improv": "The 9 can be held; b5 is the characteristic tone but it has to resolve. Play b9 and it degrades into Locrian. Target b3, b7 and 9 first. Hold the 9, pass through b5 quickly. Start by resolving 9 down to b3."
+    },
+    "pro": {
+      "mood": "The sixth mode of melodic minor; the natural 9 softens the bite of b5, which makes it the most universal chord-scale over m7b5. In arranging it suits a bass line with sparse piano: clean space, brushes on drums.",
+      "use": "In a minor ii–V–I the half-diminished moves to the altered dominant and back to the tonic; over the half-diminished, stack the 9 and 11 for quartal voicings, sharing the same material as the altered dominant. Keep the tonic in the bass and don't stretch the phrase too long. The standard move in a jazz minor ii–V–I, and the safest choice over the half-diminished chord.",
+      "improv": "The 9 and 11 can be held; b5 works as tension resolving to 3 or b3. Avoid b9 and natural 5, which dilute the half-diminished color. You can approach 5 by semitone from b5, and when moving from iiø to V7alt, plant the altered tones early."
+    }
+  },
+  "superLocrian": {
+    "beginner": {
+      "mood": "A tangle of tension, like live wires before a storm, crackling away.",
+      "use": "Reserved for altered dominant chords, right at the moment you are about to land back on the tonic.",
+      "improv": "Don't try to sing it as a melody — hit it briefly and hurry back to the tonic chord."
+    },
+    "learner": {
+      "mood": "b9, #9, b5 and #5 are all in there, so it is exclusively for altered dominant chords: maximum tension with the clearest direction, and it almost only shows up before a cadence. Good for the last bar before a blow-up.",
+      "use": "The cadence of V7alt–i, or a minor ii–V with iiø before V7alt; it also works over a blues V7alt for an outside sound. Swap V7alt for V7b9 or 7#9 to dial the tension back; brass and distorted guitar in unison.",
+      "improv": "Keep 3 and b7 as guides and orbit the altered tones around them; resolve to the root or the third, and avoid long hovering that wears the ear out. Hold 3 and b7, circle with the altered tones. Start by resolving b9 down to 5."
+    },
+    "pro": {
+      "mood": "The seventh mode of melodic minor; four altered tones push dominant tension to its limit, all pointing at the tonic chord — the core of the altered sound. Suits brass and distorted guitar: dense, short reverb. Best placed two beats before the cadence, then immediately pulled back.",
+      "use": "Its main job is altered dominant resolving to the tonic chord; b9 and #9 can be stacked into an upper structure for reharmonization, and it can be swapped with the half-whole diminished scale. Resolve cleanly and don't dawdle on the altered tones. A bebop and modern jazz cadence staple, best used in the two beats before the resolution.",
+      "improv": "3 and b7 are the guide tones you must keep; the altered tones act as semitone approaches. Natural 5 and 9 collapse the tension; resolve b9 to 5 and #9 to 3, and after the altered run, close cleanly in the last two beats."
+    }
+  },
+  "harmonicMinorMode": {
+    "beginner": {
+      "mood": "Like a shadow turning on stage — tense yet gorgeous, full of drama.",
+      "use": "Minor with a raised seventh; classical minor, metal and flamenco all use it to close.",
+      "improv": "That big leap is the most flavorful step — use it to charge at the tonic."
+    },
+    "learner": {
+      "mood": "Minor third with b6 and natural 7: the augmented second is the signature, and the leading tone gives the cadence a strong resolve. This is the grammar at the heart of classical minor. Suits classical, metal and dramatic passages.",
+      "use": "The harmonic minor cadence i–V7–i, or the classical minor progression i–iv–V7–i; i–V7/bII also gives an altered turn. Swap V7 for V7b9 to make the cadence hit harder. Keep the low strings deep and the reverb on the large side.",
+      "improv": "7 rising to 1 is the core; the augmented second between b6 and 7 can be emphasized. Don't let 7 descend as a passing tone, or the leading-tone function disappears. Start by practicing 7 up to 1. When practicing, play natural minor first, then raise 7 and listen for the leading tone."
+    },
+    "pro": {
+      "mood": "The augmented second between the leading tone and b6 supplies the strongest classical minor tension; dominant function is clear, the color is dramatic, and it suits cadences and climaxes. Suits strings and organ: larger reverb, deep lows.",
+      "use": "Minor tonic to dominant seven and back to tonic is the most classical cadence; four to dominant seven to tonic is also common. The V7 can become Phrygian dominant or an altered scale, a bII7 makes a Neapolitan turn, and the bass moves chromatically. A regular in neoclassical metal and flamenco, and at its most dramatic on a cadence.",
+      "improv": "7 is the leading tone and has to resolve to 1; the augmented second from b6 to 7 works best ascending. Natural 6 dilutes the harmonic minor color; in a solo you can stack b9 and b13 over V7. 7 up to 1, and b6 to 7 decisively. Slow the augmented second from b6 to 7, charge up, then pull back."
+    }
+  },
+  "locrianSharp6": {
+    "beginner": {
+      "mood": "Taut and chilly, like a door in an old house that won't budge. Like stepping into an unlit old room and feeling the floor go cold underfoot.",
+      "use": "Used over diminished seventh chords for a short transition, then back to the minor tonic.",
+      "improv": "It barely offers a note to breathe on — short phrases and quick passing work best. Say one sentence and leave; don't drag out a second."
+    },
+    "learner": {
+      "mood": "The second mode of harmonic minor: b2 and b5 plus natural 6, tighter than Locrian, and it maps to the minor ii°7. Good for short transitions and jump scares. When practicing, play only the diminished arpeggio, then add b2 and b9.",
+      "use": "The passing section of ii°7–V7–i, or a chromatic link over dim7; it can also set up a line before V7b9, but don't linger there. Swap ii°7 for vii°7, then go to V7b9. Touch the diminished chord and move on — don't get attached.",
+      "improv": "6 and b2 side by side give an augmented-second feel; b5 has to resolve, and targets return to b3 or b7. Keep phrases short and don't let a stable center form. Short phrases, fast passing, no stopping. Start by resolving b5 down to b3."
+    },
+    "pro": {
+      "mood": "The scale for the ii°7 of harmonic minor: b5 and b2 strip away any sense of stability, natural 6 adds another layer of contradiction, and it can hardly stand as a key on its own. Suits diminished pads and chromatic descents: dry reverb, high density.",
+      "use": "Diminished seven to dominant seven and back to tonic is its standard channel; it can also set up a line before a dominant b9. Treat the diminished chord as upper-structure material, be careful not to play it as an altered scale, and keep phrases short with a clear exit. Passing material for diminished connections, best placed one beat before the dominant.",
+      "improv": "b5 and b2 work as tension; natural 6 can be held briefly. Anchor the center with b3 and b7, end phrases within two beats, and let the third phrase land clearly on V7 — don't let the altered tones run together into a smear."
+    }
+  },
+  "ionianSharp5": {
+    "beginner": {
+      "mood": "Like a flower made of glass: bright, but it shatters at a touch.",
+      "use": "Pairs with that widened augmented triad, serving as the third degree in harmonic minor — a flash and it's gone.",
+      "improv": "The raised fifth makes major suddenly go weightless; pause and move on, don't stay long."
+    },
+    "learner": {
+      "mood": "Major with a #5, matching the III+ of harmonic minor: bright with instability, weaker in function than in color. Good for brief brightness and turns.",
+      "use": "The III+–iv–V progression, or the color chord on the third degree of harmonic minor; III+maj7 can also hover a short phrase. Swap III+ for III+maj7 for a steadier hover. Short string lines, with the piano touching only the top notes.",
+      "improv": "#5 is the characteristic tone and usually resolves to 5 or 6; 3 and 7 are stable. Don't let natural 5 linger, or you are back in plain Ionian. Start by resolving #5 up to 6. When practicing, play the major triad first, then raise 5 to hear the difference."
+    },
+    "pro": {
+      "mood": "The third mode of harmonic minor: the major third and #5 form an augmented skeleton, bright yet without a foothold, good for short modulatory passages. Suits short string and piano lines: low density, medium reverb.",
+      "use": "Color passages built on III+–iv–V and III+maj7; it can act as the hinge for a modulation to the relative minor, and the augmented triad can move symmetrically. Use III+ in first inversion with the bass on 3. A short turn in harmonic minor, usually heard as color on the third-degree chord.",
+      "improv": "#5 works as tension resolving to 6 or 5, while 3 and 7 keep the guide function. #5 shouldn't be a long note or the sense of key dissolves; an augmented triad can serve as upper structure. Don't hold #5 as a long note — keep 3 and 7, and ending on 6 sounds more natural. Keep #5 short, don't stretch it out."
+    }
+  },
+  "dorianSharp4": {
+    "beginner": {
+      "mood": "Exotic and hot-blooded, like hand drums and spinning skirts at a market. One hit of the hand drum in the square and the skirts start turning.",
+      "use": "Minor with the fourth raised; gypsy and Eastern European music use it a lot, over Cm7 and D7.",
+      "improv": "The raised fourth brings the exotic flavor the moment it appears — circle around it a few times."
+    },
+    "learner": {
+      "mood": "Minor third with #4 and natural 6: Romanian and gypsy color, more exciting than Dorian, and the dominant function stays weak. Suits gypsy, dance and fiery passages.",
+      "use": "The i7–#iv°–i7 loop, or #4 for color inside i7–IV7; i7–bII7 also gives a gypsy progression. Swap #iv° for #ivø7 for a smoother pass. Hand drums and fiddle, fairly dry reverb.",
+      "improv": "#4 is the core tension and can be circled chromatically, targeting 5 or 3; keep the 6 for Dorian's flow, and don't let natural 4 appear or you snap straight back to Dorian. When practicing, play Dorian first, then raise 4 to compare."
+    },
+    "pro": {
+      "mood": "The fourth mode of harmonic minor: the minor third and #11 create augmented-fourth friction, more ethnic color than function, good for up-tempo dance. Suits violin and hand drums: dry reverb, and the rhythm has to bounce.",
+      "use": "Minor seven on the tonic to raised-four diminished seven and back is the loop with the strongest gypsy flavor; bII7 to the tonic is also common. Stack the 9 and #11 on the tonic chord, move the bass chromatically, and keep the rhythm springy. A staple of Eastern European folk and gypsy jazz, at its best in up-tempo dance.",
+      "improv": "#4 works as an appoggiatura resolving to 5 or 3, with natural 6 stable; the moment natural 4 appears you fall back to Dorian. Reinforce it with the #iv° triad, leave rhythmic space for #4, and use fast ornaments off the strong beats."
+    }
+  }
+}

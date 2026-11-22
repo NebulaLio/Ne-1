@@ -1,0 +1,87 @@
+{
+  "69": {
+    "beginner": {
+      "summary": "Add two soft, bright notes to a major chord and it sounds open and warm, like the glow of dusk before the sky goes fully dark.",
+      "use": "Just right when you want a comfortable ending that isn't in a hurry, or when an intro needs to set the mood first. It's also hard to get tired of.",
+      "tip": "There's a very easy shape on guitar: five strings, only two or three fingers. Strum it slowly and it sings; strum too hard and it turns muddy."
+    },
+    "learner": {
+      "summary": "The 6/9 chord: a major triad plus the 6th and 9th, with no 7th. Its color is soft and open, and it is a stable extension of tonic function. No 7th means no guide tone, so it can just sit there without pushing you onward.",
+      "use": "Use I6/9 as a cadence instead of maj7; it is close to standard at the end of bossa, soul and pop-jazz tunes, and it works as an upper color on IV6/9 too. In the last bar of a slow song it feels looser than maj7, less like a full stop.",
+      "tip": "The 5th can be omitted; four voices of 1-3-6-9 are enough. The 6th and 9th together in the upper register sound sweet, but don't let the voice spacing bunch up. If the melody lands on the 9th, drop the 6th an octave and the layers will read more clearly."
+    },
+    "pro": {
+      "summary": "A tonic-function extension with no 7th, 6th and 9th sounding together: it has neither the cling of maj7 nor the pull of a dominant 7th, and its color is the most neutral and warm. It is one of the few tonic chords in arranging that can stay put for a long time without feeling stalled.",
+      "use": "I6/9 for endings, or as an upper structure over IV6/9; it can also be read as a third-related substitute for m7, useful for parallel voice movement. In bossa's repeating sections it often alternates with Imaj9 to avoid color fatigue.",
+      "tip": "A three-voice 3-6-9 voicing is the cleanest; avoid sounding the 6th next to the 5th. A melody on the 9th sounds the most modern and occupies the least midrange. With bass added, let it play only root and 5th and leave the whole middle open."
+    }
+  },
+  "maj9": {
+    "beginner": {
+      "summary": "Add one more bright note on top of a gentle major 7th chord. The sound is polished and transparent, like layers of city lights far off at night.",
+      "use": "In city pop, R&B, or whenever a section should feel a little more refined, it really shines as the tonic chord.",
+      "tip": "Four notes are enough, so don't hold down all five; leaving space is what gives you that loose, airy sound you hear on records."
+    },
+    "learner": {
+      "summary": "The major 9th chord stacks a 9th on maj7. It is more transparent and more melodic while still a stable extension of tonic function. The 9th opens one more layer on an already consonant maj7, so it sounds wider, brighter and more contemporary.",
+      "use": "Imaj9 and IVmaj9; landing a ii-V-I on maj9 sounds more modern than maj7, and it also works as a static modal tonic. In city pop it often turns up on the first line of the chorus and brightens the whole section at once.",
+      "tip": "The 5th is usually omitted; keep 3, 7 and 9. Put the 9th in the upper voice to carry the melody and keep the 7th in an inner voice so it doesn't collide with the root down low. For a floatier sound, swap the 7th for the 6th and you get a looser version of 6/9."
+    },
+    "pro": {
+      "summary": "A static tonic extension of maj7 plus the 9th, with no tritone tension; it is the most common tonic sound in contemporary pop and jazz. The 9th sits a major 9th above the root, so adding more of it never destabilizes the chord, it only opens the top further.",
+      "use": "Imaj9 for cadences and vamps; in Lydian add #11 for maj9#11, and under modal interchange you can swap in m9 or 6/9. As IVmaj9 it often borrows the tonal center for a moment, creating a suspended brightness. If the previous phrase was ii9, landing on maj9 sounds noticeably more modern.",
+      "tip": "For a rootless voicing use 3, 7, 9; with drop2 put the 9th in the top voice, and watch the minor 9th between the major 7th and the root, never place them together in the low register. Give the 9th to the electric piano and let the strings play only 3rd and 7th, and the layers separate at once."
+    }
+  },
+  "maj13": {
+    "beginner": {
+      "summary": "Stretch the major 7th chord open by one more layer. The sound is very wide, like a single piano ringing slowly in a huge hall.",
+      "use": "Great for quiet passages that still want grandeur: intros, outros, cinematic beds. You don't need many notes moving.",
+      "tip": "More notes doesn't mean you have to play them all. Keep the bright top note and the two in the middle; it sounds more open and your hand won't tire."
+    },
+    "learner": {
+      "summary": "The major 13th chord stacks 9 and 13 on maj7, with a Lydian sheen; it is the most expansive form of tonic function. The 13th lies a major 6th from the 7th, which is fully consonant, so the chord never feels crowded however many notes you add.",
+      "use": "Imaj13 for static layering, or as an upper structure over IVmaj13; it is common in modern jazz, film scoring and city pop. Playing this one chord through an intro is enough to open up both space and time.",
+      "tip": "The 13th sits a major 6th from the 7th and is very consonant; the 5th and 11th can be omitted, and a four-voice 3-7-9-13 is already full. For more brightness, swap the 9th for #11 and the flavor shifts at once from sweet to airy."
+    },
+    "pro": {
+      "summary": "An expansive tonic function of maj7 with 9 and 13, where the 13th supplies the top-register sheen; in practice it usually appears as the four-voice 3-7-9-13. It is wider than maj9 because the top layer is pushed one step further out. It has almost no pull, so it suits long stays.",
+      "use": "Imaj13 as a static sound field, IVmaj13 as a subdominant extension; in Lydian, replacing the 13th with #11 floats more and sounds more modern. In film scoring it is often a long sustained chord, letting the image fill the remaining space. With bass added, have it play only the root and leave the top to the piano.",
+      "tip": "Pair it with Ionian or Lydian; avoid sounding the 11th together with the 3rd, put the 13th in the top voice, and let the inner voices simply hold 3 and 7 for stability. With strings added, giving the 13th to the first violins is far more transparent than the keyboard."
+    }
+  },
+  "m9": {
+    "beginner": {
+      "summary": "Add one soft, bright note to a dark chord. It sounds like silk, smooth and warm, perfect for listening alone at night.",
+      "use": "Use it as the tonic in slow songs, lo-fi and R&B sections; the mood relaxes at once without turning too bitter.",
+      "tip": "On guitar a small three-finger barre gets you there. Strum lightly and don't press too hard; squeeze it and the sound goes dull."
+    },
+    "learner": {
+      "summary": "The minor 9th chord stacks a 9th on m7, with a clear Dorian color; it is the usual extension for the ii chord and for minor tonics. The 9th cracks open the slightly stuffy minor 7th, so it is brighter than m7 without losing its dark side.",
+      "use": "The starting point of ii9-V13-Imaj9, or a Dorian vamp on minor i9; it also makes a gentle transition on vi9. In neo-soul it can hold for a whole section, with only drums and bass moving the mood.",
+      "tip": "The 5th can be omitted; three voices of 3-7-9 are enough. Put the 9th up top and keep the 7th in an inner voice to avoid conflict with the root. For an emptier sound, raise the 9th another octave and leave all the middle to the vocal."
+    },
+    "pro": {
+      "summary": "A Dorian sound field of m7 plus the 9th, where the 9th softens the chord; its function stays subdominant or minor tonic, and it is suited to long sustained beds. The 9th rubs softly against the minor 3rd, so it sounds smooth rather than sharp, which makes it ideal under a vocal.",
+      "use": "ii9 into V13; i9 as a modal vamp; it also works as vi9 under a descending bass line from I to ii, making the progression sound more glued together. At a modulation it is often treated as the new key's ii, quietly opening the door. When it leads into V13, holding the 9th common is the smoothest move.",
+      "tip": "For rootless, keep 3, 7, 9, 11; with drop2 put the 9th or 11th in the top voice, and be careful not to crowd it against the b3 in the low register, where it goes muddy. When the bass plays the root, the keyboard drops its own root and lets the 9th shine on its own."
+    }
+  },
+  "m11": {
+    "beginner": {
+      "summary": "Notes spread upward in layers, sounding very open and free, like wind passing through a big empty room with nothing in the way.",
+      "use": "Good for slow, atmospheric passages, letting the music sway inside one color without rushing to change chords.",
+      "tip": "When you actually play it you leave a few notes out and keep the top ones; that's what keeps it from going muddy, and down low you want extra space."
+    },
+    "learner": {
+      "summary": "The minor 11th chord stacks 9 and 11 on m7, with a strong quartal flavor; it is the classic shape for a static Dorian vamp. Its 11th lies a major 9th from the 3rd, so the two can coexist, unlike a dominant 11th where a note has to be left out.",
+      "use": "A modal vamp on i11, or ii11 as an extended subdominant; it also works as the minor-key counterpart of the sus family. In fusion and Japanese city pop it often lays out a whole intro that deliberately has no direction.",
+      "tip": "The 11th and 3rd are a major 9th apart, so they can coexist but don't cram them into the low register; the 5th can be omitted, and stacking 4ths sounds more open and more like modern jazz. Keep only the root in the left hand and stack 4ths above it in the right, and the sound spreads out naturally."
+    },
+    "pro": {
+      "summary": "m7 with 9 and 11, a hybrid of 3rds and 4ths that reads close to quartal, where function gives way to color. It lacks the dominant function's need to resolve, so it works as a static layer and also sits well on top of someone else's bass note.",
+      "use": "i11 as a static modal field, ii11 as an extended subdominant; you can also stack the three-note upper structure 7-9-11 over another bass note, and changing the bass gives you a different chord. In modulations it often serves as the transitional surface.",
+      "tip": "Pair it with Dorian; use an open 3-7-9-11 voicing with the 11th in the top voice for maximum space, and firmly avoid stacking notes in the low register. Give the 11th to long notes and the 3rd to short ones, and the static-versus-moving contrast becomes very clear. Keep only the root in the bass and leave the middle as open as possible for the melody."
+    }
+  }
+}

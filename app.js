@@ -1303,6 +1303,7 @@ const GUITAR_A_FORM = { rootOpen: 9, shapes: {
 const GUITAR_CHORD_INSERT_QUALITIES = CHORD_QUALITY_LIBRARY.map((item) => ({
   id: item.id,
   label: `${item.name} · ${item.function}（${item.id}）`,
+  labelEn: `${item.name} (${item.id})`,
 }));
 
 // 常用和弦快捷標籤
@@ -1617,6 +1618,7 @@ function getLangEntries(lang) {
 function convertText(text, lang) {
   if (text == null) return text;
   const source = String(text);
+  if (lang === "en") return source;
   if (!source || !LANG_CJK_RE.test(source)) return source;
   const cacheKey = lang + "\u0000" + source;
   const cached = LANG_CONVERT_CACHE.get(cacheKey);
@@ -1664,6 +1666,10 @@ function convertElementAttributes(element, lang) {
 }
 
 function applyLanguageToRoot(root) {
+  if (state.lang === "en") {
+    translateEnglishRoot(root);
+    return;
+  }
   const lang = (state.lang === "zh-CN") ? "zh-CN" : "zh-HK";
   if (!root) return;
   if (root.nodeType === Node.TEXT_NODE) {
@@ -1712,15 +1718,34 @@ function applyLanguageToRoot(root) {
 
 function applyLanguage(root = document.body) {
   if (!root || !root.nodeType) return;
-  const lang = (state.lang === "zh-CN") ? "zh-CN" : "zh-HK";
-  document.documentElement.lang = lang === "zh-HK" ? "zh-Hant" : "zh-Hans";
+  NBL = state.lang === "en" && window.NBL_EN ? window.NBL_EN : NBL_ZH;
   const scope = root.nodeType === Node.DOCUMENT_NODE ? root.body : root;
+  const previous = document.documentElement.lang;
   if (languageObserver) languageObserver.disconnect();
-  applyLanguageToRoot(scope);
-  document.querySelectorAll("[data-lang]").forEach((button) => {
-    button.classList.toggle("active", button.dataset.lang === lang);
-  });
-  document.title = convertText(document.title, lang);
+  if (state.lang === "en") {
+    document.documentElement.lang = "en";
+    translateEnglishRoot(scope);
+    document.querySelectorAll("[data-lang]").forEach((button) => {
+      button.classList.toggle("active", button.dataset.lang === "en");
+    });
+    const meta = EN_VIEW_META?.[currentViewId];
+    document.title = `${meta?.title || "Chord Dictionary"} · Nebula Music Theory`;
+  } else {
+    if (previous === "en") restoreLanguageOriginals(scope);
+    const lang = (state.lang === "zh-CN") ? "zh-CN" : "zh-HK";
+    document.documentElement.lang = lang === "zh-HK" ? "zh-Hant" : "zh-Hans";
+    applyLanguageToRoot(scope);
+    document.querySelectorAll("[data-lang]").forEach((button) => {
+      button.classList.toggle("active", button.dataset.lang === lang);
+    });
+    const meta = VIEW_META[currentViewId] || VIEW_META.dictionary;
+    document.title = convertText(`${meta.title} · Nebula 乐理与创作的星际地图`, lang);
+  }
+  if (els.viewTitle) {
+    const meta = VIEW_META[currentViewId] || VIEW_META.dictionary;
+    els.viewTitle.textContent = isEnglish() ? EN_VIEW_META[currentViewId]?.title || meta.title : convertText(meta.title, state.lang);
+  }
+  renderLevelChrome();
   if (languageObserver && document.body) {
     languageObserver.observe(document.body, {
       childList: true,
@@ -1836,13 +1861,15 @@ const state = {
 };
 
 /* ── 三档解说层级：文本适配与术语翻译 ───────────────────── */
-const NBL = window.NBL;
+const NBL_ZH = window.NBL;
+let NBL = NBL_ZH;
 
 function levelKey() {
   return NBL ? NBL.normalizeLevel(state.level) : "learner";
 }
 
 function levelMeta() {
+  if (isEnglish()) return EN_LEVEL_META[levelKey()] || EN_LEVEL_META.learner;
   return NBL ? NBL.levelMeta(levelKey()) : { label: "学过乐理", short: "进阶", icon: "✦", tagline: "", desc: "" };
 }
 
@@ -2384,6 +2411,7 @@ function chordToneLabel(chord, interval) {
 }
 
 function chordToneRole(label) {
+  if (isEnglish()) return CHORD_TONE_ROLES_EN[label] || "extension";
   return CHORD_TONE_ROLES[label] || "延伸音";
 }
 
@@ -2410,6 +2438,12 @@ function intervalToDegree(interval, mode = state.mode) {
 }
 
 function getModeLabel() {
+  if (isEnglish()) {
+    return {
+      major: "Major", minor: "Natural minor", harmonicMinor: "Harmonic minor", melodicMinor: "Melodic minor",
+      dorian: "Dorian", mixolydian: "Mixolydian", phrygian: "Phrygian", lydian: "Lydian", aeolian: "Aeolian", locrian: "Locrian",
+    }[state.mode] || MODE_DETAILS.find((mode) => mode.id === state.mode)?.label || state.mode;
+  }
   return MODE_LABELS[state.mode] || MODE_DETAILS.find((mode) => mode.id === state.mode)?.label || state.mode;
 }
 
@@ -2631,6 +2665,12 @@ function functionToneClass(chord) {
 
 function getFunctionLabel(chord, plain = false) {
   const cls = getFunctionClass(chord);
+  if (isEnglish()) {
+    if (plain) {
+      return { Tonic: "home chord", Dominant: "pull-home chord", Subdominant: "bridge chord", Color: "colour chord" }[cls] || "colour chord";
+    }
+    return { Tonic: "Tonic function", Dominant: "Dominant function", Subdominant: "Subdominant function", Color: "Colour function" }[cls] || cls;
+  }
   if (plain) {
     return {
       Tonic: "家（主和弦）",
@@ -2653,6 +2693,20 @@ function getResolutionAdvice(chord) {
   const downHalf = noteName(state.root - 1);
   const downFifth = noteName(state.root - 5);
   const lv = chordLevelText(chord);
+  if (isEnglish()) {
+    const cls = getFunctionClass(chord);
+    if (cls === "Dominant") {
+      return isBeginnerLevel()
+        ? `It wants to go home, usually to ${upFourth}. Move the most tense note one step toward its nearest stable note and it will sound smooth.`
+        : `${root}${chord.name} usually resolves to ${upFourth} (or the parallel minor tonic). The 3rd rises, the 7th falls, and altered tensions resolve by semitone.`;
+    }
+    if (chord.id === "halfDim") return `It behaves like a half-open door: usually it moves to a tighter dominant first, then back to the minor tonic (${downFifth}7alt → i).`;
+    if (["sus2", "sus4", "7sus4", "9sus4"].includes(chord.id)) return "The suspended note sounds undecided: it can fall back to the 3rd, or stay suspended for a modern open colour.";
+    if (["dim", "dim7"].includes(chord.id)) return `It works as a chromatic passage between stable chords; move it up or down by semitone, for example towards ${downHalf} or ${upFourth}.`;
+    return isProLevel()
+      ? `${lv.use} To move forward, go to a IV/ii subdominant area, then return through V.`
+      : "It is stable enough to sit on; to keep moving, go to a subdominant or dominant chord.";
+  }
   if (isBeginnerLevel()) {
     if (getFunctionClass(chord) === "Dominant") {
       return `它最想走到「家」和弦（通常是 ${upFourth} 那个位置）。弹的时候把最紧张的音往最近的方向挪，就会很顺。`;
@@ -2675,6 +2729,14 @@ function getTensionSummary(chord) {
   const tensions = chord.intervals
     .filter((interval) => Math.abs(interval) > 7 || [1, 2, 5, 6, 8, 9, 10, 11].includes(mod(interval, 12)))
     .map((interval) => `${chordToneLabel(chord, interval)} ${chordToneNote(chord, interval)}`);
+  if (isEnglish()) {
+    if (!tensions.length) return "It uses only the core chord tones, so it sounds clean and relaxed.";
+    return isBeginnerLevel()
+      ? `Its tension comes from ${tensions.join(", ")}. Don't leave those intervals sitting in the low register; move on before they sound muddy.`
+      : isProLevel()
+        ? `${tensions.join(", ")}. Control how much tension you stack to change the urgency of resolution; watch low-register muddiness in close voicings.`
+        : `${tensions.join(", ")}. Keep them in the upper voices and resolve them by step.`;
+  }
   if (isBeginnerLevel()) {
     if (!tensions.length) return "它只用最核心的几个音，听起来干净、不紧绷。";
     if (chord.intervals.length <= 3) {
@@ -2695,6 +2757,14 @@ function getVoiceLeadingAdvice(chord) {
   const compact = notes.map((midi) => midiToNoteName(midi)).join(" - ");
   const functionClass = getFunctionClass(chord);
   const lv = chordLevelText(chord);
+  if (isEnglish()) {
+    if (isBeginnerLevel()) return `Keep the chord tones close together instead of leaping every voice. Hold common tones, then move the rest by the smallest step. Try this voicing: ${compact}.`;
+    if (functionClass === "Dominant") return `Anchor the 3rd and 7th as guide tones; on resolution the 3rd rises and the 7th falls. Reference close voicing: ${compact}.`;
+    if (functionClass === "Subdominant") return `Use it as a bridge into the dominant: move the bass by step or a fourth/fifth, and keep inner voices on common tones or steps. Reference close voicing: ${compact}.`;
+    return isProLevel()
+      ? `Build around 3/7, leave the root to the bass, and omit the 5th when the texture is dense. Reference voicing: ${compact}. ${lv.tip}`
+      : `It works well as a stable landing point. The left hand can cover root and 5th while the right hand spreads 3rd, 7th and extensions; guitar can omit the perfect 5th. Reference close voicing: ${compact}.`;
+  }
   if (isBeginnerLevel()) {
     return `把和弦音尽量放在附近，不要每个音都跳很远；先保留共同音，再让其余的音走最近的格。可以试试这组排列：${compact}。`;
   }
@@ -2721,7 +2791,7 @@ function getTheoryHtml(chord = getSelectedChord()) {
             <strong>${choice.scale}</strong>
             <span>${noteListFromSteps(choice.notes)}</span>
             <p>${escapeHtml(plainTerm(choice.why))}</p>
-            <small>先在这组音里找落点；标着「少碰」的音不要停太久。</small>
+            <small>${isEnglish() ? "Find a landing note inside this set; don't linger on the notes marked “handle with care”." : "先在这组音里找落点；标着「少碰」的音不要停太久。"}</small>
           </article>
         `;
       }
@@ -2730,35 +2800,49 @@ function getTheoryHtml(chord = getSelectedChord()) {
           <strong>${choice.scale}</strong>
           <span>${noteListFromSteps(choice.notes)}</span>
           <p>${choice.why}</p>
-          <small>特征音：${choice.characteristic.join("、") || "和弦骨干音"} · 避用音：${choice.avoid.join("、") || "无严格避用音"} · 适用场景：${choice.use}</small>
+          <small>${isEnglish()
+            ? `Characteristic: ${choice.characteristic.join(", ") || "chord tones"} · Avoid: ${choice.avoid.join(", ") || "no strict avoid notes"} · Use: ${choice.use}`
+            : `特征音：${choice.characteristic.join("、") || "和弦骨干音"} · 避用音：${choice.avoid.join("、") || "无严格避用音"} · 适用场景：${choice.use}`}</small>
         </article>
       `;
     })
     .join("");
   const functionLabel = getFunctionLabel(chord, isBeginnerLevel());
-  const styleAdvice = {
-    jazz: isBeginnerLevel()
-      ? "爵士里先把七音、九音当成「加料」，不要一次全弹；三音和七音最重要。"
-      : "爵士视角：聚焦三音、七音导向线与高叠张力音（9/11/13），可省略纯五音或引入三全音替代。",
-    classical: isBeginnerLevel()
-      ? "古典里最重要的是「离开—回家」的方向，并且不要让两个声部一直平行走。"
-      : "古典视角：注重主–下属–属功能逻辑、终止式规范、挂留音解决，严格避免平行五度与平行八度。",
-    pop: isBeginnerLevel()
-      ? "流行里先让旋律好唱，低音走得顺，和弦不用塞太满。"
-      : "流行视角：强调旋律线条的歌唱性、顺畅的低音走向（Slash Chord）以及开放和弦的空间色彩。",
-  }[state.styleMode] || "";
+  const styleAdvice = isEnglish()
+    ? {
+        jazz: isBeginnerLevel()
+          ? "In jazz, treat the 7th and 9th as seasoning: don't play every extension at once. The 3rd and 7th matter most."
+          : "Jazz view: focus on the 3rd/7th guide-tone line and upper tensions (9/11/13); you can omit the perfect 5th or use a tritone substitution.",
+        classical: isBeginnerLevel()
+          ? "In classical music the important thing is the pull away from home and back again; don't let two voices move in parallel forever."
+          : "Classical view: tonic–subdominant–dominant logic, standard cadences and suspension resolutions; avoid parallel fifths and octaves strictly.",
+        pop: isBeginnerLevel()
+          ? "In pop, keep the melody singable and the bass moving smoothly; the chord doesn't need to be packed full."
+          : "Pop view: singable melodic lines, smooth bass motion (slash chords) and the open, spacious colour of spread voicings.",
+      }[state.styleMode] || ""
+    : {
+        jazz: isBeginnerLevel()
+          ? "爵士里先把七音、九音当成「加料」，不要一次全弹；三音和七音最重要。"
+          : "爵士视角：聚焦三音、七音导向线与高叠张力音（9/11/13），可省略纯五音或引入三全音替代。",
+        classical: isBeginnerLevel()
+          ? "古典里最重要的是「离开—回家」的方向，并且不要让两个声部一直平行走。"
+          : "古典视角：注重主–下属–属功能逻辑、终止式规范、挂留音解决，严格避免平行五度与平行八度。",
+        pop: isBeginnerLevel()
+          ? "流行里先让旋律好唱，低音走得顺，和弦不用塞太满。"
+          : "流行视角：强调旋律线条的歌唱性、顺畅的低音走向（Slash Chord）以及开放和弦的空间色彩。",
+      }[state.styleMode] || "";
   const lv = chordLevelText(chord);
   const label = (key, fallback) => escapeHtml(uiText(`labels.${key}`) || fallback);
   const intro = isBeginnerLevel()
     ? `<p class="theory-lead">${escapeHtml(lv.summary)} ${escapeHtml(lv.use)}</p>`
     : isProLevel()
-      ? `<p class="theory-lead">${escapeHtml(lv.summary)} <strong>${escapeHtml(chord.function)}</strong> · ${escapeHtml(lv.use)}</p>`
+      ? `<p class="theory-lead">${escapeHtml(lv.summary)} <strong>${escapeHtml(functionLabel)}</strong> · ${escapeHtml(lv.use)}</p>`
       : "";
   return `
     <h4>${getChordDisplayName(chord)} · ${functionLabel} ${levelBadge()}</h4>
     ${intro}
     <ul>
-      <li><strong>${label("function", "功能属性")}：</strong>${isBeginnerLevel() ? functionLabel : `${functionLabel} · ${chord.function}`}</li>
+      <li><strong>${label("function", "功能属性")}：</strong>${isEnglish() ? functionLabel : isBeginnerLevel() ? functionLabel : `${functionLabel} · ${chord.function}`}</li>
       <li><strong>${label("resolution", "解决倾向")}：</strong>${getResolutionAdvice(chord)}</li>
       <li><strong>${label("tension", "张力与色彩")}：</strong>${getTensionSummary(chord)}</li>
       <li><strong>${label("voice", "声部连接")}：</strong>${getVoiceLeadingAdvice(chord)}</li>
@@ -2766,7 +2850,7 @@ function getTheoryHtml(chord = getSelectedChord()) {
       <li><strong>${label("practice", "练习建议")}：</strong>${escapeHtml(lv.tip)}</li>
     </ul>
     <div class="scale-choice-list">
-      <h4>${label("scale", "推荐配属音阶（Chord-Scale）")} ${isBeginnerLevel() ? '<span class="mini-hint">先看前两组就够</span>' : ""}</h4>
+      <h4>${label("scale", "推荐配属音阶（Chord-Scale）")} ${isBeginnerLevel() ? `<span class="mini-hint">${isEnglish() ? "The first two are enough to start" : "先看前两组就够"}</span>` : ""}</h4>
       ${scaleRows}
     </div>
   `;
@@ -2776,6 +2860,18 @@ function getScaleTheoryHtml() {
   const modeNotes = getScaleNotes().map((n) => noteName(n)).join(" ");
   const rootNote = noteName(state.root);
   const modeLabel = getModeLabel();
+  if (isEnglish()) {
+    return `
+      <h4>${rootNote} ${modeLabel} ${levelBadge()}</h4>
+      <p class="theory-lead">${escapeHtml(uiText("theory.scaleLead"))}</p>
+      <ul>
+        <li><strong>Scale:</strong>${modeNotes}</li>
+        <li><strong>Degrees:</strong>${getDegreeLabels().join(" - ")}</li>
+        <li><strong>Practice:</strong>Sing 1-3-5-7 first, then add 2/4/6; don't just memorise note names.</li>
+        <li><strong>Improvise:</strong>${isProLevel() ? "Build a 3/7 skeleton and treat 9/11/13 as tension; mind avoid notes and resolution." : "Land on chord tones, then connect them with neighbour and passing notes."}</li>
+      </ul>
+    `;
+  }
   const bullets = isBeginnerLevel()
     ? `
       <li><strong>这组音：</strong>${modeNotes}</li>
@@ -2798,6 +2894,19 @@ function getScaleTheoryHtml() {
 
 function getProgressionTheoryHtml() {
   const analysis = analyzeProgression(state.progression);
+  if (isEnglish()) {
+    const feel = analysis.score >= 80 ? "smooth, with a strong sense of coming home" : analysis.score >= 60 ? "mostly smooth, with one turn in the middle" : "surprising — good for a section that wants a twist";
+    return `
+      <h4>How this progression feels ${levelBadge()}</h4>
+      <p class="theory-lead">${escapeHtml(uiText("progressions.lead"))}</p>
+      <ul>
+        <li><strong>Chords:</strong>${state.progression.map(degreeToChordName).join(" - ") || "no chords yet"}</li>
+        <li><strong>Sound:</strong>${feel}.</li>
+        <li><strong>Next:</strong>Try ${analysis.nextSuggestions.slice(0, 2).join(" or ") || "the tonic"}.</li>
+      </ul>
+      ${analysis.events.length ? `<div class="analysis-tags">${analysis.events.map((event) => `<span>${escapeHtml(translateEnglishString(event))}</span>`).join("")}</div>` : ""}
+    `;
+  }
   if (isBeginnerLevel()) {
     const feel = analysis.score >= 80 ? "很顺、很有回家的感觉" : analysis.score >= 60 ? "大致顺，但中间会拐一下" : "走向比较意外，适合想要惊喜的段落";
     return `
@@ -2828,6 +2937,13 @@ function getVoiceTheoryHtml() {
   const a = chordById(els.voiceChordA?.value || "maj7");
   const b = chordById(els.voiceChordB?.value || "7");
   const comparison = compareVoiceLeading(a, b);
+  if (isEnglish()) {
+    return `
+      <h4>${a.name} → ${b.name} ${levelBadge()}</h4>
+      <p>Maximum motion ${Math.abs(Math.max(...comparison.moves.map((move) => move.distance)))} semitones; common tones ${comparison.moves.filter((move) => move.distance === 0).length}. Score ${comparison.check.rating}/100.</p>
+      <p class="theory-lead">Watch common tones, guide tones and parallel fifths/octaves.</p>
+    `;
+  }
   const summary = isBeginnerLevel() ? plainTerm(comparison.summary) : comparison.summary;
   return `
     <h4>${a.name} → ${b.name} ${levelBadge()}</h4>
@@ -3041,7 +3157,7 @@ function analyzeProgression(degrees = []) {
   return {
     empty: false,
     roman: degrees.join(" - "),
-    functions: functions.map((fn) => FUNCTION_LABELS[fn] || "色彩和声").join(" → "),
+    functions: functions.map((fn) => (isEnglish() ? FUNCTION_LABELS_EN[fn] : FUNCTION_LABELS[fn]) || (isEnglish() ? "Colour" : "色彩和声")).join(" → "),
     score,
     scores,
     events,
@@ -3310,7 +3426,7 @@ function getIntervalInfo(a, b, options = {}) {
     const simpleReference = INTERVAL_REFERENCE.find((item) => item[2] === semitones && item[0] !== "A4" && item[0] !== "d5");
     return {
       code,
-      name: `${qualityLabel}${degree}度`,
+      name: isEnglish() ? (EN_INTERVAL_NAMES[code] || `${quality} ${degree}`) : `${qualityLabel}${degree}度`,
       semitones,
       degree,
       text: reference ? reference[3] : simpleReference ? simpleReference[3] : "复合音程：先算八度，再看剩余音程的性质。",
@@ -3349,6 +3465,9 @@ function getSelectedChord() {
 }
 
 function chordCategoryLabel(category) {
+  if (isEnglish()) {
+    return { triad: "Triad", seventh: "Seventh", extended: "Extension", altered: "Altered", guitar: "Guitar-friendly" }[category] || category;
+  }
   return {
     triad: "三和弦",
     seventh: "七和弦",
@@ -3396,7 +3515,9 @@ function renderChordDetails(chord) {
     const label = chordToneLabel(chord, interval);
     const role = chordToneRole(label);
     const note = chordToneNote(chord, interval);
-    return `${role} ${label} = ${note}（${interval} 半音）`;
+    return isEnglish()
+      ? `${role} ${label} = ${note} (${interval} semitones)`
+      : `${role} ${label} = ${note}（${interval} 半音）`;
   });
   const pitchInfo = notes
     .map((note, index) => {
@@ -3409,11 +3530,13 @@ function renderChordDetails(chord) {
   els.currentRootLabel.textContent = rootNote;
   els.currentRootHint.textContent = `${rootNote} ${getModeLabel()} / ${scaleNotes.map((n) => noteName(n)).join(" ")}`;
   els.selectedChordName.textContent = getChordDisplayName(chord);
-  const analysisText = isBeginnerLevel()
-    ? `${lv.summary} ${lv.use} 上手提示：${lv.tip}`
-    : isProLevel()
-      ? `${lv.summary} ${lv.use} 编配：${lv.tip}`
-      : `${lv.summary} 功能：${chord.function}。${lv.use}`;
+  const analysisText = isEnglish()
+    ? `${lv.summary} ${lv.use}${isBeginnerLevel() ? ` Playing tip: ${lv.tip}` : isProLevel() ? ` Arranging: ${lv.tip}` : ""}`
+    : isBeginnerLevel()
+      ? `${lv.summary} ${lv.use} 上手提示：${lv.tip}`
+      : isProLevel()
+        ? `${lv.summary} ${lv.use} 编配：${lv.tip}`
+        : `${lv.summary} 功能：${chord.function}。${lv.use}`;
   els.selectedChordAnalysis.innerHTML = `<span class="analysis-level" data-level="${levelKey()}">${meta.icon} ${escapeHtml(meta.label)}</span><span>${escapeHtml(analysisText)}</span>`;
   els.selectedChordTones.innerHTML = notes
     .map((note, index) => {
@@ -3427,12 +3550,12 @@ function renderChordDetails(chord) {
   els.constructionStrip.innerHTML = construction
     .map((step, index) => `<div class="construction-step"><strong>第 ${index + 1} 步</strong><span>${escapeHtml(step)}</span></div>`)
     .join("");
-  const levelLabel = isBeginnerLevel() ? "它能做什么" : isProLevel() ? "功能定位" : "调内作用";
-  const tipLabel = isBeginnerLevel() ? "上手提示" : isProLevel() ? "编配要点" : "练习提示";
+  const levelLabel = isEnglish() ? "What it does" : isBeginnerLevel() ? "它能做什么" : isProLevel() ? "功能定位" : "调内作用";
+  const tipLabel = isEnglish() ? "Playing tip" : isBeginnerLevel() ? "上手提示" : isProLevel() ? "编配要点" : "练习提示";
   els.selectedChordDetails.innerHTML = `
-    <div><dt>类别</dt><dd>${chordCategoryLabel(chord.category)}</dd></div>
-    <div><dt>构成</dt><dd>${pitchInfo}</dd></div>
-    <div><dt>${levelLabel}</dt><dd>${analyzeChordFunction(chord)}</dd></div>
+    <div><dt>${isEnglish() ? "Category" : "类别"}</dt><dd>${chordCategoryLabel(chord.category)}</dd></div>
+    <div><dt>${isEnglish() ? "Construction" : "构成"}</dt><dd>${pitchInfo}</dd></div>
+    <div><dt>${levelLabel}</dt><dd>${isEnglish() ? `${getFunctionLabel(chord)}. ${lv.use}` : analyzeChordFunction(chord)}</dd></div>
     <div><dt>${tipLabel}</dt><dd>${escapeHtml(lv.tip)}</dd></div>
   `;
 }
@@ -3623,14 +3746,14 @@ function renderVoicings(chord) {
     .slice(0, 4)
     .map((interval) => chordToneNote(chord, interval));
   const cards = [
-    ["close", "键盘密集排列", compact, "音区集中，适合听辨和弦基本性质与键盘柱式伴奏。"],
-    ["drop2", "Drop 2 开放排列", drop2.map((note) => midiToNoteName(note)).join(" "), "将次高音降低八度（四音以上才成立），适合抒情慢板伴奏与吉他四声部把位。"],
-    ["drop3", "Drop 3 宽广排列", drop3.map((note) => midiToNoteName(note)).join(" "), "将第三高音降低八度（四音以上才成立），低音间距更开阔。"],
-    ["rootless", "无根音导向排列", rootless37.join(" ") || tones.slice(1).join(" "), "省去根音（交由贝斯承担），凸显三音、七音与高叠张力。"],
-    ["upper", "上方三和弦结构", upperStructure.join(" "), "在属和弦上方叠置三和弦，快速构建变化属与利底亚属色彩。"],
-    ["quartal", "四度叠置排列", quartal.join(" "), "以纯四度/增四度叠置打破三度框架，呈现现代调式爵士空间感。"],
-    ["chorale", "四部合唱排列", chorale.join(" "), "古典四部和声均衡分布，便于检验声部平滑度与导音解决。"],
-    ["guitar", "吉他实用简省（省略五音）", guitarOmit.join(" "), "真正省略纯五音，保留根音、三音与七音等核心骨架以利按弦。"],
+    ["close", isEnglish() ? "Close voicing" : "键盘密集排列", compact, "音区集中，适合听辨和弦基本性质与键盘柱式伴奏。"],
+    ["drop2", isEnglish() ? "Drop 2 open voicing" : "Drop 2 开放排列", drop2.map((note) => midiToNoteName(note)).join(" "), "将次高音降低八度（四音以上才成立），适合抒情慢板伴奏与吉他四声部把位。"],
+    ["drop3", isEnglish() ? "Drop 3 wide voicing" : "Drop 3 宽广排列", drop3.map((note) => midiToNoteName(note)).join(" "), "将第三高音降低八度（四音以上才成立），低音间距更开阔。"],
+    ["rootless", isEnglish() ? "Rootless guide-tone voicing" : "无根音导向排列", rootless37.join(" ") || tones.slice(1).join(" "), "省去根音（交由贝斯承担），凸显三音、七音与高叠张力。"],
+    ["upper", isEnglish() ? "Upper-structure triad" : "上方三和弦结构", upperStructure.join(" "), "在属和弦上方叠置三和弦，快速构建变化属与利底亚属色彩。"],
+    ["quartal", isEnglish() ? "Quartal voicing" : "四度叠置排列", quartal.join(" "), "以纯四度/增四度叠置打破三度框架，呈现现代调式爵士空间感。"],
+    ["chorale", isEnglish() ? "Four-part chorale" : "四部合唱排列", chorale.join(" "), "古典四部和声均衡分布，便于检验声部平滑度与导音解决。"],
+    ["guitar", isEnglish() ? "Guitar-friendly omit-5" : "吉他实用简省（省略五音）", guitarOmit.join(" "), "真正省略纯五音，保留根音、三音与七音等核心骨架以利按弦。"],
   ];
   els.voicingStrip.innerHTML = cards
     .map(([key, title, body, fallback]) => {
@@ -3684,7 +3807,7 @@ function renderChordGrid() {
     })
     .join("");
   if (els.chordCount) {
-    els.chordCount.textContent = `${filtered.length} 个和弦`;
+    els.chordCount.textContent = isEnglish() ? `${filtered.length} chords` : `${filtered.length} 个和弦`;
   }
   renderChordRail(filtered);
   if (!filtered.length) {
@@ -3772,25 +3895,29 @@ function renderIntervalTool() {
   const octB = Number(els.intervalOctaveB?.value || 4);
   const info = getIntervalInfo(aName, bName, { octA: 4, octB });
   const lv = intervalLevelText(info.code);
-  const soundLabel = isBeginnerLevel() ? "听起来" : isProLevel() ? "音响与倾向" : "听感";
-  const compoundLabel = info.degree > 7 ? "复合音程（跨八度）" : "单音程";
+  const soundLabel = isEnglish()
+    ? (isBeginnerLevel() ? "Sounds like" : isProLevel() ? "Sound and tendency" : "Sound")
+    : (isBeginnerLevel() ? "听起来" : isProLevel() ? "音响与倾向" : "听感");
+  const compoundLabel = info.degree > 7
+    ? (isEnglish() ? "Compound interval (over an octave)" : "复合音程（跨八度）")
+    : (isEnglish() ? "Simple interval" : "单音程");
   els.intervalResult.innerHTML = `
     <h4>${aName}4 → ${bName}${octB} ${levelBadge()}</h4>
     <p class="theory-lead">${escapeHtml(uiText("intervals.lead"))}</p>
     <ul>
-      <li><strong>音程：</strong>${info.name}（${info.code}）· ${compoundLabel}</li>
-      <li><strong>半音数：</strong>${info.semitones}</li>
+      <li><strong>${isEnglish() ? "Interval" : "音程"}：</strong>${info.name} (${info.code}) · ${compoundLabel}</li>
+      <li><strong>${isEnglish() ? "Semitones" : "半音数"}：</strong>${info.semitones}</li>
       <li><strong>${soundLabel}：</strong>${escapeHtml(lv.sound || info.text)}</li>
-      <li><strong>怎么用：</strong>${escapeHtml(lv.use || "")}</li>
+      <li><strong>${isEnglish() ? "How to use it" : "怎么用"}：</strong>${escapeHtml(lv.use || "")}</li>
     </ul>
   `;
   els.intervalReference.innerHTML = INTERVAL_REFERENCE.map(
     ([code, name, semitones, text]) => {
       const item = (NBL && NBL.intervalText(code, levelKey())) || { sound: text, use: "" };
       return `
-        <article class="interval-item" data-interval-ref="${semitones}" data-interval-code="${code}" role="button" tabindex="0" title="点击载入这个音程">
+        <article class="interval-item" data-interval-ref="${semitones}" data-interval-code="${code}" role="button" tabindex="0" title="${isEnglish() ? "Click to load this interval" : "点击载入这个音程"}">
           <strong>${code}</strong>
-          <span>${name} · ${semitones} 半音 · ${escapeHtml(item.sound)}</span>
+          <span>${isEnglish() ? EN_INTERVAL_NAMES[code] || name : name} · ${semitones} ${isEnglish() ? "semitones" : "半音"} · ${escapeHtml(item.sound)}</span>
           ${isBeginnerLevel() ? "" : `<small>${escapeHtml(item.use)}</small>`}
         </article>
       `;
@@ -3815,24 +3942,60 @@ function renderProgressionLibrary() {
 
 function renderProgressionBuilder() {
   if (!els.progressionPalette) return;
+  const paletteLabelEn = {
+    I: "Tonic", i: "Minor tonic", ii7: "Pre-dominant", iii: "Mediant / tonic sub", iv: "Minor subdominant",
+    IV: "Subdominant", V: "Dominant triad", V7: "Dominant", V7alt: "Altered dominant", "V7/ii": "Secondary dominant → ii",
+    "V7/V": "Secondary dominant → V", vi: "Tonic substitute", "iiø7": "Minor pre-dominant", bII7: "Tritone sub",
+    bIIImaj7: "Parallel-minor borrow", bVI: "Borrowed submediant", bVImaj7: "Borrowed colour", bVII: "Borrowed subtonic", bVII7: "Borrowed / swing",
+  };
   els.progressionPalette.innerHTML = PROGRESSION_PALETTE.map(
     (item) => `
       <button class="palette-chord drag-source" draggable="true" data-drag-degree="${item.degree}" data-add-degree="${item.degree}" type="button">
         <strong>${item.degree}</strong>
-        <span>${degreeToChordName(item.degree)} · ${item.label}</span>
+        <span>${degreeToChordName(item.degree)} · ${isEnglish() ? paletteLabelEn[item.degree] || translateEnglishString(item.label) : item.label}</span>
       </button>
     `
   ).join("");
   els.progressionLane.innerHTML = state.progression.length
     ? state.progression.map((degree, index) => `
-        <button class="lane-chord" data-remove-degree="${index}" type="button" title="点击移除">
+        <button class="lane-chord" data-remove-degree="${index}" type="button" title="${isEnglish() ? "Click to remove" : "点击移除"}">
           <strong>${degree}</strong>
-          <span>${degreeToChordName(degree)} · ${isBeginnerLevel() ? "点一下移除" : "点击移除"}</span>
+          <span>${degreeToChordName(degree)} · ${isEnglish() ? "click to remove" : isBeginnerLevel() ? "点一下移除" : "点击移除"}</span>
         </button>
       `).join("")
     : `<div class="empty-state">${escapeHtml(uiText("progressions.emptyLane"))}</div>`;
   const analysis = analyzeProgression(state.progression);
-  const levelSummary = analysis.empty
+  let levelSummary;
+  if (isEnglish()) {
+    if (analysis.empty) {
+      levelSummary = `
+        <p class="theory-lead">${escapeHtml(uiText("progressions.lead"))}</p>
+        <ul>
+          <li><strong>Status:</strong>No chords yet, so no score is shown (not 46, not 0).</li>
+          <li><strong>Start with:</strong>I → vi → IV → V, or I → IV → V → I.</li>
+          <li><strong>Next:</strong>Click a degree on the left, or drag it into the lane.</li>
+        </ul>`;
+    } else if (isBeginnerLevel()) {
+      const feel = analysis.score >= 80 ? "very smooth, with a strong sense of coming home" : analysis.score >= 60 ? "mostly smooth, with one turn in the middle" : "surprising — good for a section that wants a twist";
+      levelSummary = `
+        <p class="theory-lead">${escapeHtml(uiText("progressions.lead"))}</p>
+        <ul>
+          <li><strong>Chords:</strong>${state.progression.map(degreeToChordName).join(" - ") || "no chords yet"}</li>
+          <li><strong>Sound:</strong>${feel}.</li>
+          <li><strong>Next:</strong>Try ${analysis.nextSuggestions.slice(0, 2).join(" or ") || "the tonic"}.</li>
+        </ul>`;
+    } else {
+      levelSummary = `
+        <ul>
+          <li><strong>Function chain:</strong>${analysis.functions}</li>
+          <li><strong>${isProLevel() ? "Four-part score" : "Overall score"}:</strong>${isProLevel() ? renderScoreLine(analysis.scores) : `${analysis.score}/100`}</li>
+          <li><strong>Substitution:</strong>${translateEnglishString(analysis.suggestion)}</li>
+          <li><strong>Next chords:</strong>${analysis.nextSuggestions.join(", ")}</li>
+          <li><strong>Actual chords:</strong>${state.progression.map(degreeToChordName).join(" - ") || "not built yet"}</li>
+        </ul>`;
+    }
+  } else {
+    levelSummary = analysis.empty
     ? `
       <p class="theory-lead">${escapeHtml(uiText("progressions.lead"))}</p>
       <ul>
@@ -3862,10 +4025,11 @@ function renderProgressionBuilder() {
         <li><strong>实际和弦：</strong>${state.progression.map(degreeToChordName).join(" - ") || "尚未建立"}</li>
       </ul>
     `;
+  }
   els.progressionAnalysis.innerHTML = `
-    <h4>${isBeginnerLevel() ? "这条进行的感觉" : "功能进行分析"} ${levelBadge()}</h4>
+    <h4>${isEnglish() ? (isBeginnerLevel() ? "How this progression feels" : "Functional analysis") : (isBeginnerLevel() ? "这条进行的感觉" : "功能进行分析")} ${levelBadge()}</h4>
     ${levelSummary}
-    ${analysis.events.length ? `<div class="analysis-tags">${analysis.events.map((event) => `<span>${escapeHtml(isBeginnerLevel() ? plainTerm(event) : event)}</span>`).join("")}</div>` : ""}
+    ${analysis.events.length ? `<div class="analysis-tags">${analysis.events.map((event) => `<span>${escapeHtml(isBeginnerLevel() ? plainTerm(event) : isEnglish() ? translateEnglishString(event) : event)}</span>`).join("")}</div>` : ""}
   `;
   refreshLanguage(els.progressionLane, els.progressionAnalysis);
 }
@@ -4081,7 +4245,7 @@ function renderVoiceVisual() {
   const leadingText = leadingMove
     ? `導音 ${midiToNoteName(leadingMove.from)} → ${midiToNoteName(leadingMove.to)}`
     : "";
-  const summary = (() => {
+  let summary = (() => {
     if (isBeginnerLevel()) {
       if (verdict === "good") {
         return `這組 ${startName} → ${targetName} 聽起來很順：${commonNames.length ? `四個聲部一起保留了 ${commonNames.join("、")}，` : ""}最大移動只有 ${maxMove} 半音，沒有突然的大跳。`;
@@ -4194,16 +4358,65 @@ function renderVoiceVisual() {
       text: `${targetName} 的 ${targetToneNames.join("、")} 都至少由一個聲部負責。`,
     });
   }
-  const verdictLabel = verdict === "good" ? "通過 · 銜接流暢" : verdict === "warn" ? "建議 · 可再優化" : "待修正 · 需調整";
-  const scoreCaption = isBeginnerLevel() ? "聽起來的順暢度" : isProLevel() ? "Voice-leading score" : "聲部平滑分數";
-  const lead =
-    isBeginnerLevel()
+  if (isEnglish()) {
+    if (verdict === "good") {
+      summary = isBeginnerLevel()
+        ? `${startName} → ${targetName} sounds smooth: ${commonNames.length ? `the voices keep ${commonNames.join(", ")} in common, ` : ""}and the largest move is only ${maxMove} semitones, with no sudden leap.`
+        : `Maximum motion ${maxMove} semitones${commonNames.length ? `; common tones ${commonNames.join(", ")}` : ""}${leadingText ? `; ${leadingText} resolves upward` : ""}. No parallel fifths or octaves.`;
+    } else if (verdict === "warn") {
+      summary = isBeginnerLevel()
+        ? `${startName} → ${targetName} mostly works; there are ${Math.max(1, check.issues.length + missingPcs.length)} places you can make easier. Try the first suggestion, then hit Compare.`
+        : `The function is clear, but ${Math.max(1, check.issues.length + missingPcs.length)} points can improve: ${check.issues[0] || (missingPcs.length ? `missing target tones ${missingPcs.map((pc) => noteName(pc)).join(", ")}` : "reduce the largest motion")}`;
+    } else if (outside.length) {
+      summary = `${outside.length} target notes fall outside ${targetName} (${outside.map((item) => `V${item.voice} ${item.note}`).join(", ")}); fix those first, then judge smoothness.`;
+    } else {
+      summary = `${parallelIssue || "A voice-leading rule is broken"} Fix the red item first, then compare the score.`;
+    }
+    const englishTips = [];
+    if (outside.length) {
+      englishTips.push({ tone: "bad", title: `Fix ${outside.length} target notes`, text: `${outside.map((item) => `V${item.voice} ${item.note}`).join(", ")} are outside ${targetName}; move them to ${targetToneNames.join(", ")}.` });
+    } else if (commonNames.length) {
+      englishTips.push({ tone: "good", title: "Keep the common tones", text: `${commonNames.join(", ")} stay put through the change; that is what makes this connection stable.` });
+    } else {
+      englishTips.push({ tone: "good", title: "Every voice has a target", text: `All four voices land on chord tones of ${targetName}; when there are no common tones, move each voice by the smallest step.` });
+    }
+    if (leadingMove) {
+      englishTips.push({ tone: "good", title: "Guide tone resolved", text: `The leading tone ${midiToNoteName(leadingMove.from)} rises to ${midiToNoteName(leadingMove.to)}, exactly the pull a dominant wants.` });
+    } else if (maxMove > 7) {
+      englishTips.push({ tone: "warn", title: "Reduce the leap", text: `V${biggestIndex + 1} moves ${midiToNoteName(biggest.from)} → ${midiToNoteName(biggest.to)} (${maxMove} semitones); try an inversion or keep a common tone.` });
+    } else {
+      englishTips.push({ tone: "good", title: "Mostly stepwise", text: `${stepwiseCount} of 4 voices move only 1–2 semitones, so the line stays smooth.` });
+    }
+    if (parallelIssue) {
+      englishTips.push({ tone: "bad", title: "Parallel fifths/octaves", text: "Two voices move in the same direction into a fifth or octave; change one voice's direction or note." });
+    } else if (missingPcs.length) {
+      englishTips.push({ tone: "warn", title: "Complete the chord", text: `${missingPcs.map((pc) => noteName(pc)).join(", ")} of ${targetName} has no voice yet; move an inner voice there.` });
+    } else {
+      englishTips.push({ tone: "good", title: "All chord tones covered", text: `${targetToneNames.join(", ")} of ${targetName} are each covered by at least one voice.` });
+    }
+    tips.length = 0;
+    tips.push(...englishTips.slice(0, 3));
+  }
+  const verdictLabel = isEnglish()
+    ? (verdict === "good" ? "Pass · Smooth" : verdict === "warn" ? "Suggestion · Refine" : "Fix · Needs work")
+    : (verdict === "good" ? "通過 · 銜接流暢" : verdict === "warn" ? "建議 · 可再優化" : "待修正 · 需調整");
+  const scoreCaption = isEnglish()
+    ? (isBeginnerLevel() ? "smoothness" : isProLevel() ? "Voice-leading score" : "voice-leading score")
+    : (isBeginnerLevel() ? "聽起來的順暢度" : isProLevel() ? "Voice-leading score" : "聲部平滑分數");
+  const lead = isEnglish()
+    ? (isBeginnerLevel()
+      ? "Think of the four voices as four melodies: hold if you can, and when you move, take the smallest step."
+      : isProLevel()
+        ? "SATB voice-leading audit: target membership, 3/7 guide-tone resolution, parallel and hidden perfect intervals, voice crossing."
+        : "Check common tones and the leading tone first, then the largest move, whether all target tones are present, and parallel fifths/octaves.")
+    : isBeginnerLevel()
       ? "把四個聲部想成四條旋律：能不動就不動，要動就走最近的一格。"
       : isProLevel()
         ? "SATB voice-leading audit：目標音正確性、3/7 導向音解決、平行與隱伏五八度、聲部交越。"
         : "先看共同音與導音，再看最大移動、目標音是否齊全，以及平行五／八度。";
-  const footnote =
-    isBeginnerLevel()
+  const footnote = isEnglish()
+    ? "The score only measures voice motion and target-note correctness, not whether the chord choice itself is musically interesting."
+    : isBeginnerLevel()
       ? "分數只看四個聲部走得順不順；和弦選得好不好，會再由功能和聲另外評估。"
       : isProLevel()
         ? "評分包含 target-chord membership、voice motion、common tones 與 parallel/hidden perfect intervals。"
@@ -4308,10 +4521,11 @@ function renderQuiz() {
   });
   const gradeBadge =
     state.quiz.type === "abrsm"
-      ? `<span class="quiz-badge">ABRSM ${state.quiz.grade} 級</span>`
-      : `<span class="quiz-badge">綜合聽辨</span>`;
-  const questionTitle =
-    state.quiz.type === "chord"
+      ? `<span class="quiz-badge">${isEnglish() ? `ABRSM Grade ${state.quiz.grade}` : `ABRSM ${state.quiz.grade} 級`}</span>`
+      : `<span class="quiz-badge">${isEnglish() ? "Mixed ear training" : "綜合聽辨"}</span>`;
+  const questionTitle = isEnglish()
+    ? (state.quiz.type === "chord" ? "Which chord is this?" : state.quiz.type === "interval" ? "Which interval is this?" : "Theory multiple choice")
+    : state.quiz.type === "chord"
       ? "這是哪個和弦？"
       : state.quiz.type === "interval"
         ? "這是哪個音程？"
@@ -4331,11 +4545,9 @@ function renderQuiz() {
     })
     .join("");
   if (!state.quiz.answered) {
-    els.quizNotes.innerHTML = `
-      <h4>作答提示</h4>
-      <p>${state.quiz.preHint || "先看清楚題目問的是和弦、音程還是級數，再從選項中判斷。"}</p>
-      <p class="quiz-hint-note">作答前不顯示答案提示；選答後才會出現解析。</p>
-    `;
+    els.quizNotes.innerHTML = isEnglish()
+      ? `<h4>Before you answer</h4><p>${state.quiz.preHint || "Read what the question asks—chord, interval or degree—then compare the options."}</p><p class="quiz-hint-note">No answer hints before you choose; the explanation appears after you answer.</p>`
+      : `<h4>作答提示</h4><p>${state.quiz.preHint || "先看清楚題目問的是和弦、音程還是級數，再從選項中判斷。"}</p><p class="quiz-hint-note">作答前不顯示答案提示；選答後才會出現解析。</p>`;
   }
 }
 
@@ -4348,13 +4560,15 @@ function makeChordQuestion() {
     .map((item) => `${noteName(state.root)}${item.name}`);
   return {
     type: "chord",
-    prompt: isBeginnerLevel()
-      ? `${getChordNoteNames(chord).join("、")}，这几个音叠起来最像哪种和弦？`
-      : `${getChordNoteNames(chord).join("、")}，这些音组成哪一个和弦？`,
+    prompt: isEnglish()
+      ? `${getChordNoteNames(chord).join(", ")} — which chord do these notes make?`
+      : isBeginnerLevel()
+        ? `${getChordNoteNames(chord).join("、")}，这几个音叠起来最像哪种和弦？`
+        : `${getChordNoteNames(chord).join("、")}，这些音组成哪一个和弦？`,
     options: [correct, ...wrongs].sort(() => Math.random() - 0.5),
     answer: correct,
-    preHint: "先找出根音，再看三音与七音；延伸音（9、11、13）通常不改变和弦的基本名称。",
-    hint: `${getChordDisplayName(chord)}：${getChordNoteNames(chord).join("、")}。${chord.theory}`,
+    preHint: isEnglish() ? "Find the root first, then check the 3rd and 7th; extensions (9, 11, 13) usually don't change the basic name." : "先找出根音，再看三音与七音；延伸音（9、11、13）通常不改变和弦的基本名称。",
+    hint: isEnglish() ? `${getChordDisplayName(chord)}: ${getChordNoteNames(chord).join(", ")}. ${translateEnglishString(chord.theory)}` : `${getChordDisplayName(chord)}：${getChordNoteNames(chord).join("、")}。${chord.theory}`,
   };
 }
 
@@ -4372,8 +4586,8 @@ function makeIntervalQuestion() {
     prompt: `${a} → ${b}`,
     options: [answer, ...wrongs].sort(() => Math.random() - 0.5),
     answer,
-    preHint: "先數半音數，再判斷是幾度與什麼性質；大小音程與純音程的稱呼不同。",
-    hint: `答案是 ${interval[0]} ${interval[1]}：${interval[3]}`,
+    preHint: isEnglish() ? "Count the semitones first, then decide the number and quality; major/minor and perfect intervals use different names." : "先數半音數，再判斷是幾度與什麼性質；大小音程與純音程的稱呼不同。",
+    hint: isEnglish() ? `The answer is ${interval[0]} ${interval[1]}: ${interval[3]}` : `答案是 ${interval[0]} ${interval[1]}：${interval[3]}`,
   };
 }
 
@@ -4468,10 +4682,10 @@ function deriveDiatonicChord(index) {
 
 function renderKnowledge() {
   const cards = [
-    { key: "classical", title: "古典钢琴和声" },
-    { key: "jazz", title: "爵士吉他和声" },
-    { key: "modes", title: "调式训练" },
-    { key: "arrangement", title: "编配习惯" },
+    { key: "classical", title: isEnglish() ? "Classical piano harmony" : "古典钢琴和声" },
+    { key: "jazz", title: isEnglish() ? "Jazz guitar harmony" : "爵士吉他和声" },
+    { key: "modes", title: isEnglish() ? "Mode training" : "调式训练" },
+    { key: "arrangement", title: isEnglish() ? "Arranging habits" : "编配习惯" },
   ];
   els.knowledgeGrid.innerHTML = cards
     .map((card) => {
@@ -4617,8 +4831,8 @@ function renderTabEditor() {
   const filterSelect = document.getElementById("scoreMeasureFilter");
   if (filterSelect) {
     const prevVal = state.scoreMeasureFilter || "all";
-    filterSelect.innerHTML = `<option value="all">显示全部小节 (${totalMeasures} 小节)</option>` +
-      Array.from({ length: totalMeasures }, (_, m) => `<option value="${m}">仅看第 ${m + 1} 小节 (M${m + 1})</option>`).join("");
+    filterSelect.innerHTML = `<option value="all">${isEnglish() ? `Show all bars (${totalMeasures})` : `显示全部小节 (${totalMeasures} 小节)`}</option>` +
+      Array.from({ length: totalMeasures }, (_, m) => `<option value="${m}">${isEnglish() ? `Bar ${m + 1} only (M${m + 1})` : `仅看第 ${m + 1} 小节 (M${m + 1})`}</option>`).join("");
     filterSelect.value = prevVal !== "all" && Number(prevVal) >= totalMeasures ? "all" : prevVal;
     state.scoreMeasureFilter = filterSelect.value;
   }
@@ -4655,7 +4869,7 @@ function renderTabEditor() {
     measuresHtml.push(`
       <div class="tab-measure-box">
         <div class="tab-measure-head">
-          <span>${repeatBadge}第 ${m + 1} 小节 (M${m + 1})</span>
+          <span>${isEnglish() ? `Bar ${m + 1} (M${m + 1})` : `第 ${m + 1} 小节 (M${m + 1})`}</span>
           <span>${state.scoreTimeSig}</span>
         </div>
         <div class="tab-dur-row" style="--m-beats:${colsInMeasure}">
@@ -4693,8 +4907,10 @@ function serializeTabGrid(grid = state.tabGrid, beats = state.tabBeats) {
     return `${label.padEnd(2, " ")}|${tokens.join("-")}|`;
   });
 
-  const headerMeta = `调弦: ${tuning.label} | Capo: ${state.tabCapo || 0} | 拍号: ${state.scoreTimeSig || "4/4"} | 调号: ${state.scoreKeySig || "C"} | 速度: ${state.scoreBpm || 100} BPM`;
-  return `${headerMeta}\n拍|${durRow.join(" ")}|\n${bodyLines.join("\n")}`;
+  const headerMeta = isEnglish()
+    ? `Tuning: ${tuning.label} | Capo: ${state.tabCapo || 0} | Time: ${state.scoreTimeSig || "4/4"} | Key: ${state.scoreKeySig || "C"} | Tempo: ${state.scoreBpm || 100} BPM`
+    : `调弦: ${tuning.label} | Capo: ${state.tabCapo || 0} | 拍号: ${state.scoreTimeSig || "4/4"} | 调号: ${state.scoreKeySig || "C"} | 速度: ${state.scoreBpm || 100} BPM`;
+  return `${headerMeta}\n${isEnglish() ? "Beat" : "拍"}|${durRow.join(" ")}|\n${bodyLines.join("\n")}`;
 }
 
 function buildTabScore(title, memo = "") {
@@ -4723,7 +4939,9 @@ function buildPianoScore(title, memo = "") {
   return {
     type: "piano",
     title,
-    memo: memo || `拍号 ${state.scoreTimeSig} · 调号 ${state.scoreKeySig} · ${state.scoreBpm} BPM`,
+    memo: memo || (isEnglish()
+      ? `Time ${state.scoreTimeSig} · Key ${state.scoreKeySig} · ${state.scoreBpm} BPM`
+      : `拍号 ${state.scoreTimeSig} · 调号 ${state.scoreKeySig} · ${state.scoreBpm} BPM`),
     body: `右手（RH）：${rightHand}\n左手（LH）：${leftHand}`,
     payload: {
       rightHand: els.rightHandInput.value.trim(),
@@ -4772,7 +4990,7 @@ function renderChordInsertSelectors() {
   }
   if (els.tabChordQuality) {
     els.tabChordQuality.innerHTML = GUITAR_CHORD_INSERT_QUALITIES.map(
-      (item) => `<option value="${item.id}">${item.label}</option>`
+      (item) => `<option value="${item.id}">${isEnglish() ? item.labelEn : item.label}</option>`
     ).join("");
     els.tabChordQuality.value = state.tabChordQuality;
   }
@@ -4956,7 +5174,7 @@ function loadSavedScoreToEditor(score) {
 
 function renderSavedScores() {
   if (!state.scores.length) {
-    els.savedScores.innerHTML = '<div class="empty-state">还没有保存任何谱例。编写上方吉他谱或钢琴谱后点击保存即可归档。</div>';
+    els.savedScores.innerHTML = `<div class="empty-state">${isEnglish() ? "No scores saved yet. Write a guitar or piano score above, then press Save to archive it." : "还没有保存任何谱例。编写上方吉他谱或钢琴谱后点击保存即可归档。"}</div>`;
     return;
   }
   els.savedScores.innerHTML = state.scores
@@ -5053,7 +5271,7 @@ function loadState() {
     state.chordSearch = prefs.chordSearch || "";
     state.phraseStyle = prefs.phraseStyle || "all";
     state.styleMode = prefs.styleMode || "jazz";
-    state.lang = prefs.lang === "zh-CN" ? "zh-CN" : "zh-HK";
+    state.lang = ["zh-CN", "zh-HK", "en"].includes(prefs.lang) ? prefs.lang : "zh-HK";
     state.level = NBL ? NBL.normalizeLevel(prefs.level) : "learner";
     state.theme = THEME_OPTIONS.includes(prefs.theme) ? prefs.theme : "nebula";
     state.tabTuning = prefs.tabTuning || "standard";
@@ -5126,7 +5344,7 @@ function renderLevelChrome() {
     els.levelChip.dataset.level = key;
     els.levelChip.title = meta.desc;
   }
-  if (els.levelChipText) els.levelChipText.textContent = `${meta.label}视角`;
+  if (els.levelChipText) els.levelChipText.textContent = isEnglish() ? `${EN_LEVEL_LABEL[key] || meta.label} view` : `${meta.label}视角`;
   if (els.levelSwitch) {
     els.levelSwitch.querySelectorAll("[data-level]").forEach((button) => {
       const active = button.dataset.level === key;
@@ -5135,10 +5353,11 @@ function renderLevelChrome() {
     });
   }
   const metaView = VIEW_META[currentViewId] || VIEW_META.dictionary;
+  const enMeta = isEnglish() ? (EN_VIEW_META[currentViewId] || EN_VIEW_META.dictionary) : null;
   const leadPath = currentViewId === "library" && state.libActiveTab === "guitar-atlas" ? "library.atlasLead" : metaView.lead;
-  if (els.viewLeadText) els.viewLeadText.textContent = metaView.leadText || uiText(leadPath);
+  if (els.viewLeadText) els.viewLeadText.textContent = enMeta ? `${enMeta.lead} · Lesson notes remain in Chinese for now.` : metaView.leadText || uiText(leadPath);
   if (els.viewCoord) els.viewCoord.textContent = metaView.sector;
-  if (els.topbarEyebrow) els.topbarEyebrow.textContent = metaView.eyebrow;
+  if (els.topbarEyebrow) els.topbarEyebrow.textContent = enMeta ? enMeta.eyebrow : metaView.eyebrow;
   refreshLanguage(els.viewLeadText, els.viewCoord, els.topbarEyebrow, els.levelChipText);
 }
 
@@ -5180,11 +5399,13 @@ function setView(name, options = {}) {
     else button.removeAttribute("aria-current");
   });
   if (els.viewTitle) {
-    els.viewTitle.textContent = VIEW_META[next].title;
+    els.viewTitle.textContent = isEnglish() ? EN_VIEW_META[next]?.title || VIEW_META[next].title : VIEW_META[next].title;
     refreshLanguage(els.viewTitle);
   }
   renderLevelChrome();
-  document.title = convertText(`${VIEW_META[next].title} · Nebula 乐理与创作的星际地图`, state.lang);
+  document.title = isEnglish()
+    ? `${EN_VIEW_META[next]?.title || VIEW_META[next].title} · Nebula Music Theory`
+    : convertText(`${VIEW_META[next].title} · Nebula 乐理与创作的星际地图`, state.lang);
   if (push && location.hash !== `#${next}`) {
     try {
       history.pushState({ view: next }, "", `#${next}`);
@@ -5325,8 +5546,9 @@ function bindEvents() {
 
     const langButton = event.target.closest("[data-lang]");
     if (langButton) {
-      state.lang = langButton.dataset.lang === "zh-CN" ? "zh-CN" : "zh-HK";
+      state.lang = langButton.dataset.lang === "zh-CN" ? "zh-CN" : langButton.dataset.lang === "en" ? "en" : "zh-HK";
       applyLanguage(document);
+      renderAll();
       persist();
       return;
     }
@@ -6853,10 +7075,10 @@ function renderDictionaryStaffVisual(chord) {
       <svg class="staff-svg" viewBox="0 0 780 162" aria-label="和弦与调式五线谱视图" style="color: var(--staff-line)">
         ${staffLines}
         <text x="36" y="${bottomY - 8}" fill="var(--staff-clef)" font-size="42" font-family="serif">𝄞</text>
-        <text x="118" y="34" text-anchor="middle" fill="var(--staff-label)" font-size="11.5" font-weight="800">${getChordDisplayName(chord)} 叠置和弦</text>
+        <text x="118" y="34" text-anchor="middle" fill="var(--staff-label)" font-size="11.5" font-weight="800">${getChordDisplayName(chord)} ${isEnglish() ? "stacked chord" : "叠置和弦"}</text>
         ${chordNotesSvg}
         <line x1="238" y1="${staffStepToY(8, bottomY, lineGap)}" x2="238" y2="${bottomY}" stroke="var(--staff-guide)" stroke-width="1.6" />
-        <text x="480" y="34" text-anchor="middle" fill="var(--staff-scale)" font-size="11.5" font-weight="800">${noteName(state.root)} ${getModeLabel()} 音阶（点击单音试听）</text>
+        <text x="480" y="34" text-anchor="middle" fill="var(--staff-scale)" font-size="11.5" font-weight="800">${noteName(state.root)} ${getModeLabel()} ${isEnglish() ? "scale (click a note to hear it)" : "音阶（点击单音试听）"}</text>
         ${scaleNotesSvg}
         <line x1="748" y1="${staffStepToY(8, bottomY, lineGap)}" x2="748" y2="${bottomY}" stroke="var(--staff-guide-strong)" stroke-width="2.5" />
       </svg>
@@ -7734,6 +7956,270 @@ function initialize() {
   renderLevelChrome();
 }
 
+/* ── English interface layer ─────────────────────────────────────────── */
+const EN_UI = new Map(Object.entries({
+  "乐理与创作的星际地图": "Music theory & creative star map",
+  "和弦词典": "Chord Dictionary",
+  "乐理解析": "Theory Guide",
+  "音程词典": "Interval Dictionary",
+  "五度圈": "Circle of Fifths",
+  "功能和声": "Functional Harmony",
+  "调式大全": "Mode Library",
+  "声谱分析": "Spectral Analysis",
+  "声部进行": "Voice Leading",
+  "乐理图书馆": "Theory Library",
+  "乐句工坊": "Phrase Workshop",
+  "测验闯关": "Quiz Arena",
+  "谱例编辑": "Score Editor",
+  "当前主音": "Current root",
+  "自然音阶 · 可切换升降号记谱": "Natural scale · switch flat/sharp spelling",
+  "探索和声与旋律的无限可能": "Explore harmony and melody without limits",
+  "设置": "Settings",
+  "界面主题": "Theme",
+  "星云": "Nebula",
+  "工业": "Industrial",
+  "录音室": "Studio",
+  "解说层级": "Explanation level",
+  "✧ 初学者": "✧ Beginner",
+  "✦ 学过乐理": "✦ Learner",
+  "✵ 音乐人": "✵ Musician",
+  "界面语言": "Language",
+  "English：全站英文内容（含课程与回馈）。": "English: full English interface and lesson content.",
+  "显示与风格": "Display & style",
+  "简体": "简体",
+  "繁體": "繁體",
+  "降号记谱 (♭)": "Flat notation (♭)",
+  "爵士": "Jazz",
+  "古典": "Classical",
+  "流行": "Pop",
+  "核心调式": "Core mode",
+  "自然大调": "Major",
+  "自然小调": "Natural minor",
+  "和声小调": "Harmonic minor",
+  "旋律小调": "Melodic minor",
+  "多利亚调式 (Dorian)": "Dorian",
+  "混合利底亚 (Mixolydian)": "Mixolydian",
+  "选择和弦，查看功能、构成、声部连接与可选配属音阶。": "Choose a chord to see its function, construction, voice leading and available scales.",
+  "学过乐理视角": "Learner view",
+  "快速检索和弦": "Search chords",
+  "全部": "All",
+  "三和弦": "Triads",
+  "七和弦": "Sevenths",
+  "高叠扩展": "Extensions",
+  "变化张力": "Altered",
+  "吉他常用": "Guitar-friendly",
+  "当前和弦焦点": "Chord focus",
+  "互动钢琴键盘": "Interactive piano",
+  "点击、拖拽滑奏，或使用电脑键盘 A S D F G H J K 实时弹奏": "Click or drag to play, or use A S D F G H J K on your keyboard",
+  "待弹奏": "Ready",
+  "深度解析": "Deep dive",
+  "和声与配器注解": "Harmony & voicing notes",
+  "和弦": "Chords",
+  "音阶": "Scale",
+  "进行": "Progression",
+  "声部": "Voices",
+  "奏法模式": "Playback mode",
+  "柱式齐奏": "Block chords",
+  "分解琶音": "Arpeggio",
+  "吉他扫弦": "Guitar strum",
+  "合成示意音色": "Synth sound",
+  "合成钢琴（示意）": "Synth piano (demo)",
+  "合成电钢（示意）": "Synth electric piano (demo)",
+  "合成吉他（示意）": "Synth guitar (demo)",
+  "合成器（示意）": "Synth (demo)",
+  "摇摆律动": "Swing",
+  "人性化微调": "Humanize",
+  "▶ 试听和弦": "▶ Audition chord",
+  "♪ 分解琶音": "♪ Arpeggiate",
+  "↗ 上行音阶": "↗ Scale up",
+  "↘ 下行音阶": "↘ Scale down",
+  "■ 停止发声": "■ Stop audio",
+  "调式音阶与自然音和弦": "Mode scale & diatonic chords",
+  "起始和弦": "From chord",
+  "目标和弦": "To chord",
+  "↻ 更新聲部軌跡": "↻ Update voice paths",
+  "↻ 更新声部轨迹": "↻ Update voice paths",
+  "▶ 對比試聽": "▶ Compare",
+  "▶ 对比试听": "▶ Compare",
+  "✨ 自動平滑配置": "✨ Auto-smooth",
+  "✨ 自动平滑配置": "✨ Auto-smooth",
+  "平滑连接范例": "Smooth example",
+  "问题声部对照": "Problem example",
+  "手动偏移": "Manual offset",
+  "四部和声与导向音连接": "Four-part harmony & guide-tone connection",
+  "声部进行轨迹分析": "Voice-leading paths",
+  "加入当前和弦": "Add current chord",
+  "清空轨道": "Clear lane",
+  "载入标准范例": "Load standard example",
+  "起始音（下方音）": "Lower note",
+  "目标音（上方音）": "Upper note",
+  "上方音八度（可测复音程）": "Upper octave (compound intervals)",
+  "▶ 先後響": "▶ Sequential",
+  "♬ 一起響": "♬ Together",
+  "音程距离计算器": "Interval calculator",
+  "速度 BPM": "Tempo BPM",
+  "调号": "Key signature",
+  "无反复": "No repeats",
+  "显示全部小节": "Show all bars",
+  "▶ 播放吉他谱": "▶ Play guitar score",
+  "▶ 播放钢琴谱": "▶ Play piano score",
+  "保存吉他谱": "Save guitar score",
+  "保存乐句至本机": "Save phrase locally",
+  "下一题": "Next question",
+  "↶ 撤销": "↶ Undo",
+  "↷ 重做": "↷ Redo",
+  "⏹ 停止播放": "⏹ Stop playback",
+  "中文名称": "Chinese",
+  "意大利文 (Italiano)": "Italian",
+  "德文 (Deutsch)": "German",
+  "法文 (Français)": "French",
+  "英文 (English)": "English",
+}));
+
+const EN_LEVEL_LABEL = { beginner: "Beginner", learner: "Learner", pro: "Musician" };
+const EN_LEVEL_META = {
+  beginner: { label: "Beginner", short: "Beginner", icon: "✧", tagline: "Start with the sound, then learn how to use it", desc: "Plain-language listening first; every term is translated the first time it appears." },
+  learner: { label: "Learner", short: "Learner", icon: "✦", tagline: "Functions, degrees and resolutions", desc: "Keeps standard theory terms, with concrete progressions and practice paths." },
+  pro: { label: "Musician", short: "Pro", icon: "✵", tagline: "Guide tones, tension and arranging", desc: "Guide-tone resolution, tension structure, voicings, substitutions and modal interchange." },
+};
+const CHORD_TONE_ROLES_EN = {
+  "1": "root", b3: "minor 3rd", 3: "major 3rd", 5: "perfect 5th", b5: "diminished 5th", "#5": "augmented 5th",
+  b7: "minor 7th", maj7: "major 7th", bb7: "diminished 7th", b9: "minor 9th", 9: "major 9th", "#9": "augmented 9th",
+  11: "11th", "#11": "augmented 11th", b13: "minor 13th", 13: "major 13th", 6: "6th", 4: "sus4", 2: "sus2",
+};
+const FUNCTION_LABELS_EN = { T: "Tonic (T)", S: "Subdominant (S)", D: "Dominant (D)", N: "Neapolitan (N)", color: "Colour" };
+const EN_INTERVAL_NAMES = {
+  P1: "Perfect unison", m2: "Minor 2nd", M2: "Major 2nd", m3: "Minor 3rd", M3: "Major 3rd",
+  P4: "Perfect 4th", A4: "Augmented 4th", d5: "Diminished 5th", P5: "Perfect 5th",
+  m6: "Minor 6th", M6: "Major 6th", m7: "Minor 7th", M7: "Major 7th", P8: "Perfect octave",
+};
+const EN_VIEW_META = {
+  dictionary: { title: "Chord Dictionary", eyebrow: "Explore harmony and melody without limits", lead: "Choose a chord to see its function, construction, voice leading and available scales." },
+  theory: { title: "Theory Guide", eyebrow: "Functional harmony, voice leading and arranging", lead: "Read harmony from function, construction and voice leading outward." },
+  intervals: { title: "Interval Dictionary", eyebrow: "Distance, colour and resolution", lead: "Measure, hear and resolve every interval from unison to compound tenths." },
+  fifths: { title: "Circle of Fifths", eyebrow: "Keys, relatives and modulation paths", lead: "Navigate keys by fifths and hear the seven diatonic chords." },
+  progressions: { title: "Functional Harmony", eyebrow: "Build, analyse and hear progressions", lead: "Drag degrees into a lane and read T/S/D function and voice leading." },
+  modes: { title: "Mode Library", eyebrow: "Character, colour and improvisation", lead: "Each mode is a weather system: hear its colour and find its characteristic note." },
+  analysis: { title: "Spectral Analysis", eyebrow: "FFT, harmonics and chroma", lead: "See low/mid/high energy, the harmonic series and a 12-pitch chroma map in real time." },
+  voice: { title: "Voice Leading", eyebrow: "Four voices, guide tones and smooth motion", lead: "Four lines, one goal: move each voice as little as possible and resolve guide tones." },
+  library: { title: "Theory Library", eyebrow: "Terms, guitar atlas and arranging notes", lead: "A five-language glossary and a visual guitar atlas for modern playing." },
+  phrases: { title: "Phrase Workshop", eyebrow: "Original licks and practice material", lead: "Save, edit and audition your own phrases, then send them to the score editor." },
+  quiz: { title: "Quiz Arena", eyebrow: "Ear training and theory drills", lead: "Answer before the explanation appears; each question trains one skill." },
+  scores: { title: "Score Editor", eyebrow: "Tab, standard notation and piano", lead: "Edit tab or piano scores without syntax, then export MIDI, MusicXML or PDF." },
+};
+
+function isEnglish() {
+  return state.lang === "en";
+}
+
+function translateEnglishString(text) {
+  if (!text) return text;
+  const trimmed = text.trim();
+  if (!LANG_CJK_RE.test(trimmed)) return text;
+  const simplified = convertText(trimmed, "zh-CN");
+  const generated = window.EN_TEXT_MAP || null;
+  const exact = EN_UI.get(simplified) || EN_UI.get(trimmed) || (generated ? generated[simplified] || generated[trimmed] : null);
+  if (exact) return text.replace(trimmed, exact);
+  if (window.EN_PHRASE_RE && window.EN_PHRASE_MAP) {
+    const phraseTranslated = text.replace(window.EN_PHRASE_RE, (match) => window.EN_PHRASE_MAP[match] || match);
+    if (phraseTranslated !== text) return phraseTranslated;
+  }
+  const patterns = [
+    [/^(\d+) 个和弦$/, "$1 chords"],
+    [/^(\d+) 条术语$/, "$1 terms"],
+    [/^声部 (\d+)（V(\d+)）$/, "Voice $1 (V$2)"],
+    [/^声部 (\d+)$/, "Voice $1"],
+    [/^(\d+) 半音$/, "$1 semitones"],
+    [/^([+-]?\d+) 半音$/, "$1 semitones"],
+    [/^第 (\d+) 步$/, "Step $1"],
+    [/^(\d+) 个音$/, "$1 notes"],
+    [/^(.+?)，这些音组成哪一个和弦？$/, "Which chord do $1 form?"],
+    [/^(.+?)，这几个音叠起来最像哪种和弦？$/, "Which chord do these notes ($1) most resemble?"],
+    [/^(.+?)，这是什么音程？$/, "What interval is $1?"],
+    [/^(.+?) 小节$/, "$1 bars"],
+  ];
+  for (const [re, replacement] of patterns) {
+    if (re.test(simplified)) return text.replace(trimmed, simplified.replace(re, replacement));
+  }
+  return text;
+}
+
+function translateEnglishTextNode(node) {
+  const raw = node.nodeValue;
+  const trimmed = raw.trim();
+  if (!trimmed || !LANG_CJK_RE.test(trimmed)) return;
+  const translated = translateEnglishString(trimmed);
+  if (translated && translated !== trimmed) {
+    if (node.__zhText === undefined) node.__zhText = raw;
+    node.nodeValue = raw.replace(trimmed, translated);
+  }
+}
+
+function translateEnglishAttributes(element) {
+  if (!element || element.nodeType !== Node.ELEMENT_NODE) return;
+  if (element.dataset && element.dataset.noLang !== undefined) return;
+  LANG_ATTRS.forEach((attr) => {
+    const value = element.getAttribute(attr);
+    if (!value || !LANG_CJK_RE.test(value)) return;
+    const translated = translateEnglishString(value);
+    if (translated !== value) {
+      if (!element.__zhAttrs) element.__zhAttrs = {};
+      if (element.__zhAttrs[attr] === undefined) element.__zhAttrs[attr] = value;
+      element.setAttribute(attr, translated);
+    }
+  });
+}
+
+function translateEnglishRoot(root) {
+  if (!root || !root.nodeType) return;
+  if (root.nodeType === Node.TEXT_NODE) {
+    translateEnglishTextNode(root);
+    return;
+  }
+  const scope = root.nodeType === Node.ELEMENT_NODE ? root : (root.nodeType === Node.DOCUMENT_NODE ? root.body : null);
+  if (!scope) return;
+  const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT, {
+    acceptNode: (node) => {
+      if (!node.nodeValue || !LANG_CJK_RE.test(node.nodeValue)) return NodeFilter.FILTER_REJECT;
+      let el = node.parentElement;
+      while (el) {
+        if (LANG_SKIP_TAGS.has(el.tagName)) return NodeFilter.FILTER_REJECT;
+        if (el.dataset && el.dataset.noLang !== undefined) return NodeFilter.FILTER_REJECT;
+        el = el.parentElement;
+      }
+      return NodeFilter.FILTER_ACCEPT;
+    },
+  });
+  const nodes = [];
+  let current = walker.nextNode();
+  while (current) { nodes.push(current); current = walker.nextNode(); }
+  nodes.forEach(translateEnglishTextNode);
+  scope.querySelectorAll?.("*").forEach(translateEnglishAttributes);
+  if (scope.nodeType === Node.ELEMENT_NODE) translateEnglishAttributes(scope);
+}
+
+function restoreLanguageOriginals(root) {
+  if (!root || !root.nodeType) return;
+  const scope = root.nodeType === Node.ELEMENT_NODE ? root : (root.nodeType === Node.DOCUMENT_NODE ? root.body : null);
+  if (!scope) return;
+  const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  let current = walker.nextNode();
+  while (current) { nodes.push(current); current = walker.nextNode(); }
+  nodes.forEach((node) => {
+    if (node.__zhText !== undefined) {
+      node.nodeValue = node.__zhText;
+      delete node.__zhText;
+    }
+  });
+  scope.querySelectorAll?.("*").forEach((el) => {
+    if (!el.__zhAttrs) return;
+    Object.entries(el.__zhAttrs).forEach(([attr, value]) => el.setAttribute(attr, value));
+    delete el.__zhAttrs;
+  });
+}
+
+
 initialize();
 
 
@@ -8192,8 +8678,8 @@ function renderPhraseMiniVisual(notesText) {
       <div class="phrase-contour-strip">${contourBars}</div>
       <div class="phrase-mini-kb">${miniKeys}</div>
       <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:0.68rem;color:var(--muted);">
-        <span>首音：${rootDegName} · 音域跨度：${maxMidi - minMidi} 半音</span>
-        <span>共 ${events.length} 个音符事件（播放时同步高亮主钢琴键）</span>
+        <span>${isEnglish() ? `First note: ${rootDegName} · Range: ${maxMidi - minMidi} semitones` : `首音：${rootDegName} · 音域跨度：${maxMidi - minMidi} 半音`}</span>
+        <span>${isEnglish() ? `${events.length} note events (the keyboard highlights as it plays)` : `共 ${events.length} 个音符事件（播放时同步高亮主钢琴键）`}</span>
       </div>
     </div>
   `;
@@ -8253,7 +8739,7 @@ renderPhraseFilters = function () {
     els.phraseFilters.innerHTML = styles
       .map((style) => {
         const active = state.phraseStyle === style;
-        return `<button class="segment ${active ? "active" : ""}" data-phrase-style="${style}" type="button">${style === "all" ? "全部风格 (30)" : style}</button>`;
+        return `<button class="segment ${active ? "active" : ""}" data-phrase-style="${style}" type="button">${style === "all" ? (isEnglish() ? "All styles (30)" : "全部风格 (30)") : isEnglish() ? translateEnglishString(style) : style}</button>`;
       })
       .join("");
   }
@@ -8261,10 +8747,10 @@ renderPhraseFilters = function () {
   const diffWrap = document.getElementById("phraseDifficultyFilters");
   if (diffWrap) {
     const diffs = ["all", "入门", "进阶", "专业"];
-    diffWrap.innerHTML = `<span class="tool-strip-label">难度：</span>` + diffs
+    diffWrap.innerHTML = `<span class="tool-strip-label">${isEnglish() ? "Difficulty:" : "难度："}</span>` + diffs
       .map((d) => {
         const active = (state.phraseDifficulty || "all") === d;
-        return `<button type="button" class="chip-btn ${active ? "active" : ""}" data-phrase-diff="${d}">${d === "all" ? "全部难度" : d}</button>`;
+        return `<button type="button" class="chip-btn ${active ? "active" : ""}" data-phrase-diff="${d}">${d === "all" ? (isEnglish() ? "All levels" : "全部难度") : isEnglish() ? translateEnglishString(d) : d}</button>`;
       })
       .join("");
   }
@@ -8272,10 +8758,10 @@ renderPhraseFilters = function () {
   const tagWrap = document.getElementById("phraseTagFilters");
   if (tagWrap) {
     const allTags = ["all", ...new Set(PHRASE_LIBRARY.flatMap((item) => item.tags || []))];
-    tagWrap.innerHTML = `<span class="tool-strip-label">技法标签：</span>` + allTags
+    tagWrap.innerHTML = `<span class="tool-strip-label">${isEnglish() ? "Technique tags:" : "技法标签："}</span>` + allTags
       .map((t) => {
         const active = (state.phraseTag || "all") === t;
-        return `<button type="button" class="chip-btn ${active ? "active" : ""}" data-phrase-tag="${escapeHtml(t)}">${t === "all" ? "全部技法" : escapeHtml(t)}</button>`;
+        return `<button type="button" class="chip-btn ${active ? "active" : ""}" data-phrase-tag="${escapeHtml(t)}">${t === "all" ? (isEnglish() ? "All techniques" : "全部技法") : isEnglish() ? translateEnglishString(t) : escapeHtml(t)}</button>`;
       })
       .join("");
   }
@@ -8314,10 +8800,10 @@ renderPhraseLibrary = function () {
           ${renderPhraseMiniVisual(item.notes)}
           <p>${escapeHtml(isBeginnerLevel() ? `${plainTechnique(item.tags)} 先跟着「${item.progression}」听一遍节奏。` : item.description)}</p>
           <div class="phrase-card-actions">
-            <button class="primary-button mini-button" data-play-phrase="${escapeHtml(item.notes)}" type="button">▶ 节奏播放</button>
+            <button class="primary-button mini-button" data-play-phrase="${escapeHtml(item.notes)}" type="button">${isEnglish() ? "▶ Play rhythm" : "▶ 节奏播放"}</button>
             <button class="secondary-button mini-button" data-open-phrase-score="piano" data-phrase-id="${escapeHtml(item.id)}" type="button">🎹 在谱例编辑中打开(钢琴)</button>
             <button class="secondary-button mini-button" data-open-phrase-score="tab" data-phrase-id="${escapeHtml(item.id)}" type="button">🎸 在谱例编辑中打开(吉他TAB)</button>
-            <button class="ghost-button mini-button" data-copy-phrase-form="${escapeHtml(item.id)}" type="button">📋 复制到表单</button>
+            <button class="ghost-button mini-button" data-copy-phrase-form="${escapeHtml(item.id)}" type="button">${isEnglish() ? "📋 Copy to form" : "📋 复制到表单"}</button>
             <button class="ghost-button mini-button" data-export-phrase-txt="${escapeHtml(item.id)}" type="button">⬇ 导出 TXT</button>
           </div>
         </article>
@@ -8347,11 +8833,11 @@ renderCustomPhrases = function () {
           ${renderPhraseMiniVisual(item.notes)}
           ${item.description ? `<p>${escapeHtml(item.description)}</p>` : ""}
           <div class="phrase-card-actions">
-            <button class="primary-button mini-button" data-play-custom-phrase="${escapeHtml(item.notes)}" type="button">▶ 节奏播放</button>
+            <button class="primary-button mini-button" data-play-custom-phrase="${escapeHtml(item.notes)}" type="button">${isEnglish() ? "▶ Play rhythm" : "▶ 节奏播放"}</button>
             <button class="secondary-button mini-button" data-edit-custom-phrase="${escapeHtml(item.id)}" type="button">✏️ 编辑</button>
             <button class="secondary-button mini-button" data-open-custom-phrase-score="piano" data-custom-id="${escapeHtml(item.id)}" type="button">🎹 在谱例编辑中打开(钢琴)</button>
             <button class="secondary-button mini-button" data-open-custom-phrase-score="tab" data-custom-id="${escapeHtml(item.id)}" type="button">🎸 在谱例编辑中打开(吉他)</button>
-            <button class="ghost-button mini-button" data-copy-custom-phrase="${escapeHtml(item.id)}" type="button">📋 复制到表单</button>
+            <button class="ghost-button mini-button" data-copy-custom-phrase="${escapeHtml(item.id)}" type="button">${isEnglish() ? "📋 Copy to form" : "📋 复制到表单"}</button>
             <button class="ghost-button mini-button" data-export-custom-phrase="${escapeHtml(item.id)}" type="button">⬇ 导出 TXT</button>
             <button class="ghost-button mini-button danger-button" data-delete-custom-phrase="${escapeHtml(item.id)}" type="button">🗑️ 删除</button>
           </div>
@@ -9040,8 +9526,8 @@ renderTabStaffVisual = function () {
   wrap.innerHTML = `
     <div class="staff-card-header">
       <div>
-        <strong>吉他排版级五线谱 (𝄞₈) + 六线谱 (TAB) 垂直对齐总谱（${tuning.label}${capo ? ` · Capo ${capo}` : ""}）</strong>
-        <span>自动连体符杠 (Beaming) · 第三线符干规则 · 二度防重叠 · 技法圆滑线与 p/i/m/a 右手指法</span>
+        <strong>${isEnglish() ? `Guitar engraving staff (𝄞₈) + TAB, vertically aligned (${tuning.label}${capo ? ` · Capo ${capo}` : ""})` : `吉他排版级五线谱 (𝄞₈) + 六线谱 (TAB) 垂直对齐总谱（${tuning.label}${capo ? ` · Capo ${capo}` : ""}）`}</strong>
+        <span>${isEnglish() ? "Automatic beaming · third-line stem rules · second-interval displacement · technique slurs and p/i/m/a fingering" : "自动连体符杠 (Beaming) · 第三线符干规则 · 二度防重叠 · 技法圆滑线与 p/i/m/a 右手指法"}</span>
       </div>
       <span>拍号 ${state.scoreTimeSig} · 调号 ${state.scoreKeySig} · ${state.scoreBpm} BPM</span>
     </div>
@@ -10773,7 +11259,7 @@ renderWesternTermsLibrary = function () {
   catWrap.innerHTML = categories
     .map((c) => {
       const active = (state.termCategory || "all") === c;
-      return `<button type="button" class="segment ${active ? "active" : ""}" data-term-cat="${escapeHtml(c)}">${c === "all" ? "全部类别" : escapeHtml(c)}</button>`;
+      return `<button type="button" class="segment ${active ? "active" : ""}" data-term-cat="${escapeHtml(c)}">${c === "all" ? (isEnglish() ? "All categories" : "全部类别") : escapeHtml(c)}</button>`;
     })
     .join("");
 
@@ -10786,10 +11272,10 @@ renderWesternTermsLibrary = function () {
     return hay.includes(q);
   });
 
-  if (badge) badge.textContent = `${filtered.length} / ${WESTERN_TERMS_LIBRARY.length} 条术语`;
+  if (badge) badge.textContent = isEnglish() ? `${filtered.length} / ${WESTERN_TERMS_LIBRARY.length} terms` : `${filtered.length} / ${WESTERN_TERMS_LIBRARY.length} 条术语`;
 
   if (!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">未找到匹配的术语，请缩短关键词或切换至「全部类别」。</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">${isEnglish() ? "No matching term. Shorten the keyword or switch to All categories." : "未找到匹配的术语，请缩短关键词或切换至「全部类别」。"}</td></tr>`;
     applyLanguageToRoot(tbody);
     return;
   }
@@ -10801,7 +11287,7 @@ renderWesternTermsLibrary = function () {
           <td><span class="term-cat-pill">${escapeHtml(item.cat)}</span></td>
           <td class="term-lang-primary">
             <div>${escapeHtml(item.zh)}</div>
-            <button type="button" class="chip-btn" style="margin-top:4px;min-height:24px;padding:0 8px;font-size:11px;" data-term-demo="${escapeHtml(item.demo || "piano")}">🔊 试听示范</button>
+            <button type="button" class="chip-btn" style="margin-top:4px;min-height:24px;padding:0 8px;font-size:11px;" data-term-demo="${escapeHtml(item.demo || "piano")}">🔊 ${isEnglish() ? "Audition" : "试听示范"}</button>
           </td>
           <td class="term-lang-it">${escapeHtml(item.it)}</td>
           <td class="term-lang-de">${escapeHtml(item.de)}</td>
@@ -10825,7 +11311,7 @@ renderGuitarFingeringAtlas = function () {
 
   if (rootSelect) {
     rootSelect.innerHTML = NOTE_NAMES.sharp
-      .map((n, idx) => `<option value="${idx}" ${idx === state.root ? "selected" : ""}>${noteName(idx)} 主音 / 根音</option>`)
+      .map((n, idx) => `<option value="${idx}" ${idx === state.root ? "selected" : ""}>${noteName(idx)} ${isEnglish() ? "root" : "主音 / 根音"}</option>`)
       .join("");
     rootSelect.value = String(state.root);
     applyLanguageToRoot(rootSelect);
@@ -10886,7 +11372,7 @@ renderGuitarFingeringAtlas = function () {
     const isNut = f === 0;
     fretsSvg += `<line x1="${fx}" y1="${topPad}" x2="${fx}" y2="${topPad + 5 * stringGap}" stroke="${isNut ? "#e2e8f0" : "rgba(148,163,184,0.38)"}" stroke-width="${isNut ? 4.5 : 1.6}" />`;
     const centerX = fx - fretWidth / 2;
-    fretsSvg += `<text x="${centerX}" y="${topPad + 5 * stringGap + 26}" text-anchor="middle" fill="${inlayFrets.has(f) ? "#fde68a" : "#94a3b8"}" font-size="11" font-weight="800">${f === 0 ? "空弦0" : `${f}品`}</text>`;
+    fretsSvg += `<text x="${centerX}" y="${topPad + 5 * stringGap + 26}" text-anchor="middle" fill="${inlayFrets.has(f) ? "#fde68a" : "#94a3b8"}" font-size="11" font-weight="800">${f === 0 ? (isEnglish() ? "open" : "空弦0") : (isEnglish() ? `${f}` : `${f}品`)}</text>`;
     if (inlayFrets.has(f)) {
       if (f === 12) {
         fretsSvg += `<circle cx="${centerX}" cy="${topPad + 1.5 * stringGap}" r="4" fill="rgba(148,163,184,0.22)" />`;
@@ -11147,7 +11633,7 @@ renderModes = function () {
                 <article class="mode-card ${mode.id === state.selectedModeId ? "active" : ""}" data-mode-detail="${mode.id}" role="button" tabindex="0" aria-pressed="${mode.id === state.selectedModeId}">
                   <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:4px;">
                     <h4 style="margin:0;">${mode.label}</h4>
-                    <span class="mode-char-badge" style="font-size:10.5px;padding:2px 7px;">特征 ${meta.charLabel}</span>
+                    <span class="mode-char-badge" style="font-size:10.5px;padding:2px 7px;">${isEnglish() ? "Characteristic" : "特征"} ${meta.charLabel}</span>
                   </div>
                   <p class="mode-card-notes">${notes}</p>
                   <p>${escapeHtml(modeLevelText(mode).mood || mode.feature)}</p>
@@ -11463,7 +11949,7 @@ renderAbrsmKnowledge = function () {
         <p class="abrsm-grade-tip">${escapeHtml(levelTip)}</p>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <button type="button" class="primary-button mini-button" data-jump-quiz-grade="${gradeData.grade}">🎯 进入第 ${gradeData.grade} 级专项闯关模式 →</button>
+        <button type="button" class="primary-button mini-button" data-jump-quiz-grade="${gradeData.grade}">🎯 ${isEnglish() ? `Start Grade ${gradeData.grade} drills` : `进入第 ${gradeData.grade} 级专项闯关模式`} →</button>
       </div>
     </div>
     <div class="abrsm-topic-grid">
@@ -11480,8 +11966,8 @@ renderAbrsmKnowledge = function () {
     </div>
     <div class="abrsm-inline-quiz">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-        <h4 style="margin:0;color:#fde68a;">✍️ ABRSM 第 ${gradeData.grade} 级 · 随堂真题即学即练（点击选项即时批改解析）</h4>
-        <button type="button" class="ghost-button mini-button" data-reset-abrsm-inline="${gradeData.grade}">重置本级练习</button>
+        <h4 style="margin:0;color:#fde68a;">✍️ ${isEnglish() ? `ABRSM Grade ${gradeData.grade} · practice with instant feedback` : `ABRSM 第 ${gradeData.grade} 级 · 随堂真题即学即练（点击选项即时批改解析）`}</h4>
+        <button type="button" class="ghost-button mini-button" data-reset-abrsm-inline="${gradeData.grade}">${isEnglish() ? "Reset this grade" : "重置本级练习"}</button>
       </div>
       <div class="abrsm-inline-grid">${practiceHtml}</div>
     </div>
@@ -11586,22 +12072,25 @@ renderQuiz = function () {
   });
 
   const gradeBadge = state.quiz.grade > 0
-    ? `<span class="quiz-badge">ABRSM ${state.quiz.grade} 级</span>`
-    : `<span class="quiz-badge">综合题库</span>`;
-  const catBadge = `<span class="quiz-badge" style="background:rgba(245,158,11,0.16);color:#fde68a;border-color:rgba(245,158,11,0.35);">${CAT_LABELS[state.quiz.cat] || "乐理选择题"}</span>`;
+    ? `<span class="quiz-badge">ABRSM ${isEnglish() ? "Grade " : ""}${state.quiz.grade}${isEnglish() ? "" : " 级"}</span>`
+    : `<span class="quiz-badge">${isEnglish() ? "Question bank" : "综合题库"}</span>`;
+  const catLabel = isEnglish()
+    ? ({ all: "Mixed", rhythm: "Rhythm & metre", scale: "Keys & scales", interval: "Intervals", chord: "Chords & cadences", clef: "Clefs & transposition", term: "Terminology" }[state.quiz.cat] || "Theory")
+    : (CAT_LABELS[state.quiz.cat] || "乐理选择题");
+  const catBadge = `<span class="quiz-badge" style="background:rgba(245,158,11,0.16);color:#fde68a;border-color:rgba(245,158,11,0.35);">${catLabel}</span>`;
 
   const staffHtml = state.quiz.staffMidis ? renderQuizStaffSvg(state.quiz.staffMidis) : "";
   const audioStageHtml = state.quiz.staffMidis
     ? `
       <div class="quiz-visual-stage">
         ${staffHtml}
-        <button type="button" class="secondary-button mini-button" data-play-quiz-audio="1">🔊 试听本题音高 / 和弦</button>
+        <button type="button" class="secondary-button mini-button" data-play-quiz-audio="1">🔊 ${isEnglish() ? "Hear this question" : "试听本题音高 / 和弦"}</button>
       </div>
     `
     : "";
 
   els.quizPrompt.innerHTML = `
-    <h4>${gradeBadge}${catBadge}第 ${state.quiz.total} 题 ${levelBadge()}</h4>
+    <h4>${gradeBadge}${catBadge}${isEnglish() ? `Question ${state.quiz.total}` : `第 ${state.quiz.total} 题`} ${levelBadge()}</h4>
     <p style="font-size:16px;font-weight:750;color:var(--ink);margin-top:8px;">${state.quiz.prompt}</p>
     ${audioStageHtml}
   `;
@@ -11633,28 +12122,26 @@ function renderQuizRightPanel(lastFeedbackHtml = "") {
   const mistakesHtml = state.quizMistakes.length
     ? state.quizMistakes.slice(0, 6).map((m) => `
         <div class="mistake-item">
-          <strong>[G${m.grade || "综"}] ${escapeHtml(m.prompt)}</strong>
-          <div style="color:#34d399;margin-top:3px;">✓ 正确：${escapeHtml(m.answer)}（误选：${escapeHtml(m.chosen)}）</div>
+          <strong>[${isEnglish() ? "G" : "G"}${m.grade || (isEnglish() ? "mixed" : "综")}] ${escapeHtml(m.prompt)}</strong>
+          <div style="color:#34d399;margin-top:3px;">✓ ${isEnglish() ? "Correct" : "正确"}：${escapeHtml(m.answer)}${isEnglish() ? " (you chose " : "（误选："}${escapeHtml(m.chosen)}${isEnglish() ? ")" : "）"}</div>
           <div style="color:var(--muted);margin-top:2px;">💡 ${escapeHtml(m.hint)}</div>
         </div>
       `).join("")
-    : `<div class="empty-state" style="padding:12px;">🎉 暂无错题，保持全对连胜！</div>`;
+    : `<div class="empty-state" style="padding:12px;">🎉 ${isEnglish() ? "No mistakes yet — keep the streak going!" : "暂无错题，保持全对连胜！"}</div>`;
 
   els.quizNotes.innerHTML = `
     <div class="quiz-stats-strip">
-      <div class="quiz-stat-box"><strong>${totalDone > 0 ? `${acc}%` : "—"}</strong><span>${totalDone > 0 ? "答题正确率" : "尚未作答"}</span></div>
-      <div class="quiz-stat-box"><strong>🔥 ${state.quizStreak || 0}</strong><span>当前连胜</span></div>
-      <div class="quiz-stat-box"><strong>${ABRSM_QUESTION_BANK.length} 题</strong><span>总题库容量</span></div>
+      <div class="quiz-stat-box"><strong>${totalDone > 0 ? `${acc}%` : "—"}</strong><span>${totalDone > 0 ? (isEnglish() ? "Accuracy" : "答题正确率") : (isEnglish() ? "Not answered yet" : "尚未作答")}</span></div>
+      <div class="quiz-stat-box"><strong>🔥 ${state.quizStreak || 0}</strong><span>${isEnglish() ? "Current streak" : "当前连胜"}</span></div>
+      <div class="quiz-stat-box"><strong>${ABRSM_QUESTION_BANK.length} ${isEnglish() ? "questions" : "题"}</strong><span>${isEnglish() ? "Question bank" : "总题库容量"}</span></div>
     </div>
-    ${lastFeedbackHtml || `
-      <h4>💡 作答提示 ${levelBadge()}</h4>
-      <p>${escapeHtml(isBeginnerLevel() ? plainTerm(state.quiz.preHint || state.quiz.hint) : state.quiz.preHint || "先看清楚題目問的是什麼，再排除明顯不合的選項。")}</p>
-      <p class="quiz-hint-note">${escapeHtml(uiText("quiz.lead"))} 可按上方「1–8 级」与「专项题型」自由组合刷题；作答後才顯示解析。</p>
-    `}
+    ${lastFeedbackHtml || (isEnglish()
+      ? `<h4>💡 Before you answer ${levelBadge()}</h4><p>${escapeHtml(state.quiz.preHint || "Read what the question asks, then eliminate the obviously wrong options.")}</p><p class="quiz-hint-note">${escapeHtml(uiText("quiz.lead"))} Combine the grade and question-type filters above; the explanation appears after you answer.</p>`
+      : `<h4>💡 作答提示 ${levelBadge()}</h4><p>${escapeHtml(isBeginnerLevel() ? plainTerm(state.quiz.preHint || state.quiz.hint) : state.quiz.preHint || "先看清楚題目問的是什麼，再排除明顯不合的選項。")}</p><p class="quiz-hint-note">${escapeHtml(uiText("quiz.lead"))} 可按上方「1–8 级」与「专项题型」自由组合刷题；作答後才顯示解析。</p>`)}
     <div style="margin-top:14px;">
       <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h4 style="margin:0;">📕 错题复盘本 (${state.quizMistakes.length})</h4>
-        ${state.quizMistakes.length ? `<button type="button" class="ghost-button mini-button" data-clear-mistakes="1">清空错题</button>` : ""}
+        <h4 style="margin:0;">📕 ${isEnglish() ? `Mistake log (${state.quizMistakes.length})` : `错题复盘本 (${state.quizMistakes.length})`}</h4>
+        ${state.quizMistakes.length ? `<button type="button" class="ghost-button mini-button" data-clear-mistakes="1">${isEnglish() ? "Clear mistakes" : "清空错题"}</button>` : ""}
       </div>
       <div class="mistake-list">${mistakesHtml}</div>
     </div>

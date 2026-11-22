@@ -1,0 +1,512 @@
+{
+  "maj": {
+    "beginner": {
+      "summary": "Three notes stacked together, it sounds like pulling back the curtains on a bright clear day: open, steady, in no hurry, and not the least bit awkward.",
+      "use": "When a song needs to end, or a melody wants to land solidly, use it. It feels as settled as walking home and easing the door shut behind you.",
+      "tip": "On the piano, put the note the name points to down low, space the top two notes evenly, and press with relaxed fingers so it rings. Don't pound it; pounding just makes it noisy."
+    },
+    "learner": {
+      "summary": "A major triad built from root, major third, and perfect fifth. It's the most stable color and the most direct aural signal of key. It has no seventh, so there's no tension that has to resolve, and it can serve as a home base in any mode.",
+      "use": "Mostly the I tonic chord, though it also shows up as V and bVI; in I-V-vi-IV it handles the opening and every landing point. A perfect cadence V-I almost always arrives here, and the last line of a chorus often just sits on it, sounding most like coming home.",
+      "tip": "When arpeggiating, ease back on the fifth and let the third come through and it sings better. Going to the dominant, use second inversion so the bass can move by step instead of leaping. If the chart gives you only one chord, play it as whole-note pads."
+    },
+    "pro": {
+      "summary": "A pure major structure with no seventh, therefore no tritone tension: neutral-bright, the coordinate origin of functional harmony. In arranging it's often the color-neutral base layer, and every other chord tone is added to or subtracted from it. Whatever note it sits on basically fixes the key.",
+      "use": "The steadiest I-level cadential target; under modal interchange it can become m7 or maj7, or be wrapped by borrowed bVII and iv to form bVII-I and iv-I plagal cadences. It's also the most common pedal pivot, and the upper structure can change all it likes without anything collapsing. Functionally there's no need to substitute for it; rewrites usually happen only in the upper voices.",
+      "tip": "The triad itself doesn't have to be rootless; drop2 with the third in the top voice strengthens the pull toward the tonic, and adding a 9 or 13 in the right hand sounds more modern than a bare triad. Watch that added tones don't collide with the melody; a major second on the tonic chord is the easiest way to fight a singer's sustained note. Leave the root to the bass so the upper voices don't crowd together."
+    }
+  },
+  "min": {
+    "beginner": {
+      "summary": "Move that middle note down a little and the color darkens at once, like a cloudy day with just one small lamp lit indoors: quiet, with a bit of a heavy heart.",
+      "use": "Use it when you want to express longing, quiet, or an ache in the chest. Plenty of ballads lean on it straight through the verse to keep from falling apart.",
+      "tip": "On guitar, fret the lowest string and the middle two fingers first, then strum slowly. Don't rush it; too fast and it smears into one blurry sound."
+    },
+    "learner": {
+      "summary": "A minor triad: root plus minor third and perfect fifth. A shade darker than major, emotionally inward, but still a consonant and stable triad. Because the third is lowered a semitone, that bright upward lift is gone, and it sounds more like it's turning inward.",
+      "use": "The i in minor; in major it serves as ii and vi, and i-iv-V and vi-ii-V-I both rely on it for groundwork and transition. In pop it's often the last step before the chorus, pushing the emotion down before lifting it.",
+      "tip": "Root plus fifth in the left hand and the third and seventh spread apart in the right keeps the close minor third in the low register from crowding into mud, and makes the inversion into V smoother. Use open positions so the open strings can resonate and the dark color comes through clearer."
+    },
+    "pro": {
+      "summary": "A minor structure: lowering the third a semitone removes the bright major pull, so the color is introspective and it can be tonic or subdominant. It also has no seventh, so its function depends entirely on the scale degree it sits on, not on the chord itself. Move the same three notes to another degree and both the sound and the function change.",
+      "use": "ii7 and vi7 are its usual identities; in minor it's i, and Dorian's i7 can keep the sixth unflattened so it doesn't read as Aeolian. As vi it's the best descending bass pedal between I and ii, and it lengthens a phrase effortlessly. In a new key it's often treated as ii, paving the way for the modulation.",
+      "tip": "Keep the close minor third between root and third out of the low register; put the fifth in the bass as an inversion, and the bass moves 1-5 into V7 more solidly, so the guide tones can be heard. In the voicing, give the third a little midrange presence or the whole block collapses into mush."
+    }
+  },
+  "dim": {
+    "beginner": {
+      "summary": "Three notes packed tight together, it sounds edgy and stuck in midair, like a door that won't quite shut and keeps rattling in the wind.",
+      "use": "It rarely stays long, usually just half a beat, and its job is to push the ear from the chord before it to the chord after it.",
+      "tip": "Just remember it's a minor chord with the top note pushed down one more step. The hand shape is tiny, easy to press, and quick to lift."
+    },
+    "learner": {
+      "summary": "A diminished triad: root plus minor third and diminished fifth, two minor thirds stacked. The tension is sharp and the sense of key is weak. It's less directional than the tritone of a dominant seventh, more the tension of being squeezed and needing to leave at once.",
+      "use": "Usually a leading-tone or passing chord, as in the chromatic stepwise motion of I-#i°-ii, or an upward lead-in before V7, which makes it functionally more of a temporary push. As a chromatic bridge between two stable chords it's much smoother than jumping straight across.",
+      "tip": "Use first inversion to put the diminished fifth in an outer voice; on resolution the lowest voice moves up a semitone, which is the cleanest result. Don't let it sit for more than a beat. If you want less bite, tuck the diminished fifth into an inner voice and leave only the tartness of the minor third."
+    },
+    "pro": {
+      "summary": "A symmetrical stack of minor thirds containing the dissonant diminished fifth; functionally closer to a leading-tone chord than to an independent chord. Held alone for long it robs the key of its center of gravity, so it almost always appears as a short note or a passing voice. It can only be a process, never a destination.",
+      "use": "Mostly chromatic passing or a reduced form of V7b9; when vii° omits its root it comes from the same source as dim7, and the two can be swapped before resolving to the tonic. You can also split its three notes across different instruments to make a moving shadow, which gives more sense of space than pressing the whole block down.",
+      "tip": "In the voices, let the diminished fifth resolve to a third and the minor third to a unison; keep the arranging short and soft, since short notes in the mid-low register work better than a full string section. To make it more modern, keep only the root and diminished fifth and pull out the middle layer; the shadow thins by half."
+    }
+  },
+  "aug": {
+    "beginner": {
+      "summary": "The gaps between the three notes are all the same width, so it sounds like it's floating upward with nothing to grab, a little dreamlike, a little like a memory scene in a film.",
+      "use": "When a song wants to turn a corner suddenly, or leave a melodic line hanging in midair, use it as a cushion for a moment and then move on right away.",
+      "tip": "On the keyboard this shape looks identical every four keys, so learn one and you can shift it anywhere; it tastes the same up and down the keyboard."
+    },
+    "learner": {
+      "summary": "An augmented triad: two major thirds stacked, containing an augmented fifth. The sound is swollen and suspended, functionally adrift from the key. It divides the octave into three equal parts, so all three inversions look exactly alike, and changing the root only changes the name.",
+      "use": "Often a chromatic passing chord between I and IV, as in I-I+-IV, or a altered form of V pushing toward the tonic, with a clear sense of leaving and returning. It also pairs well with an ascending melody, letting melody and chord float up together.",
+      "tip": "Any note can be the root, and inverting it changes its identity; on resolution the smoothest move is the augmented fifth up a semitone to the third, and holding the bass still is even steadier. If you want a clean close, let the augmented fifth leap straight to the third of the target chord instead of taking a detour."
+    },
+    "pro": {
+      "summary": "A symmetrical augmented structure that divides the octave equally, with all three inversions isomorphic. It carries a naturally floating augmented color and no stable function, so it can only be a process. It belongs to neither major nor minor, which makes it ideal for the seam where two keys meet.",
+      "use": "As V7#5, or a line cliché from I to IV; you can also lay a whole-tone scale underneath to weaken the dominant function and leave only color and suspension. In film scoring it often handles the transition, carrying the listener from one emotion to the next without a cadence.",
+      "tip": "The augmented fifth must resolve, or the suspended feeling will drag the whole piece; put it in an inner voice and let the outer voices move chromatically, which is far rounder than putting it in the top voice. In the arranging, don't let the bass instrument double the augmented fifth either; the low end goes hollow at once."
+    }
+  },
+  "sus2": {
+    "beginner": {
+      "summary": "Swap the brightest note for a softer one next door and the sound turns open and airy, like standing on a prairie looking up at the sky.",
+      "use": "Use it in intros and interludes when you want the mood to spread out first without committing to anything; lots of folk and post-rock open slowly this way.",
+      "tip": "On guitar it's one finger away from a plain major chord: lift the finger holding the middle note by one fret and it opens up."
+    },
+    "learner": {
+      "summary": "A suspended second chord: the major second replaces the third, and without a third it's neither major nor minor, open in color and unresolved. Unlike sus4 it doesn't insist on resolving, so it can stay in one kind of weather for a long time.",
+      "use": "Often a substitute color for I or IV; I(sus2)-IV and vi(sus2)-IV are very common in modern pop, and it works as a static intro layer. When the lyrics risk getting too sweet, swapping it in for the major triad reins things in immediately.",
+      "tip": "The second sits next to the root and muddies easily, so put the second an octave higher and leave only root and fifth in the bass, which is clearest, and save the midrange for the melody. When arpeggiating, play the second then the fifth for a slowly opening feel."
+    },
+    "pro": {
+      "summary": "A suspended-second structure with the third omitted, no major or minor pull: negative space in the harmony, or a three-note reduction of a quartal voicing. It differs from add9 only by whether the third is there, yet its function shifts from stable tonic to a blur. Moving on to vi then sounds especially natural.",
+      "use": "A static pedal color on I, or a thin mist before V; also common in modal sections alternating with I, creating a quality that keeps breathing and never commits. It's interchangeable with add9, one note apart in light and shade, which makes it the easiest breather in an arrangement.",
+      "tip": "Avoid having the second and third sound at once and clash; use an open voicing with the second in the top voice and deliberately leave a midrange gap in the arranging for maximum transparency. If you must thicken it, add a fifth an octave down, not a third."
+    }
+  },
+  "sus4": {
+    "beginner": {
+      "summary": "The middle note gets lifted a little, and it sounds like a sentence stopping halfway—it makes you really want to hear how the next line goes.",
+      "use": "Most often you play it first, then let it fall back to the plain chord; that release sounds great, and lots of songs use it before the chorus.",
+      "tip": "On guitar the shape is only one finger away—lift it and you have the plain chord. You can swap back and forth for rhythm and it is very handy."
+    },
+    "learner": {
+      "summary": "Sus4 chord: a perfect fourth replaces the third, and the fourth rubs a major second against the root, its tension pointing clearly at the third. It has more direction than sus2 because it sits only a semitone from the third, so the ear fills it in automatically.",
+      "use": "The classic I(sus4)-I and V(sus4)-V suspension resolutions; it can also delay just before a ii-V, pushing the arrival of dominant function later. Holding it for two beats before the chorus and then releasing is the least effortful way to keep the emotion suspended.",
+      "tip": "On resolution move only one voice: let the fourth fall a semitone to the third while the other voices stay put. That is the most economical voice leading and sounds the most natural. For more suspense, use 7sus4 or 9sus4 to push the resolution back another beat."
+    },
+    "pro": {
+      "summary": "A fourth-suspension structure: the fourth rubs a second against the root. The tension is gentle but directional, and it can delay the release of dominant function precisely. Its real value is not colour but time—it is a delay switch built into the harmony.",
+      "use": "V7sus4 often serves as a delayed V7 and also appears in modal vamps; gospel and fusion use its alternation with the third for syncopated groove. In a backdoor progression, bVII7sus4 is looser than bVII7 and sounds less like borrowing. Keeping the fourth in an inner voice makes the resolution more obvious.",
+      "tip": "When the fourth resolves to the third, leave the other voices alone; as a static vamp, alternate with 7sus4 to create a floating sense of hanging forever without landing. Give the fourth to a solo instrument and it will be clearer than a whole keyboard pad."
+    }
+  },
+  "6": {
+    "beginner": {
+      "summary": "Add one higher note to a major chord and the sound turns round and warm, like the yellowed, faded light on an old record cover.",
+      "use": "When you want an ending that is gentle and not too final, use it instead of the plain major chord—it sounds more relaxed.",
+      "tip": "On piano, play the three notes first, then add the top one lightly with your pinky; keep it softer than the middle, or it turns cloying."
+    },
+    "learner": {
+      "summary": "A major triad with an added major sixth; the sixth replaces the seventh, so it lacks the sharpness of a major seventh and its colour is warm and stable. It sounds like a major triad with a layer of fuzz—very consonant, without the slightly suspended sweetness of maj7.",
+      "use": "Often used as a cadential colour substitute for maj7 at the I degree, or as IV6 moving to ii, or as a tonic 6 ending in jazz to avoid the stickiness of the major seventh. In swing, bossa and old pop, ending on it sounds more like that era than maj7 does.",
+      "tip": "With the sixth in the bass, the structure equals the m7 of the relative minor, so when moving to ii-V the bass can step smoothly; that inversion choice is very useful. If the melody rests on the sixth, don't push the third against it—they clash easily."
+    },
+    "pro": {
+      "summary": "A tonic-function chord with the sixth replacing the seventh; with no seventh to lead, it sounds more relaxed than maj7 and loses that thick jazz stickiness. Its sixth is a major sixth from the root, so it sounds open and airy—good for long notes.",
+      "use": "Use as a tonic 6 ending, or as an inversion of vi7; bossa and swing cadences often use 6 or 6/9 to dodge the sweetness of the major seventh. It can also replace Imaj7 so the tonic mid-section sounds less like a conclusion and the phrase can continue. Moving to vi7, it barely needs any voice to move at all.",
+      "tip": "Avoid placing the sixth and fifth together in the low register; drop2 puts the sixth in the top voice, giving a more singable melodic position than the root and an easier link to the next phrase. Going to ii7, keep the sixth and let it fall to the fifth of ii7 for very smooth voice leading."
+    }
+  },
+  "7": {
+    "beginner": {
+      "summary": "A chord with a note that twists against another inside it—it feels restless and wants to move on, like a string being slowly tightened.",
+      "use": "It almost always goes to another chord; most often it walks down to the stable chord five notes below it.",
+      "tip": "Once you know this shape on guitar, move the whole hand two frets right and you get another chord of the same kind—very handy, you can slide it up the neck."
+    },
+    "learner": {
+      "summary": "Dominant seventh: a major third plus a minor seventh, which together form a tritone. The tension is strong, and it is the most directional dominant-function structure. The third wants to rise, the seventh wants to fall, and the two lines together lead the ear to the tonic.",
+      "use": "Core of the V degree; V7-I is the most basic resolution. In blues, I7 and IV7 also work as dominant sevenths, their function coloured rather than resolved. In ii-V-I it is the third step: ii7 sets it up, I closes it off, and it does all the pushing.",
+      "tip": "The third and seventh are the guide tones: on resolution the third rises and the seventh falls. The fifth can be omitted, which makes the structure clearer and easier to finger. For more weight add a ninth or thirteenth, but don't touch those two guide lines."
+    },
+    "pro": {
+      "summary": "Major third plus minor seventh, with the third and seventh a tritone apart. It is the engine of functional harmony and the source of tritone subs and every altered dominant. Its tension comes not from many notes but from that unstable distance between two of them.",
+      "use": "V7 resolves to I or i; it can be swapped wholesale for bII7 as a tritone sub, or serve as a backdoor dominant on bVII7—a completely different path with the same landing point. In blues it can go a whole section without resolving, using its grit as a wash of colour.",
+      "tip": "Rootless: keep only 3, 7, 9, 13; keep the guide-tone line moving from 3 to b7 by semitone or step—that reveals the direction better than piling up chord tones. In arranging, split the tritone between two different timbres: the tension becomes much clearer and you use fewer voices."
+    }
+  },
+  "maj7": {
+    "beginner": {
+      "summary": "Add a high note that sits very close to the top of a major chord and the sound turns soft—bright with a layer of haze, like a window before dawn has fully brightened.",
+      "use": "For tenderness, city nights, being alone at night—lots of R&B and Japanese pop use it as the main chord.",
+      "tip": "On piano, don't cram all four notes into the low register on the left; shift the whole voicing a bit right of centre and it will sound clearly cleaner, more like a record."
+    },
+    "learner": {
+      "summary": "Major seventh: a major third plus a major seventh, adding a soft sheen to the major triad while staying a stable tonic function. The major seventh sits just a semitone from the root, so there is a slight friction—sweet with a faint itch.",
+      "use": "As Imaj7 and IVmaj7; the end of a ii-V-I often uses maj7 or maj9, and vi7 can be a substitute colour for a softer landing. In bossa and city pop it is almost the default spelling of the tonic, sounding more familiar than a plain major triad.",
+      "tip": "The major seventh and the root fight easily in the low register; put the seventh in an upper voice, or omit the fifth, for a four-voice structure that is clearer and airier. If the melody lands on the root, give the seventh to an inner voice—don't put it on top."
+    },
+    "pro": {
+      "summary": "A major structure containing a major seventh, with no tritone tension. It is the modern wash of static tonic function and can also be the base of a Lydian soundscape. The minor ninth between the major seventh and the root is its one hazard—voicing it out of the low register is a hard rule.",
+      "use": "Imaj7 and IVmaj7 are common; under modal interchange it can become m7 or 6/9, and in Lydian adding #11 is more open than a plain maj7. As IVmaj7 it is often treated as a temporary tonic, briefly borrowing the tonal centre. When the tonic sits too long, swapping in vi7 for a breath sounds better.",
+      "tip": "Avoid a minor ninth between the major seventh and the root; use drop2 to keep the seventh in an inner voice, and stack 9 and #11 on top as an upper structure for the most modern sound. If the bass plays the root, drop the root from the keyboard and let the top shine."
+    }
+  },
+  "m7": {
+    "beginner": {
+      "summary": "A darker chord with one more relaxed note, like sighing back into the sofa—not sad, just a little lazy.",
+      "use": "The most common passing chord in jazz and city pop; when it shows up, the next line usually brightens and moves forward.",
+      "tip": "On guitar a small barre across four strings is enough; if you can't fret it, use the three-string simplified version—it sounds just as good, so don't force it."
+    },
+    "learner": {
+      "summary": "Minor seventh: a minor third plus a minor seventh, adding a layer of relaxation to the triad and carrying both subdominant and tonic identities. The minor seventh makes it less taut, so it can push forward or sit back and sway.",
+      "use": "The core of the ii degree in major; ii7-V7-I is its home ground. In minor it is i7, and in Dorian the sixth stays natural rather than lowered. In funk and neo-soul one i7 can fill an entire section, varied only by rhythm.",
+      "tip": "The fifth can often be omitted; the root and seventh are a minor seventh apart, so putting the seventh in the bass as an inversion makes the move to V7 much smoother. In arpeggios, give the third before the seventh to hear that inward-turning darkness."
+    },
+    "pro": {
+      "summary": "Minor third plus minor seventh: it has a minor seventh but no tritone, its colour is relaxed, and it is the default shape for ii-V progressions and modal sections. It does not force a resolution, so it outlasts a dominant seventh in static passages and suits long repetition.",
+      "use": "ii7 into V7, or as a Dorian vamp on i7; it can also be vi7 linking a descending bass line between I and ii, keeping the root motion more connected. At modulations it is often interpreted by both keys at once—one of the most reliable pivots. In a modal section it can stay for the whole stretch.",
+      "tip": "Rootless: keep 3, 7, 9, 11; the guide-tone line from the seventh down to the third and on to the third of V7 is the easiest and clearest voice line. Give the ninth to guitar or electric piano, let the bass hold root and fifth, and don't thicken the midrange any further."
+    }
+  },
+  "mMaj7": {
+    "beginner": {
+      "summary": "It sounds like a late-night elevator, or a long hallway in a detective film — dark, but with a little glowing tension hidden inside.",
+      "use": "It generally isn't used in happy sections. It suits suspense, a cinematic feel, or a turn that suddenly tightens something in your chest.",
+      "tip": "On piano, put the top note in a very close position and you get this flavor. Don't hold the sustain pedal the whole time or it turns muddy."
+    },
+    "learner": {
+      "summary": "The minor major seventh chord: a minor third paired with a major seventh, with an augmented second of tension between them, drawn from harmonic minor and melodic minor. It is the only tonic chord in minor that is both dark and strongly directed, so it sounds like something left unsaid.",
+      "use": "As the tonic i(maj7) in minor, imaj7-ii7-V7-i is the basic syntax of melodic minor; it can also be a borrowed color of IVm. In film scoring it often lands on the beat where the truth is revealed — brief, but hard to forget.",
+      "tip": "Putting the seventh in the top voice reveals that lit-up darkness best; if you go on to i7, let the seventh descend by a semitone and the voice leading becomes very natural. Don't put the seventh and the root together in the low register — it immediately turns thick rather than suspended."
+    },
+    "pro": {
+      "summary": "A minor third stacked with a major seventh, the standard form of the first degree of harmonic minor: dark with strong direction, a colored tonic rather than a stable resting point. The minor third plus major seventh above it makes a sonority that is uncomfortable until it resolves, so it rarely stays long.",
+      "use": "i(maj7) as the minor tonic; it usually enters iiø-V7alt-i through the semitone descent i(maj7)-i7, the smoothest path in minor. It can also be borrowed as IVm(maj7), turning the subdominant into a patch of shadow at once. If the preceding phrase is iv, it can darken the key a full notch immediately.",
+      "tip": "Avoid a seventh–root clash in the low register; use a three-voice Drop 2 of 3, 7, 9, leave the midrange for the melody in your voicing, and don't pile the tension in the bass. To weaken it, treat it as a passing chord and move on after two beats."
+    }
+  },
+  "halfDim": {
+    "beginner": {
+      "summary": "Tighter and greyer than an ordinary minor chord, like an unlit room on a rainy day — muffled, but a sliver of light still comes through the gap under the door.",
+      "use": "It is usually the step right before things get tense; once it appears, it generally goes to a forceful chord that badly wants to return to safety.",
+      "tip": "On guitar it is just the minor seventh shape with the middle finger lifted one fret — the shape barely changes, and the chord is ready as soon as you lift."
+    },
+    "learner": {
+      "summary": "The half-diminished seventh chord, built from a minor third, a diminished fifth and a minor seventh: the first degree of Locrian and the standard minor iiø. It has a minor seventh more than dim7, so the tension carries some weight instead of floating away.",
+      "use": "The starting point of minor iiø7-V7alt-i; in major it also serves as viiø7, or as a chromatic passing chord between I and ii, leaning subdominant. In jazz minor it is almost the fixed opening of every ii-V — swap it for m7 and the minor flavor is gone.",
+      "tip": "The diminished fifth is the identifying tone and must stay in the voicing; when going to V7alt, let the diminished fifth descend by semitone to the dominant's b9 for the strongest sense of resolution. To soften it, put the diminished fifth in an inner voice and leave only the seventh on top."
+    },
+    "pro": {
+      "summary": "A minor third plus diminished fifth plus minor seventh: the structure is unequal and therefore more stable than dim7, and functionally it fuses the minor subdominant with the pre-dominant. Its diminished fifth is the identifying tone — remove it and it degrades to m7, add one and it becomes dim7, so the window is narrow.",
+      "use": "iiø7 into V7alt, the smallest minor ii-V; it can also substitute for IVm6 as a relative, or have its upper structure reinterpreted through a tritone sub frame. In modulation it is often treated as the new key's ii, pushing the door open a crack. Going into V7alt, its b5 and b9 are the two ends of one line.",
+      "tip": "Locrian #2 softens the b9; for voice leading let the b5 descend to the V7's b9, hold the seventh, then drop the third onto the tonic chord — the most settled fit. Give the b5 to the midrange and keep only root and seventh in the bass so the low end doesn't knot up."
+    }
+  },
+  "dim7": {
+    "beginner": {
+      "summary": "The gaps between the four notes are all the same size; it sounds like a spinning top turning in place — tight, a little dizzy, with nowhere to put your feet down.",
+      "use": "It works best as a bridge, sliding from one chord to another in just a few beats; it doesn't need to stay long and isn't suited to it.",
+      "tip": "Move this shape up three frets and it is the same chord, so it shifts around the instrument very easily and works in any key."
+    },
+    "learner": {
+      "summary": "The diminished seventh chord, four minor thirds stacked so the octave divides into four equal parts: a symmetrical structure with very low stability. Because it is symmetrical, the same chord can belong to four different keys — that is its best feature.",
+      "use": "As vii°7 leading to the tonic, or as a chromatic passing chord; it also works as a substitute for the dominant seventh and as a pivot for modulation, since it belongs to four keys at once. To slide abruptly from one key to a distant one, using it as a bridge is far more natural than forcing the modulation.",
+      "tip": "Every inversion is identical, so you only need to memorize one shape; on resolution the four voices usually move by semitone in stepwise fashion, and they can either expand outward or contract inward. If you don't want it too classical, keep only three notes and hand one to another instrument."
+    },
+    "pro": {
+      "summary": "A symmetrical structure dividing the octave equally; all four inversions are identical and it contains two diminished fifths, functioning as an intensified substitute for dominant function. Symmetry means it cannot establish a key — it is only a transition, never a destination.",
+      "use": "vii°7 into I or i; it can also be the rootless form of V7b9, or a pivot chord shared by four keys to accomplish a distant modulation. From any of its notes, a semitone down lands on a new tonic chord.",
+      "tip": "Use whole-half diminished as the chord-scale; on resolution push every voice by semitone toward a tone of the target chord, and be careful not to send all four voices in the same direction. Put the two diminished fifths in different octaves and the tension doubles, and it stays cleaner than crowding them into one."
+    }
+  },
+  "9": {
+    "beginner": {
+      "summary": "Add one bright note on top of an already tense chord and the sound gets fuller, like an extra spoon of sugar in soda.",
+      "use": "Very common in rhythmic songs, funk and blues — press it and there is an immediate push forward, and it suits syncopated rhythms too.",
+      "tip": "On guitar, if you can't fret them all, drop one string and keep just the notes with the most flavor; don't force every note in."
+    },
+    "learner": {
+      "summary": "The dominant ninth chord: a ninth added above the dominant seventh, keeping the strong dominant function while adding singability, with tension a little softer than a plain dominant seventh. The ninth wraps a layer around that sharp tritone, so it still wants to resolve, just not as urgently.",
+      "use": "V9 into I or i; in blues and funk, I9 and IV9 use the dominant chord as color, with function weakened but momentum kept. In sixteenth-note syncopation it wears better than a plain dominant seventh and is less likely to grate.",
+      "tip": "The fifth can be omitted — 3, 7, 9 is enough; the ninth is brighter on top and thicker in an inner voice, depending on whether you want melody or groove. If the chord is held for a long time, put the ninth on top and let it glint in the rhythm."
+    },
+    "pro": {
+      "summary": "A dominant seventh plus a ninth: dominant function intact but the tension spread thinner by the ninth, fuller sounding and better suited to syncopated and long-value rhythms. The ninth is a major ninth from the root, very consonant, so it thickens the chord without sacrificing function.",
+      "use": "V9 as dominant function; in blues I9-IV9 as static color, and V7 can extend into I6/9 for a rounder landing. In funk it often pairs with the 13 to turn the dominant into a pedal you can stand on. Going into I6/9, the ninth can be kept as is.",
+      "tip": "Use Mixolydian or the blues scale; rootless leaves 3, 7, 9, 13 — watch the ninth's minor-ninth clash with the root, which is safer in an inner voice. When the bass plays the fifth, drop the fifth from the keyboard so the low end doesn't fight."
+    }
+  },
+  "11": {
+    "beginner": {
+      "summary": "The notes pile up layer by layer and the space opens wide, like talking in a very empty warehouse where the sound keeps echoing.",
+      "use": "Good for intros and atmospheric sections — let the music spread out and leave gaps first, then tighten gradually once the melody enters.",
+      "tip": "When actually playing it you deliberately leave out a note; don't force all six notes down or it turns to mush — less is clearer."
+    },
+    "learner": {
+      "summary": "The dominant eleventh chord: a ninth and an eleventh stacked on the dominant seventh, with the eleventh clashing against the third at a minor ninth, so in practice the third is usually omitted to become 9sus4. So when a chart says 11, what you actually play is often a very wide suspended chord.",
+      "use": "Mostly V11 or a static vamp; with the third omitted the function leans suspended, suited to long modal and fusion passages, not to fast modulations. In a fusion intro it can hold for a dozen-plus bars on its own.",
+      "tip": "The third and the eleventh cannot coexist — keep the eleventh and the third must go; omitting the fifth clears the upper structure, and quartal stacking sounds better too. Leave only the root in the left hand and stack fourths in the right — the least fussy approach."
+    },
+    "pro": {
+      "summary": "A dominant seventh plus 9 and 11; the minor ninth between 11 and 3 makes the complete form almost unusable, and the actual sound is a thickened 9sus4. Its function therefore becomes ambiguous — it can be dominant, or a patch of color with no direction.",
+      "use": "As a static V11 bed, or I11 under modal interchange; omitting the 3 blurs function, which suits long vamps and not functional progressions. In fusion it is often swapped directly with 9sus4 — they differ by one third. It doesn't suit fast modulations, only sitting inside one color.",
+      "tip": "Use Mixolydian but avoid the third above the eleventh; a quartal stack of 7-9-11 is cleaner than tertian, and don't thicken the low register in the voicing. If you must have the third, put it in the top voice and let the eleventh retreat inside. Once the third appears, the eleventh must exit immediately."
+    }
+  },
+  "13": {
+    "beginner": {
+      "summary": "Stack almost every note you can add and the sound gets full and gorgeous, like a whole band lighting up at once with every spotlight on you.",
+      "use": "Usually the last stop on a stretch of road: hold it with a big sound, then land back on the safe tonic chord.",
+      "tip": "Don't press every note. Keep the bright top note and the two key notes in the middle: it actually sounds clearer and bigger that way."
+    },
+    "learner": {
+      "summary": "Dominant thirteenth chord: 9, 11 and 13 stacked over a dominant seventh. The full form is crowded, so in practice 3, b7 and 13 are the clearest. The 11th clashes with the 3rd, so it is almost always dropped, which is why the chord actually sounds clean.",
+      "use": "V13 is the deluxe version of dominant function, usually going to Imaj7 or I6/9; blues and swing endings also love V13 as the final chord. It is wider than V7 but points the same way, so put it on the last two beats of the section.",
+      "tip": "The 11th conflicts with the 3rd, so leave it out; the 5th can go too. A four-voice version keeps just 3, b7, 9, 13, with the 13th on top. For more brightness, swap the 9 for another high color tone, but never add the 11 at the same time."
+    },
+    "pro": {
+      "summary": "The most complete extension of dominant function: the 13 gives a melodic peak, the 11 clashes with the 3 and is usually deleted, so what remains is the guide-tone tritone plus color tones. The 13 sits a major sixth above the 3, so the top of the chord sounds open, not crowded at all.",
+      "use": "V13 to I, or as a bVII13 backdoor; you can also voice a tritone sub's 13 as an upper structure, and changing the bass changes its identity. In the last bar of a blues it is almost the push that opens the door. If it resolves to I6/9, the 13 can stay right where it is.",
+      "tip": "Use Mixolydian; rootless keeps 3, b7, 9, 13 with the 13 on top as the melody, and strictly avoid 11 and 3 together. When the bass plays the 5, raise the 13 another octave so the two don't crowd. Never press the 11 and the 3 at the same time."
+    }
+  },
+  "alt": {
+    "beginner": {
+      "summary": "Take several notes of the chord and bend them a little out of tune; it feels like the picture is shaking and the camera is wobbling, and you really want to land somewhere safe.",
+      "use": "It only shows up in the moment just before arrival, usually for one or two beats, then you move straight to a chord that feels comfortable.",
+      "tip": "Don't hold it for long, your ears get tired; treat it like the handle of a revolving door, give it a turn and let go."
+    },
+    "learner": {
+      "summary": "Altered dominant: it contains b9 and #9, the 5th is usually replaced by b5 or #5, the tritone is still there, and tension is pushed to the maximum. It bends nearly every bendable note of a dominant, so the drop when it resolves to the tonic is the most obvious.",
+      "use": "V7alt resolving to i or I, especially in minor iiø-V7alt-i; it also works as the altered form of a tritone sub. In minor it is practically the default dominant, because the 5th of i is already low.",
+      "tip": "Keep only 3 and b7 as guides and make everything else an altered tone; on resolution the altered tones move by half step down or up into the target chord tones, and the closer they are, the more convincing. Don't pile up every altered tone; two is enough."
+    },
+    "pro": {
+      "summary": "The altered form of a dominant seventh, centered on b9 and #9, with the 5th usually omitted and the tritone intact; it is the dominant with the strongest pull to resolve. All its altered tones come from Super Locrian, so the scale and the chord are two ways of saying the same thing.",
+      "use": "V7alt to i or I; it shares its source with the tritone sub, so it can serve as bII7, or add pressure on the V of a blues for maximum pull. At a modulation it can turn any target chord into a temporary tonic.",
+      "tip": "Pair with Super Locrian; rootless uses 3, b7 and two altered tones, with b9 on top and #9 buried in an inner voice the least harsh, all on top will blow up. If the target is minor, include b13 for a smoother resolution. Resolving to I, swapping #9 for b9 is steadier."
+    }
+  },
+  "add9": {
+    "beginner": {
+      "summary": "One extra bright note on a plain major chord: clean and youthful, like the fizz rising when you crack open a soda in summer.",
+      "use": "Works in pop arpeggios, intros and choruses; when you want bright but not heavy, this is the first choice.",
+      "tip": "On guitar it is just one higher note than a plain major chord and the other fingers barely move, so switching is fast and good for changing while you strum."
+    },
+    "learner": {
+      "summary": "Add-nine chord: a major triad with the 9th stacked on it and no 7th, so it is bright and clear, carries no dominant function and never wants to resolve. It differs from maj7 by one note, the 7th, but the feel is very different: one is transparent, the other is syrupy.",
+      "use": "A color substitute for I or IV; Iadd9-V-vi-IV is common. It can also replace maj7 to avoid that sticky major-seventh sweetness. In folk and pop arpeggios it is about the easiest and safest added note you can play.",
+      "tip": "The 9 and the 3 are a major sixth apart; together high up they sound sweet, an octave apart they sound clearer. The 5th can be dropped and it actually gets cleaner. If the melody sits on the 9, keep only the root and 3rd and leave room for it."
+    },
+    "pro": {
+      "summary": "A major triad plus 9 with no 7th, essentially a thickened tonic color. Without a 7th there is no guide tone and no tritone to use, which makes it the safest added note, since the 9 is consonant with the root and does not disturb the original function.",
+      "use": "Static tonic as Iadd9, or IVadd9; think of it as maj9 with the major 7th removed, a clean and common starting point in pop arranging. On guitar it often swaps with sus2 and the light/dark shift is immediate, which is very useful when arranging.",
+      "tip": "Avoid a minor ninth between the 9 and the root; use an open voicing of 1-3-5-9, with the 9 high up carrying the melody, and don't let it get muddy in the low register. If you add distortion, drop the 9 or the beating will sound bad."
+    }
+  },
+  "5": {
+    "beginner": {
+      "summary": "Only the lowest note and the one above it: hollow, hard and punchy, like the stage is down to just drums and bass pushing you forward.",
+      "use": "Use it for rock and metal, or whenever you want the guitar to sound mean; with distortion it doesn't turn to mush, it gets tighter.",
+      "tip": "On guitar it is two strings and two fingers, so your whole hand can slide around the neck fast, much less work than a full chord for rhythm parts."
+    },
+    "learner": {
+      "summary": "Power chord: root and perfect fifth only. With no 3rd it has no major or minor quality and is functionally very neutral. Because the 3rd is missing it is neither major nor minor, so you can move it in parallel all through a section without harmonic clashes.",
+      "use": "The rhythm voice of rock and pop: parallel-fifth progressions like I5-bVII5-IV5, or a pedal point to pin down the bass. In heavy metal it is nearly the only choice, because distortion turns a 3rd into noise.",
+      "tip": "Parallel fifths are banned in traditional harmony and are exactly the style in rock; add an octave below the root for weight and better resistance to distortion. If you want color, let another guitar or a keyboard supply the 3rd, and the division of labor is cleaner."
+    },
+    "pro": {
+      "summary": "A two-note structure of root plus fifth: no 3rd means no modal pointer, so it can move freely in parallel voices without functional conflict. Its job is not to state harmony but to provide frame and weight, leaving the decisions to whatever sounds above it.",
+      "use": "Parallel-fifth riffs, pedal points in drop tuning; also a frame for upper harmony, with keyboards or vocals adding the 3rd to decide major or minor. In arranging it often unifies the weight of bass and guitar so the low end doesn't turn into one solid blob.",
+      "tip": "Under distortion, avoid stacking 3rds and 6ths and the beating they cause; layer octaves and fifths, leave the low register to the bass, and don't fill in everything around 100Hz. For more bite, put the fifth an octave down and the root on top."
+    }
+  },
+  "m6": {
+    "beginner": {
+      "summary": "A soft bright note on top of a dark chord, like the rain just stopped and a little light comes through the clouds: damp, but not cold.",
+      "use": "Use it when a minor song wants to end without feeling too heavy; it also fits the moment when the mood lifts a little but hasn't fully opened up.",
+      "tip": "On guitar it differs from a minor seventh by one note, so your fingers barely move and you can slide into it easily."
+    },
+    "learner": {
+      "summary": "Minor sixth chord: minor third plus natural sixth, enharmonically an inversion of m7b5. The color is warm and stable, and it often serves as a minor tonic. Its sixth is natural, so the pressure of minor opens a crack and the chord sounds wider.",
+      "use": "Minor i6 as a stable ending, with less pull than i7; also iv6, or the i6 color of Dorian, to avoid sounding like it wants to resolve. In gypsy jazz and the ends of lyrical minor tunes it leaves more aftertaste than a plain i.",
+      "tip": "The sixth is its identifying note, so don't drop it. Going to V7 in root position the bass moves 1-5; first inversion lets the bass move by step for a more connected phrase. If the melody rests on the root, put the sixth in an inner voice so it isn't too sweet."
+    },
+    "pro": {
+      "summary": "Minor triad plus natural sixth, structurally the first inversion of m7b5, so it reads both as minor tonic function and as half-diminished color. Change the bass and it turns from a stable minor tonic into a tense predominant.",
+      "use": "i6 as a minor cadence, iv6 as subdominant; also usable as a disguised iiø inversion to blur function in modal sections and leave only color. In a Dorian section it marks the mode better than i7, because the sixth is pushed into the open. Its sixth and ninth are only a whole tone apart, so don't stack both on top.",
+      "tip": "Pair with Dorian; drop2 with the sixth on top gives tension close to m7b5, and going to V7alt the sixth falling by half step has the most flavor. For a darker sound, lower the sixth back to m7, since the two are only a half step apart."
+    }
+  },
+  "69": {
+    "beginner": {
+      "summary": "Add two soft, bright notes to a major chord and it sounds open and warm, like the glow of dusk before the sky goes fully dark.",
+      "use": "Just right when you want a comfortable ending that isn't in a hurry, or when an intro needs to set the mood first. It's also hard to get tired of.",
+      "tip": "There's a very easy shape on guitar: five strings, only two or three fingers. Strum it slowly and it sings; strum too hard and it turns muddy."
+    },
+    "learner": {
+      "summary": "The 6/9 chord: a major triad plus the 6th and 9th, with no 7th. Its color is soft and open, and it is a stable extension of tonic function. No 7th means no guide tone, so it can just sit there without pushing you onward.",
+      "use": "Use I6/9 as a cadence instead of maj7; it is close to standard at the end of bossa, soul and pop-jazz tunes, and it works as an upper color on IV6/9 too. In the last bar of a slow song it feels looser than maj7, less like a full stop.",
+      "tip": "The 5th can be omitted; four voices of 1-3-6-9 are enough. The 6th and 9th together in the upper register sound sweet, but don't let the voice spacing bunch up. If the melody lands on the 9th, drop the 6th an octave and the layers will read more clearly."
+    },
+    "pro": {
+      "summary": "A tonic-function extension with no 7th, 6th and 9th sounding together: it has neither the cling of maj7 nor the pull of a dominant 7th, and its color is the most neutral and warm. It is one of the few tonic chords in arranging that can stay put for a long time without feeling stalled.",
+      "use": "I6/9 for endings, or as an upper structure over IV6/9; it can also be read as a third-related substitute for m7, useful for parallel voice movement. In bossa's repeating sections it often alternates with Imaj9 to avoid color fatigue.",
+      "tip": "A three-voice 3-6-9 voicing is the cleanest; avoid sounding the 6th next to the 5th. A melody on the 9th sounds the most modern and occupies the least midrange. With bass added, let it play only root and 5th and leave the whole middle open."
+    }
+  },
+  "maj9": {
+    "beginner": {
+      "summary": "Add one more bright note on top of a gentle major 7th chord. The sound is polished and transparent, like layers of city lights far off at night.",
+      "use": "In city pop, R&B, or whenever a section should feel a little more refined, it really shines as the tonic chord.",
+      "tip": "Four notes are enough, so don't hold down all five; leaving space is what gives you that loose, airy sound you hear on records."
+    },
+    "learner": {
+      "summary": "The major 9th chord stacks a 9th on maj7. It is more transparent and more melodic while still a stable extension of tonic function. The 9th opens one more layer on an already consonant maj7, so it sounds wider, brighter and more contemporary.",
+      "use": "Imaj9 and IVmaj9; landing a ii-V-I on maj9 sounds more modern than maj7, and it also works as a static modal tonic. In city pop it often turns up on the first line of the chorus and brightens the whole section at once.",
+      "tip": "The 5th is usually omitted; keep 3, 7 and 9. Put the 9th in the upper voice to carry the melody and keep the 7th in an inner voice so it doesn't collide with the root down low. For a floatier sound, swap the 7th for the 6th and you get a looser version of 6/9."
+    },
+    "pro": {
+      "summary": "A static tonic extension of maj7 plus the 9th, with no tritone tension; it is the most common tonic sound in contemporary pop and jazz. The 9th sits a major 9th above the root, so adding more of it never destabilizes the chord, it only opens the top further.",
+      "use": "Imaj9 for cadences and vamps; in Lydian add #11 for maj9#11, and under modal interchange you can swap in m9 or 6/9. As IVmaj9 it often borrows the tonal center for a moment, creating a suspended brightness. If the previous phrase was ii9, landing on maj9 sounds noticeably more modern.",
+      "tip": "For a rootless voicing use 3, 7, 9; with drop2 put the 9th in the top voice, and watch the minor 9th between the major 7th and the root, never place them together in the low register. Give the 9th to the electric piano and let the strings play only 3rd and 7th, and the layers separate at once."
+    }
+  },
+  "maj13": {
+    "beginner": {
+      "summary": "Stretch the major 7th chord open by one more layer. The sound is very wide, like a single piano ringing slowly in a huge hall.",
+      "use": "Great for quiet passages that still want grandeur: intros, outros, cinematic beds. You don't need many notes moving.",
+      "tip": "More notes doesn't mean you have to play them all. Keep the bright top note and the two in the middle; it sounds more open and your hand won't tire."
+    },
+    "learner": {
+      "summary": "The major 13th chord stacks 9 and 13 on maj7, with a Lydian sheen; it is the most expansive form of tonic function. The 13th lies a major 6th from the 7th, which is fully consonant, so the chord never feels crowded however many notes you add.",
+      "use": "Imaj13 for static layering, or as an upper structure over IVmaj13; it is common in modern jazz, film scoring and city pop. Playing this one chord through an intro is enough to open up both space and time.",
+      "tip": "The 13th sits a major 6th from the 7th and is very consonant; the 5th and 11th can be omitted, and a four-voice 3-7-9-13 is already full. For more brightness, swap the 9th for #11 and the flavor shifts at once from sweet to airy."
+    },
+    "pro": {
+      "summary": "An expansive tonic function of maj7 with 9 and 13, where the 13th supplies the top-register sheen; in practice it usually appears as the four-voice 3-7-9-13. It is wider than maj9 because the top layer is pushed one step further out. It has almost no pull, so it suits long stays.",
+      "use": "Imaj13 as a static sound field, IVmaj13 as a subdominant extension; in Lydian, replacing the 13th with #11 floats more and sounds more modern. In film scoring it is often a long sustained chord, letting the image fill the remaining space. With bass added, have it play only the root and leave the top to the piano.",
+      "tip": "Pair it with Ionian or Lydian; avoid sounding the 11th together with the 3rd, put the 13th in the top voice, and let the inner voices simply hold 3 and 7 for stability. With strings added, giving the 13th to the first violins is far more transparent than the keyboard."
+    }
+  },
+  "m9": {
+    "beginner": {
+      "summary": "Add one soft, bright note to a dark chord. It sounds like silk, smooth and warm, perfect for listening alone at night.",
+      "use": "Use it as the tonic in slow songs, lo-fi and R&B sections; the mood relaxes at once without turning too bitter.",
+      "tip": "On guitar a small three-finger barre gets you there. Strum lightly and don't press too hard; squeeze it and the sound goes dull."
+    },
+    "learner": {
+      "summary": "The minor 9th chord stacks a 9th on m7, with a clear Dorian color; it is the usual extension for the ii chord and for minor tonics. The 9th cracks open the slightly stuffy minor 7th, so it is brighter than m7 without losing its dark side.",
+      "use": "The starting point of ii9-V13-Imaj9, or a Dorian vamp on minor i9; it also makes a gentle transition on vi9. In neo-soul it can hold for a whole section, with only drums and bass moving the mood.",
+      "tip": "The 5th can be omitted; three voices of 3-7-9 are enough. Put the 9th up top and keep the 7th in an inner voice to avoid conflict with the root. For an emptier sound, raise the 9th another octave and leave all the middle to the vocal."
+    },
+    "pro": {
+      "summary": "A Dorian sound field of m7 plus the 9th, where the 9th softens the chord; its function stays subdominant or minor tonic, and it is suited to long sustained beds. The 9th rubs softly against the minor 3rd, so it sounds smooth rather than sharp, which makes it ideal under a vocal.",
+      "use": "ii9 into V13; i9 as a modal vamp; it also works as vi9 under a descending bass line from I to ii, making the progression sound more glued together. At a modulation it is often treated as the new key's ii, quietly opening the door. When it leads into V13, holding the 9th common is the smoothest move.",
+      "tip": "For rootless, keep 3, 7, 9, 11; with drop2 put the 9th or 11th in the top voice, and be careful not to crowd it against the b3 in the low register, where it goes muddy. When the bass plays the root, the keyboard drops its own root and lets the 9th shine on its own."
+    }
+  },
+  "m11": {
+    "beginner": {
+      "summary": "Notes spread upward in layers, sounding very open and free, like wind passing through a big empty room with nothing in the way.",
+      "use": "Good for slow, atmospheric passages, letting the music sway inside one color without rushing to change chords.",
+      "tip": "When you actually play it you leave a few notes out and keep the top ones; that's what keeps it from going muddy, and down low you want extra space."
+    },
+    "learner": {
+      "summary": "The minor 11th chord stacks 9 and 11 on m7, with a strong quartal flavor; it is the classic shape for a static Dorian vamp. Its 11th lies a major 9th from the 3rd, so the two can coexist, unlike a dominant 11th where a note has to be left out.",
+      "use": "A modal vamp on i11, or ii11 as an extended subdominant; it also works as the minor-key counterpart of the sus family. In fusion and Japanese city pop it often lays out a whole intro that deliberately has no direction.",
+      "tip": "The 11th and 3rd are a major 9th apart, so they can coexist but don't cram them into the low register; the 5th can be omitted, and stacking 4ths sounds more open and more like modern jazz. Keep only the root in the left hand and stack 4ths above it in the right, and the sound spreads out naturally."
+    },
+    "pro": {
+      "summary": "m7 with 9 and 11, a hybrid of 3rds and 4ths that reads close to quartal, where function gives way to color. It lacks the dominant function's need to resolve, so it works as a static layer and also sits well on top of someone else's bass note.",
+      "use": "i11 as a static modal field, ii11 as an extended subdominant; you can also stack the three-note upper structure 7-9-11 over another bass note, and changing the bass gives you a different chord. In modulations it often serves as the transitional surface.",
+      "tip": "Pair it with Dorian; use an open 3-7-9-11 voicing with the 11th in the top voice for maximum space, and firmly avoid stacking notes in the low register. Give the 11th to long notes and the 3rd to short ones, and the static-versus-moving contrast becomes very clear. Keep only the root in the bass and leave the middle as open as possible for the melody."
+    }
+  },
+  "7sus4": {
+    "beginner": {
+      "summary": "A chord that usually pushes forward, but it swaps its most important note for one that just hovers. It sounds strong, yet it never lands.",
+      "use": "Huge in funk and Japanese pop — players often repeat it over and over, keeping you waiting for that final release.",
+      "tip": "On guitar, lift or shift your middle finger one fret and you're back to the original chord. Switch back and forth for a rhythm part — it feels great."
+    },
+    "learner": {
+      "summary": "Dominant seventh sus4: a fourth suspension that keeps dominant function while the third is delayed, so tension is present without rushing to resolve. It trades the forward push of a dominant seventh for a state of hanging in mid-air, ready to let go at any moment.",
+      "use": "V7sus4 as a delayed form of V7, or I7sus4 for a gospel groove; also a resting station before a ii–V. In funk it often never resolves for a whole section, using the alternation between the fourth and the third as the groove.",
+      "tip": "The resolution from the fourth to the third can be delayed for several beats; alternating between 7sus4 and a dominant seventh that contains the third creates a strong syncopated groove. To stretch the suspense, put the fourth in the top voice and don't hurry to lower it."
+    },
+    "pro": {
+      "summary": "A dominant seventh with the third replaced by the fourth: the functional direction survives, but its guide tone is suspended — a rhythmic core of gospel and fusion. Its fourth rubs against the root at a second, so it is coarser than a plain dominant seventh and better suited to syncopation.",
+      "use": "V7sus4 as a lead-in to V7, or an unresolved vamp for a whole section; also a backdoor color as bVII7sus4, with a more surprising landing. In modulations it often stands in for V7, pushing the resolution into the next bar. Going to V7, you only lower the fourth a semitone and leave everything else alone.",
+      "tip": "Think Mixolydian sus; voice it 1-4-b7-9 and keep the second between fourth and root in the inner voices, where it bites hardest. If you add the ninth, drop the fourth an octave so two seconds don't crowd into mud."
+    }
+  },
+  "9sus4": {
+    "beginner": {
+      "summary": "Suspended but not tense — open and sunny, like a weekend morning with the window open, wind and light coming in.",
+      "use": "City Pop and bright pop often use it in intros and at the turn into a chorus; it widens the picture and changes the weather in one move.",
+      "tip": "The guitar shape is easy — two or three fingers across five strings — so it strums comfortably and takes syncopation well."
+    },
+    "learner": {
+      "summary": "Nine sus4: a ninth stacked on a dominant seventh sus4. The color is wide and the function sits between dominant and suspended, not clearly resolved. It is warmer and fuller than 7sus4, because the ninth wraps a layer around the fourth's blunt rub.",
+      "use": "V9sus4 as a softened dominant, or I9sus4 for a static vamp; extremely common in City Pop and fusion. Two beats before a chorus it pushes without giving the answer away too early.",
+      "tip": "Enharmonically it equals an inversion of m11, so they are interchangeable; once the third appears it must resolve at once, or it fights the fourth. For more brightness, put the ninth on top and keep the fourth inside as the rub."
+    },
+    "pro": {
+      "summary": "Dominant nine sus4, structurally identical to the second inversion of m11: ambiguous function, wide color, a common choice for static harmony. The bass decides its identity — the same sonority sounds dominant over its root and minor over another.",
+      "use": "A soft resolution as V9sus4, or a whole modal vamp; it can also replace I7 going to IV, taming the dominant's aggression. In a backdoor progression it is looser than bVII7 and lands on I with almost no attack. For a minor target, b9 instead of 9 sits closer.",
+      "tip": "Mixolydian or Dorian; voice it 1-4-b7-9, letting the third appear only at the moment of resolution so it doesn't lock against the fourth. For thinner material keep only 1-4-b7 and let the melody supply the ninth."
+    }
+  },
+  "7b9": {
+    "beginner": {
+      "summary": "A tense chord with one note pressed very low — like a distant alarm, it tightens your chest and you want it to end soon.",
+      "use": "It usually shows up just before the return to a settled chord, often in sad or dramatic passages: brief, but strong.",
+      "tip": "On piano that tightness comes through more clearly in the right hand, so keep the left hand light and leave it room."
+    },
+    "learner": {
+      "summary": "Dominant flat-nine: a dominant seventh plus b9. The b9 sits a minor ninth from the root and marks Phrygian dominant and minor-key dominants. That b9 is very close to the root, giving a pressed, uneasy rub that sounds classical.",
+      "use": "V7b9 resolving to i is the most common, and to I as well; the minor iiø–V7b9–i is grammar shared by classical and jazz. In flamenco and Spanish colors it also appears as V7b9.",
+      "tip": "The b9 must resolve down a semitone to the fifth of the target chord; the upper four voices actually form a diminished seventh, so the whole block can be shifted as one. To soften it, put the b9 in an inner voice and expose only the third and seventh."
+    },
+    "pro": {
+      "summary": "A dominant seventh plus b9; the minor ninth against the root supplies strong dark tension, while the tritone of third and seventh still drives the resolution. Its upper four voices form a diminished seventh, so the block transposes to find other dominants.",
+      "use": "V7b9 into i or I; also a rooted form of vii°7, or a b9 alteration of a tritone sub, used to cut into different keys. In modulation it is nearly a master key — it opens doors in four keys. Its diminished upper layer can shift as a block to look for another dominant chord.",
+      "tip": "Half-whole diminished or Phrygian dominant; the b9 is sharpest on top, and resolving down a semitone to the fifth sits best. If the target is I, the b9 can also rise to the tonic for a brighter exit."
+    }
+  },
+  "7sharp9": {
+    "beginner": {
+      "summary": "The chord holds a bright and a dark note at once, very close together — like sandpaper, rough, with a little defiant wildness.",
+      "use": "Common in blues, rock and funk, for moods that are driven and a bit stubborn; the noisier it gets, the better it sounds.",
+      "tip": "With distortion on guitar it is especially tasty, but watch that the neighboring finger doesn't mute that string — it has to ring out."
+    },
+    "learner": {
+      "summary": "Dominant sharp-nine: a dominant seventh plus #9. The #9 sits a minor second from the third (enharmonically a minor third), producing a strong blues rub. It holds both a major and a minor third, so it sounds bright and dirty at once — exactly the contradiction blues wants.",
+      "use": "V7#9 into i or I; I7#9 in blues and funk as a static color — the so-called Hendrix chord. In rock it is often a pedal you can stand on for a long time without ever resolving.",
+      "tip": "Keep the minor second between #9 and the third; don't delete it as a wrong note. The #9 is wilder on top and darker, thicker inside. With heavy distortion, flatten the third slightly and the rub sounds more like a rasping voice."
+    },
+    "pro": {
+      "summary": "A dominant seventh plus #9; the minor-second friction between third and #9 is its signature. Functionally still a strong dominant, but the color is bluesy rather than purely functional. Because it stacks major and minor thirds in one chord, it carries a naturally torn character.",
+      "use": "V7#9 into i; I7#9 as a static blues field; also part of an altered voicing, combined with b9 for denser tension. In funk it often joins the 13 for a dirty-bright syncopation. It works just as well on a blues IV7, with no resolution needed.",
+      "tip": "Half-whole diminished or blues scale; rootless as 3, b7, #9, watching that the #9 and third don't blur into one mass. With b9 added, spread the two altered tones into different octaves or they smear. Under heavy distortion keep only the third and #9 and leave the rest to the bass."
+    }
+  },
+  "7b13": {
+    "beginner": {
+      "summary": "A tense chord with one more low note pressing down on it — gloomy and heavy, like the low cloud bank just before rain.",
+      "use": "Good right before a turn into a very dark, heavy section; one hit lowers the mood and lets you feel the weight that's coming.",
+      "tip": "On guitar it differs from the ordinary tense chord by only the top note — lift a finger and you're there; try it a few times and you'll feel it."
+    },
+    "learner": {
+      "summary": "Dominant flat-thirteen: a dominant seventh plus b13. The b13 is enharmonically #5, carries harmonic minor color and usually resolves to the minor tonic. It darkens the top of the dominant, so it is heavier than V7 and points more clearly to minor.",
+      "use": "V7b13 into i, often combined with V7b9 as a minor dominant; also a chromatic lead-in to bVI, showing the minor color early. In a minor cadence it has more of that must-fall weight than a plain V7.",
+      "tip": "The b13 is an augmented fifth from the third, so the third must stay for dominant function; put the b13 on top and its resolution down a semitone to the tonic is clearest. For more darkness, flatten the fifth to b5 as well — but that becomes another chord."
+    },
+    "pro": {
+      "summary": "A dominant seventh plus b13 (enharmonically #5), the marker tone of the harmonic-minor dominant: concentrated tension with a clear vector toward the minor tonic. Its b13 is an augmented fifth from the third — wider and heavier than b9, and better suited to large ensembles.",
+      "use": "V7b13 into i, often merged with b9 as V7b9b13; also the b13 upper structure of a tritone sub — change the bass and it becomes another route. In modulation it often pushes the minor door open before the tonic enters. Used with b9, place the two altered tones in different octaves.",
+      "tip": "Mixolydian b6 or Phrygian dominant; the b13 on top resolving down a semitone to the tonic works best — don't bury it inside. With b9 added, separate the two into adjacent octaves so they don't crowd into a diminished octave."
+    }
+  }
+}

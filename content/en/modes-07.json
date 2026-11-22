@@ -1,0 +1,87 @@
+{
+  "neapolitanMajor": {
+    "beginner": {
+      "mood": "Gentle and surprising, like a letter sent to the wrong address that arrives exactly where it should.",
+      "use": "Minor color with a flat second and a major seventh; it turns up now and then in dream pop and film scores.",
+      "improv": "Don't rush the flat second to resolve — resting on it gives a strangely reassuring stability."
+    },
+    "learner": {
+      "mood": "b2 sits alongside the minor third, major sixth and major seventh: Phrygian's dark shade with a major-key steadiness, an ambiguous color. Good for dreamy, gentle moments and unexpected turns.",
+      "use": "A bIImaj7–Imaj7 progression, or a static bIImaj7 color section; bIImaj7–IVm7 also works as a connector. Swap bIImaj7 for bII6/9 for something softer. Electric piano and strings, long reverb.",
+      "improv": "b2 works as a long note while 6 and 7 supply brightness; avoid natural 2 or you drop back into ordinary minor color. Start by practicing long b2 notes."
+    },
+    "pro": {
+      "mood": "Neapolitan major: b2 set against the major sixth and major seventh, keeping major-key stability inside a dark shade. Electric piano plus choir makes the flat second more dreamlike — ambiguous, elevated color.",
+      "use": "Flat-two major seventh into the tonic is the most common move; flat-two major seventh into four minor seventh also connects smoothly and can act as a modal-interchange bridge, or let the flat second ring as a hover with the bass held on b2. An occasional guest in dream pop and film scoring, where bIImaj7 is the signature.",
+      "improv": "b2 is color rather than tension, so you can stay on it; 6 and 7 are the guide tones. Natural 2 dilutes the Neapolitan color. Use bIImaj9 for static harmony, let the long b2 fade slowly, and don't hurry to resolve."
+    }
+  },
+  "romanianMajor": {
+    "beginner": {
+      "mood": "Cheerful and a little odd, like a village wedding dance that keeps spinning until you're lost.",
+      "use": "Minor with a raised fourth and a major seventh — the flavor of Eastern European folk dances.",
+      "improv": "The raised fourth and major seventh sit close together; a fast pass through them has the most dance energy."
+    },
+    "learner": {
+      "mood": "Minor third with #4 and a major seventh: a folk-dance color, related to Dorian #4 but with a different third, so it sways between bright and dark. Good for dance tunes, folk and quirky sections.",
+      "use": "A Imaj7–#iv°–Imaj7 loop, or the dance progression i–#iv°–V7–i; Imaj7–bIImaj7 also gives color. Replace #iv° with #ivø7 for a smoother pass. Violin and accordion, with a springy rhythm.",
+      "improv": "#4 and 7 are the twin cores of the color and can be used for chromatic enclosure; b3 keeps the minor center. Avoid natural 4 and b7; practice #4 to 5 and back to 3 first."
+    },
+    "pro": {
+      "mood": "Minor third, #11 and major seventh side by side — neither pure minor nor major, with the sway coming from the semitone between #4 and 7; a pronounced dance character. Suits violin and accordion, dry reverb, springy rhythm.",
+      "use": "Tonic major seventh into the raised-four diminished seventh and back is the loop with the strongest dance feel; raised-four diminished seventh into the dominant seventh and then the tonic is also common. It can serve as a major-ized foil to Hungarian minor — keep the rhythm elastic like a folk dance.",
+      "improv": "#4 resolves to 5 or 3; 7 can be held for maj7 color. Natural 4 and b7 wreck the dance color. #ivø7 works as an upper structure, and ending phrases on 3 gives more dance feel. #4 to 5, 7 to 1, phrases landing on 3."
+    }
+  },
+  "hirajoshi": {
+    "beginner": {
+      "mood": "Cool and airy, like a Japanese garden after snow, where you can hear every footstep.",
+      "use": "A five-note Japanese scale; pair it with a sustained bass note — you hear it often in anime scores.",
+      "improv": "There are very few notes, so go slowly: silence matters more than notes. Play two notes, pause, then play the next."
+    },
+    "learner": {
+      "mood": "An asymmetrical pentatonic structure, 1-2-b3-5-b6, with a minor second and perfect fourth side by side: an Eastern color that omits 4 and 7. Good for cool, airy and Eastern-flavored sections.",
+      "use": "A pentatonic vamp, or a melody layer over a sustained bass, with bVI and i harmony; bII can add color too. Very low arranging density — koto and shakuhachi.",
+      "improv": "b3 and b6 are the color landing points and 5 is the pivot; adding 4 and 7 destroys the pentatonic emptiness. Keep phrases sparse: two phrases with space, the third landing on b6. Practice slowly, playing only three or four notes per phrase."
+    },
+    "pro": {
+      "mood": "Asymmetrical pentatonic: the minor second between b6 and the tonic, plus the semitone between 5 and b6, gives the Eastern color, and space is the core. A touch of room noise in the gaps makes the airiness more real — low density, long aftertaste.",
+      "use": "Pointing at just two chords over a sustained bass is its most common use; bVI into the tonic works as a bed, or interchange with Phrygian, stacking the fifth and flat sixth as a quartal voice. Space matters more than chords. A staple of Japanese anime and game scores, at its best over a pedal.",
+      "improv": "b3 and b6 are the landing points, 2 is passing; don't fill in with 4 and 7, and preserve the contrast between open fourths and semitones. Leave space between two phrases, land the third on b6, and b6 can serve as a pedal. Keep the dynamics restrained and let the phrases breathe, like snow falling on stone."
+    }
+  },
+  "enigmatic": {
+    "beginner": {
+      "mood": "Eerie and suspenseful, like the door at the end of the corridor in a detective film. A detective pushes that door open, and inside there is only one lamp.",
+      "use": "Rare, mostly used to lay down an atmosphere you can't quite name in a score.",
+      "improv": "Don't try to sing it in tune — use semitones and odd leaps to play a character who is not quite right."
+    },
+    "learner": {
+      "mood": "1-b2-3-#4-#5-b7-7, an asymmetrical structure with a strong sense of suspense and puzzle and almost no traditional functional harmony. Good for suspense, detective and eerie sections. When practicing, play only the augmented triad, then add semitones one at a time.",
+      "use": "Chromatic cadential phrases, or static harmony in suspense scores; an augmented triad can serve as the harmonic skeleton. Celesta and double bass.",
+      "improv": "b2, #4 and #5 are the core of the color; build phrases around semitones and augmented structures and don't rush to establish a stable center. b2, #4, #5 as the core. Start by practicing a chromatic descending ending."
+    },
+    "pro": {
+      "mood": "An asymmetrical seven-note scale with b2 against 3 and #5 against b7; the augmented skeleton makes it nearly impossible to functionalize. A muted double bass long note makes the suspense colder — extremely strong color. With the bass fixed, each added semitone above is like a new face.",
+      "use": "Chromatic endings and suspense static sections; usable as a hybrid of diminished and whole-tone material. Laying an augmented triad underneath omits the root, and symmetrical harmony is the most arresting. Keep minor seconds between voices and the suspense appears at once.",
+      "improv": "b2 and #5 as appoggiaturas, #4 as tension, with a fixed bass creating the suspense; don't rush to establish a center, close with a chromatic descent, lay an augmented triad underneath — leaving space is more suspenseful than filling it."
+    }
+  },
+  "prometheus": {
+    "beginner": {
+      "mood": "Mysterious and gleaming, like a blue flame rising in a laboratory.",
+      "use": "Rarely used on its own; you often hear it in film scores depicting mysterious forces.",
+      "improv": "It's like a major scale with a missing note — use that gap to create a floating feeling."
+    },
+    "learner": {
+      "mood": "Lydian dominant without the fifth: 1-2-3-#4-6-b7, few notes but strong color, and the missing 5 leaves the harmony open. Good for mysterious, impressionistic and sci-fi sections.",
+      "use": "Static harmony on V7#11sus, or a color layer over a #11 dominant chord; two stacked triads also work. Swap V7#11sus for V7#11. Harp and synth, long reverb.",
+      "improv": "#4 is the signature, with 6 and b7 supplying dominant-seventh tension; the missing 5 leaves harmonic space, so land on 3 and b7 first. #4 as a long note, 3 and b7 as landing points. Start by practicing #4 resolving to 3."
+    },
+    "pro": {
+      "mood": "Lydian dominant with the fifth omitted: a hexatonic scale with #11 and b7 together, a common color in impressionism and jazz — low density but clearly directed. Suits harp and synth, long reverb, low density. Leaving the fifth empty actually makes the color more complete.",
+      "use": "A long, sustained V7#11sus is its standard post; #11 and 13 can stack as an upper structure, or interchange with the whole-tone scale, and a sus chord keeps it open — hold the bass and don't write it full. For sci-fi and mystery scoring, a long V7#11sus is the best fit.",
+      "improv": "#4 is the core tension, resolving to 3 or 5; with the 5 missing, use 6 and b7 to complete the dominant-seventh skeleton. Favor #4 and 3 as long notes, don't put the 5 back, and long lines can circle #4 chromatically. When circling chromatically, leave one empty beat so the color block stands."
+    }
+  }
+}

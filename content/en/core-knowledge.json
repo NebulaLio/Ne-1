@@ -1,0 +1,145 @@
+{
+  "progressionNotes": {
+    "0": {
+      "beginner": "The classic \"leave home, wander, come back\" story — you hear it in almost every song.",
+      "learner": "The T-S-D-T functional loop, a perfect cadence; the key has never been clearer.",
+      "pro": "Authentic cadence; watch the V7 third/seventh resolution and the preparation of the cadential six-four."
+    },
+    "1": {
+      "beginner": "The three building blocks jazz uses most: prepare, push, come home.",
+      "learner": "ii7-V7-Imaj7, the core grammar of the shortest guide-tone connections.",
+      "pro": "ii-V-I; focus on 3/7 voice leading, alt tensions, and the tritone sub."
+    },
+    "2": {
+      "beginner": "The minor-key version of prepare, push, come home — darker colors, more drama.",
+      "learner": "iiø7-V7alt-imMaj7, a strong resolution in minor.",
+      "pro": "Minor ii-V-i; V7alt takes the altered scale, and i can be mMaj7/6/9."
+    },
+    "3": {
+      "beginner": "The smoothest loop for a chorus — the emotional rise and fall lands just right.",
+      "learner": "I-V-vi-IV: stable and singable, made for choruses.",
+      "pro": "Pop axis; can rotate to vi-IV-I-V — mind the bass line and the hook."
+    },
+    "4": {
+      "beginner": "Swap the usual dominant for a distant cousin chord, and the bass slides down by a half step.",
+      "learner": "bII7 shares its tritone with V7, and the bass resolves down a half step.",
+      "pro": "Tritone sub; Lydian Dominant works over bII7, where #11 is the color tone."
+    },
+    "5": {
+      "beginner": "Borrow two chords from the parallel minor and the picture suddenly turns cinematic.",
+      "learner": "Modal interchange: bVI/bVII borrowed from the parallel minor.",
+      "pro": "Modal interchange; watch the parallel major triads of bVI-bVII-I and the voice leading."
+    }
+  },
+  "knowledge": {
+    "classical": {
+      "beginner": {
+        "body": "Think of writing an essay: state the theme, leave it, then come home. Classical harmony is just writing that \"coming home\" route clearly.",
+        "points": [
+          "Find the tonic first — that is home",
+          "Use IV and V to create the feeling of leaving and wanting to return",
+          "Let every voice leap as little as possible and move smoothly"
+        ]
+      },
+      "learner": {
+        "body": "Built around key, cadence, passing harmony, and voice leading; tonic, dominant, and subdominant build a clear structure.",
+        "points": [
+          "The I-IV-V-I functional loop",
+          "Resolution of neighbor tones, passing tones, and suspensions",
+          "Avoiding parallel fifths and octaves in four-part writing"
+        ]
+      },
+      "pro": {
+        "body": "The syntax layer of functional harmony: cadences, passing six-four chords, Neapolitan and augmented sixths, pedals, and voice engineering.",
+        "points": [
+          "Perfect/plagal/deceptive/imperfect cadences",
+          "Preparation and resolution of N6 and It/Fr/Ger+6",
+          "Bass line, inner voices, and harmonic rhythm"
+        ]
+      }
+    },
+    "jazz": {
+      "beginner": {
+        "body": "Jazz chords sound \"thick\" because sevenths and ninths sit on top of the triad. Grab the third and seventh first and you will not get lost.",
+        "points": [
+          "ii-V-I is the three building blocks you will use most",
+          "The third and seventh define the chord's character",
+          "The fifth can usually be left out"
+        ]
+      },
+      "learner": {
+        "body": "Built around functional harmony, substitute dominants, guide tones, and minimal voice movement; third and seventh first, then add tensions.",
+        "points": [
+          "The core grammar of ii-V-I",
+          "Omitting the fifth keeps the voices clearer",
+          "When to use alt, sus, and upper structures"
+        ]
+      },
+      "pro": {
+        "body": "Treat ii-V-I as a swappable syntactic unit: tritone sub, modal interchange, upper-structure triads, and chord-scale choices.",
+        "points": [
+          "Guide-tone lines and 3/7 resolution",
+          "Choosing between V7alt / Lydian Dominant / Whole-tone",
+          "Drop 2/3 versus rootless — the arranging trade-off"
+        ]
+      }
+    },
+    "modes": {
+      "beginner": {
+        "body": "A mode is the same set of notes with a different \"home\". Move the home and the whole color of the music changes with it.",
+        "points": [
+          "First hear where the tonic is",
+          "Compare whether the third is major or minor",
+          "Remember one note that makes it distinctive"
+        ]
+      },
+      "learner": {
+        "body": "When switching between major, minor, harmonic minor, and melodic minor, lock the tonic first, then identify the third and seventh.",
+        "points": [
+          "Listen for the tonal center first",
+          "Compare major and minor thirds and sevenths",
+          "Practice parallel modes on the same tonic"
+        ]
+      },
+      "pro": {
+        "body": "Treat modes as a chord-to-scale mapping system: characteristic notes set the color, avoid notes set the resolution, and upper structures set the voicing.",
+        "points": [
+          "Quick judgment of characteristic versus avoid notes",
+          "Parallel modal interchange and borrowed chords",
+          "Voicing modal vamps and pedal points"
+        ]
+      }
+    },
+    "arrangement": {
+      "beginner": {
+        "body": "The keyboard works in three layers: bass in the left hand, chords in the middle, melody in the right. On guitar, start by making sure it is playable and clear.",
+        "points": [
+          "Do not let the bass get too thick",
+          "Save the melody for the right hand",
+          "Drop the fifth whenever you can"
+        ]
+      },
+      "learner": {
+        "body": "Keyboard layers: bass and skeleton in the left hand, melody and upper structures in the right; guitar favors playable shapes and clear voices.",
+        "points": [
+          "Separate bass and inner voices by register",
+          "Keep the melody and guide tones",
+          "Position beats playing every note"
+        ]
+      },
+      "pro": {
+        "body": "Arranging is the distribution of space and function: low end for the bass, midrange for 3/7 and tensions, high end for color and melody.",
+        "points": [
+          "Dividing the work between rootless voicings and the bass",
+          "Drop 2/3 and two-hand distribution",
+          "Tension density and the rhythm of resolution"
+        ]
+      }
+    }
+  },
+  "historyIntro": {
+    "beginner": "No need to memorize dates — treat it as one storyline of music becoming freer: from single-line chant, to functional harmony, to jazz and pop.",
+    "learner": "From Greek ratios, church modes, major/minor, and figured bass to chromaticism, the modal revival, and jazz grammar — understand the \"why\" of each stage.",
+    "pro": "The coupled evolution of tuning systems, notation, and harmonic syntax: how twelve-tone equal temperament unlocked modulation, how functional harmony was dismantled by chromaticism and modal thinking, and how it reassembled in jazz and pop."
+  }
+}

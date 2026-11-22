@@ -1,0 +1,104 @@
+{
+  "majorBlues": {
+    "beginner": {
+      "mood": "Like talking with a smile and a nasal twang, bright with a layer of grit.",
+      "use": "The major pentatonic plus a flat third; heard often in country, jump blues and pop.",
+      "improv": "Switch back and forth between the major third and the flat third, and that little slide appears."
+    },
+    "learner": {
+      "mood": "Major pentatonic plus b3; the alternation of major and minor thirds is its signature. Bright with a bluesy tinge, lighter than the minor blues. Fits bright, country and jump sections.",
+      "use": "The I7-IV7-I7 blues progression is the most typical; the I-VI7-II7-V7 major blues phrase also works. Common in western swing and rockabilly; end phrases on 1, and a walking bass makes it steadier. Clean guitar, shuffle drums.",
+      "improv": "The semitone alternation of b3 and 3 is the core grammar; 6 can be held, but 4 should not be leaned on for long. Land on 1, 3 and 6 first; practice sliding from b3 to 3."
+    },
+    "pro": {
+      "mood": "b3 inserted into the major pentatonic as a blue note creates a mixed color where major and minor thirds sit side by side, bright with both country and blues flavor. Fits clean guitar and jump drums, short reverb, bright tone.",
+      "use": "I7 to IV7 and back to I7 is the most typical jump blues; stack 6 and 9 on I7, use VI7 as a secondary dominant, add b7 to IV7, end phrases on the tonic, walk the bass, and keep the groove light. A staple scale of country and rockabilly, where the major/minor third alternation tastes best.",
+      "improv": "b3 works as a passing tone to 3 or the reverse; 6 and 9 are stable, while holding 4 clashes with the major third. On IV7 switch to b7 and b3 to keep the blues flavor; keep the rhythm steady during the major/minor third alternation, and land phrases on 3 or 6. Land phrases on 3 or 6, not on 4."
+    }
+  },
+  "wholeTone": {
+    "beginner": {
+      "mood": "Floating and dreamy, like a reflection on water that scatters at a touch. Like looking at scenery through fog, where nothing can be touched.",
+      "use": "Pair it with a dominant chord with a raised fifth; it is used for dreams, mist and weightlessness.",
+      "improv": "It has no sense of coming home; running a string of scale notes up and down is very effective."
+    },
+    "learner": {
+      "mood": "Symmetrical whole tones with no semitones or perfect fourths; tonally ambiguous, impressionist in color, and any transposition keeps the same structure. Fits dreams, mist and weightlessness.",
+      "use": "Static harmony on V7#5, or a hovering passage before a modulation; two stacked augmented triads also work as harmony with the bass held. Swap V7#5 for an aug chord to hover longer. Harp and synth, long reverb.",
+      "improv": "The symmetrical figure can shift freely, but do not stay long, because the bass or chord must establish the center; land on b7 and 3. Move it in blocks, do not linger."
+    },
+    "pro": {
+      "mood": "The symmetrical structure dissolves the leading tone and the dominant-tonic relationship; the octave holds only whole tones, giving an even, suspended color that suits impressionism and modulation. Harp and synth, long reverb, low density.",
+      "use": "A sustained dominant seven sharp five is its most standard post; it can also serve as a hovering passage before a modulation, or trade places with the tritone substitute of the bII7. Voice the harmony as two stacked augmented triads with the bass held, and do not rush the resolution. For impressionist and film-score hovering, a long V7#5 works best.",
+      "improv": "Any note can act as tension; anchor the center with rhythm and bass, since mixing in diatonic notes weakens the evenness. Move the symmetrical figure in blocks for two phrases, then land the third phrase on the 3 and b7 of the target chord."
+    }
+  },
+  "halfWholeDiminished": {
+    "beginner": {
+      "mood": "Tense and slippery, like walking on a waxed floor, ready to slide at any moment.",
+      "use": "The dedicated scale for a dominant seven flat nine chord, for that one bar in jazz that is about to resolve.",
+      "improv": "Move in alternating semitones and whole tones, and always land on a note of the tonic chord at the end."
+    },
+    "learner": {
+      "mood": "Alternating semitones and whole tones, the common scale for V7b9, with concentrated and symmetrical tension; four starting points transpose to any dominant. Fits the tense bar before a cadence.",
+      "use": "The V7b9-i cadence, or a whole solo over V7b9; it can also bridge a dim7 connection, so watch the direction of resolution. Swap V7b9 for V7alt for more tension. Brass and distortion, high density.",
+      "improv": "b9, #9 and #4 are the tension notes; keep 3 and b7. Resolve to the tonic or the third, and avoid holding b9 as a long note. Start phrases on b9 and resolve to 5. Practice b9 falling to 5 first."
+    },
+    "pro": {
+      "mood": "Half-whole symmetrical, with b9, #9, #11 and natural 13 coexisting; it is the default chord-scale for V7b9, with evenly distributed tension. Brass and distorted guitar, high density, medium-short reverb. Best placed in the two bars before a cadence, so do not drag the phrase.",
+      "use": "V7b9-i and dim7 substitution; the four symmetrical starting points transpose to any dominant. Layer brass and distortion so the density lets the tension pop; it also works as partial material for V7alt.",
+      "improv": "3 and b7 are the guide tones, while b9 and #9 approach by semitone; natural 5 and 9 weaken the tension. Resolve b9 to 5 and #9 to 3, and open a phrase on b9 to create suspense. Enter on b9 and close the resolution cleanly."
+    }
+  },
+  "wholeHalfDiminished": {
+    "beginner": {
+      "mood": "Spinning and dizzy, like a broken music box stuck going around the same circle.",
+      "use": "The dedicated scale for diminished seventh chords, for transitions and jump scares; it moves every three frets.",
+      "improv": "Remember that it repeats every three frets, so the shape can be moved as a block."
+    },
+    "learner": {
+      "mood": "A symmetrical whole-half scale for dim7; the structure repeats every three semitones, and its four positions are transpositions of one another. Fits transitions, jump scares and vertigo.",
+      "use": "A passing link over dim7, or vii°7 as a substitute for the dominant chord; it also works in chromatic descending passages, shifting every three frets. Swap dim7 for vii°7 and go to I. Pizzicato strings, clean space.",
+      "improv": "You can use it across a whole dim7 passage, landing on b3, b5 and b7; when you change position, keep your eye on the target note so the direction of resolution does not drift."
+    },
+    "pro": {
+      "mood": "Whole-half symmetrical, the natural chord-scale of dim7; its four positions are transpositions of the same scale, with even tension and a neutral direction. Pizzicato strings and celesta, medium density, clean space.",
+      "use": "Most often used as a passing link over a diminished seventh chord, it can also stand in for the dominant seventh going to the tonic. Over dim7 it can stack into an upper structure of V7b9, alternating with the half-whole diminished scale for greater density; keep the resolution clear and do not overstay. The standard scale for diminished seventh chords, on which passing links and jump scares both rely.",
+      "improv": "Chord tones b3, b5 and b7 are the landing points, while 2, 4 and 6 serve as passing tones; when shifting symmetrically, keep your eye on the target note and avoid landing on 2 or 6 on consecutive strong beats so the phrase closes well. After shifting, sing the target note before you play."
+    }
+  },
+  "chromatic": {
+    "beginner": {
+      "mood": "Colorful and crowded, like a city at night where every color is on show. Like a night-market sign display all lit up, so many colors that it is a little noisy.",
+      "use": "Not used as a key on its own; mostly for semitone passing motion in a melody, or to build tense passages.",
+      "improv": "Do not use all of it at once; pick a few semitones as a slide and glide into a target chord tone."
+    },
+    "learner": {
+      "mood": "All twelve notes, with no tonal center; semitone passing and chromatic departure are its most common uses, and it is the natural source of approach notes. Fits tense, urban and atonal passages.",
+      "use": "Chromatic passing phrases, atonal passages, or a bebop-style chromatic approach; it can also precede a modulation, but the landing must return to the key.",
+      "improv": "Chromatic figures need a target note, and enclosing it with a semitone on each side works best; avoid long unresolved strings, and land back in the key. Practice enclosing the target with semitones first."
+    },
+    "pro": {
+      "mood": "All twelve notes available, with the center decided by context; it is the library for approach notes and outside playing. Slide strings with automation, density rising and falling with the section, tension infinitely divisible.",
+      "use": "Chromatic passing, atonal passages and side-slip; it can be the chromatic hinge of a reharmonization, and a chromatic bass can drive the harmony. Enclosing the 3 and 7 of the target chord is most effective, and bebop and free jazz both rely on it.",
+      "improv": "Use a chromatic enclosure around the target note, then resolve back into the key, since symmetrical stacking makes the center disappear; long lines need landing points and breathing room, and after two outside phrases one must come back. Once the enclosure figure is solid, stretch the proportion of outside playing."
+    }
+  },
+  "bebopMajor": {
+    "beginner": {
+      "mood": "Busy and quick-witted, like the fast-walking narrator in an old movie. Like that fast-walking side character in an old film, who talks a lot but with a plan.",
+      "use": "The major scale plus a passing sharp five, used to fill in long jazz lines.",
+      "improv": "That extra note only flashes by in the eighth notes, so do not stop on it."
+    },
+    "learner": {
+      "mood": "The major scale with a #5 passing tone; long eighth-note lines flow more smoothly while the landing points stay on chord tones, making it the entry-level scale for bebop vocabulary. Fits long jazz lines and fast passages.",
+      "use": "The Imaj7-vi7-ii7-V7 jazz progression, or long lines over maj7; it also works in the A section of rhythm changes. Swap Imaj7 for I6 for a sweeter landing. Piano and bass, strong ride feel.",
+      "improv": "Put #5 on a weak beat as a passing tone and land 3, 5 or 7 on strong beats; do not stop on #5 on a strong beat or it sounds like a wrong note. Practice the #5 weak-beat passing tone first."
+    },
+    "pro": {
+      "mood": "Inserting #5 into ionian keeps the eighth-note chain unbroken; passing on weak beats and chord tones on strong beats is the core grammar. Piano and voice in unison make bebop lines clearer and more propulsive.",
+      "use": "Major seven to minor six, minor two, dominant five is the most common four-chord cycle in jazz; stack 9 and 13 on the Imaj7, swap the vi for Dorian, keep the eighth notes even, and keep landing on chord tones. A common resource for rhythm changes, on which long eighth-note lines thrive.",
+      "improv": "#5 is a chromatic passing tone and must resolve to 5 or 6, while 3 and 7, the two guide tones, hold the strong beats; keep the eighth notes even and return to 1 or 9 at the end of a long line, and do not stop on #5 on a strong beat. Breathe on the second half of beat two, start slow and build speed, and do not charge out of the gate."
+    }
+  }
+}

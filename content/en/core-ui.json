@@ -1,0 +1,211 @@
+{
+  "levels": {
+    "beginner": {
+      "label": "Beginner",
+      "short": "Intro",
+      "icon": "✧",
+      "tagline": "Hear harmony in plain language",
+      "desc": "No theory background assumed: start with the feel, then see how it's used. Every term gets translated into plain language the first time it appears."
+    },
+    "learner": {
+      "label": "Some Theory",
+      "short": "Intermediate",
+      "icon": "✦",
+      "tagline": "Turn functional harmony into a map",
+      "desc": "Keeps standard terms and degree logic, and adds concrete progressions, resolution directions, and paths you can actually practice."
+    },
+    "pro": {
+      "label": "Musician",
+      "short": "Pro",
+      "icon": "✵",
+      "tagline": "Arranging, substitution, and voice-leading engineering",
+      "desc": "Focuses on guide tones, tension tones, voicings, substitution, and modal interchange, directly serving writing, arranging, and recording."
+    }
+  },
+  "ui": {
+    "levelHint": {
+      "beginner": "Zero-background view: hear the feel first, then learn how to use it",
+      "learner": "Some-theory view: keeps degree, function, and resolution terminology",
+      "pro": "Musician view: guide tones, tension structure, and arranging detail"
+    },
+    "levelBanner": {
+      "beginner": "Reading in Beginner view · every explanation starts in plain language",
+      "learner": "Reading in Some Theory view · degree and function terms are in place",
+      "pro": "Reading in Musician view · straight to substitution, tension, and voice-leading engineering"
+    },
+    "dictionary": {
+      "focusLead": {
+        "beginner": "What it sounds like, when to use it, and where your hands go, all laid out below.",
+        "learner": "An integrated view of function, construction, voice leading, and assigned scale.",
+        "pro": "An engineering view of guide tones, tension structure, and substitute voicings."
+      },
+      "gridHint": {
+        "beginner": "No need to memorize names: pick by feel first, whether stable, suspenseful, tense, or open.",
+        "learner": "Filter by category, or search chord symbols, qualities, and use cases.",
+        "pro": "Locate chord material fast by tension level and instrument suitability."
+      },
+      "searchHint": {
+        "beginner": "Just type a name you know, such as maj7, sus4, or ninth chord.",
+        "learner": "Supports symbols, qualities, functions, and context keywords.",
+        "pro": "Supports term searches such as alt, upper structure, slash, and tension."
+      }
+    },
+    "theory": {
+      "scaleLead": {
+        "beginner": "This group of notes is your safe zone: start by playing inside these notes.",
+        "learner": "The natural scale of the current mode and the function of each degree.",
+        "pro": "A comparison of modal scales, degree functions, and available tension tones."
+      },
+      "knowledgeLead": {
+        "beginner": "Four of the most practical directions: grab one and start practicing.",
+        "learner": "Build a framework from four dimensions: classical, jazz, modal, and arranging.",
+        "pro": "Puts style grammar, modal systems, and arranging habits on the same map."
+      },
+      "historyLead": {
+        "beginner": "No need to memorize dates: just see how harmony evolved step by step into what it is today.",
+        "learner": "From ancient Greece to jazz and pop, understand how functional harmony evolved.",
+        "pro": "The evolution of tuning systems, notation, and harmonic grammar, and its impact on contemporary arranging."
+      }
+    },
+    "intervals": {
+      "lead": {
+        "beginner": "The distance between two notes decides whether they sound close together or wide apart.",
+        "learner": "Degree, semitone count, and consonance are the foundation of ear training and harmonic writing.",
+        "pro": "Interval tendencies, resolution paths, and function within a voicing."
+      },
+      "referenceLead": {
+        "beginner": "Treat this table as a distance chart: memorize the two ends first, the most stable and the most tense.",
+        "learner": "A quick reference to how the 13 basic intervals sound and how they are commonly used.",
+        "pro": "A complete reference of interval, tension, and resolution direction."
+      }
+    },
+    "progressions": {
+      "lead": {
+        "beginner": "Check whether this progression feels like setting out, leaving, and coming home.",
+        "learner": "Evaluate direction and cadence along the T–S–D–T function chain.",
+        "pro": "Four-dimension scoring: voice leading, functional strength, tension release, and stylistic fit."
+      },
+      "emptyLane": {
+        "beginner": "Tap chords on the left and line them up into a harmonic route.",
+        "learner": "Add degrees from the chord material to build an analyzable functional progression.",
+        "pro": "Drag in degree material and see the function chain, voice smoothness, and substitution suggestions in real time."
+      }
+    },
+    "modes": {
+      "galleryLead": {
+        "beginner": "Each mode is a kind of weather. Hear the brightness or darkness first, then remember one note that stands out.",
+        "learner": "Grouped by church modes, melodic minor, pentatonic, and symmetrical scales, compare the characteristic notes.",
+        "pro": "Search by mode family, focusing on characteristic tones, avoid notes, and chord–scale mapping."
+      },
+      "detailLead": {
+        "beginner": "Hear how bright or dark it is first, then see which chords it fits.",
+        "learner": "A full view of characteristic tones, common progressions, and improv landing points.",
+        "pro": "A comparison of characteristic tones, avoid notes, upper structures, and substitute scales."
+      }
+    },
+    "voice": {
+      "lead": {
+        "beginner": "Four voices are like four tracks: the goal is fewer leaps, fewer collisions, and each one moving smoothly.",
+        "learner": "Watch how guide tones, common tones, and parallel fifths and octaves are handled.",
+        "pro": "SATB voice engineering: spacing, guide-tone resolution, and hidden and parallel rules."
+      }
+    },
+    "library": {
+      "termsLead": {
+        "beginner": "When a foreign term stumps you, start with the plain-language one-liner.",
+        "learner": "A master table of terms in five languages, playing techniques, and arranging practice.",
+        "pro": "A five-language workflow reference for arranging, articulation, tempo, and form terms."
+      },
+      "atlasLead": {
+        "beginner": "Learn the shape of one position first, then connect them slowly.",
+        "learner": "A systematic atlas of CAGED, 3NP, pentatonic blues, and modern pop fingerings.",
+        "pro": "Triple labeling of position systems, interval degrees, and actual note names."
+      }
+    },
+    "phrases": {
+      "lead": {
+        "beginner": "Imitate one phrase, change two notes, and eventually make it your own.",
+        "learner": "Filter by style, difficulty, and technique, and analyze where each phrase lands.",
+        "pro": "A reusable library of vocabulary, rhythmic grammar, and harmonic landing points."
+      }
+    },
+    "quiz": {
+      "lead": {
+        "beginner": "Wrong answers are fine: remember the sound and the shape first.",
+        "learner": "Drill by level and question type, and use the mistake log to find weak spots.",
+        "pro": "Leveled question bank and mistake review for targeted work on harmony, intervals, and terminology."
+      },
+      "correct": {
+        "beginner": "Correct! Remember this feeling so it comes automatically next time.",
+        "learner": "Right reasoning path: identify the quality first, then rule out the distractors.",
+        "pro": "Correct. Worth also double-checking enharmonics, inversions, and alternate readings."
+      },
+      "wrong": {
+        "beginner": "It's okay: note the correct answer first, then look back at the question.",
+        "learner": "The mistake usually comes from one key condition: go back to the definition and check each item.",
+        "pro": "Review: confirm whether the slip was chord quality, enharmonics, or a rule detail."
+      },
+      "autoNext": {
+        "beginner": "Moving on to the next question shortly.",
+        "learner": "Moving on shortly, or tap Next question.",
+        "pro": "Auto-advances shortly, or move on manually."
+      }
+    },
+    "scores": {
+      "lead": {
+        "beginner": "Fill in the skeleton first, which note on each beat, then add technique.",
+        "learner": "Enter by beat position and duration, and check the voices against the staff.",
+        "pro": "Cross-check tab against staff notation, and check technique and voice rules before exporting."
+      }
+    },
+    "empty": {
+      "noMatch": {
+        "beginner": "Nothing in this part of the sky: try a simpler word.",
+        "learner": "No matches: adjust your keywords or category filters.",
+        "pro": "No matching entries: check spelling and synonyms, or clear the filters."
+      },
+      "noData": {
+        "beginner": "This is still empty: add something to get started.",
+        "learner": "No data yet; it will show up here once you add it.",
+        "pro": "Empty state: no data has been created yet."
+      }
+    },
+    "labels": {
+      "function": {
+        "beginner": "Its role in the song",
+        "learner": "Function",
+        "pro": "Functional role"
+      },
+      "resolution": {
+        "beginner": "Where it wants to go",
+        "learner": "Resolution tendency",
+        "pro": "Resolution path"
+      },
+      "tension": {
+        "beginner": "Where the tension comes from",
+        "learner": "Tension and color",
+        "pro": "Tension structure"
+      },
+      "voice": {
+        "beginner": "How to stack the notes so it sounds good",
+        "learner": "Voice leading",
+        "pro": "Voice Leading"
+      },
+      "style": {
+        "beginner": "Which kind of song it fits",
+        "learner": "Style essentials",
+        "pro": "Style grammar"
+      },
+      "scale": {
+        "beginner": "Which scales fit",
+        "learner": "Suggested scales",
+        "pro": "Chord-Scale mapping"
+      },
+      "practice": {
+        "beginner": "Something to practice today",
+        "learner": "Practice path",
+        "pro": "Training prescription"
+      }
+    }
+  }
+}

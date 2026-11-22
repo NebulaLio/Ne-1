@@ -1,0 +1,104 @@
+{
+  "phrygianDominant": {
+    "beginner": {
+      "mood": "Hot and dangerous, like the floor burning under a flamenco dancer's feet.",
+      "use": "A dominant seven with a b2 — that one-phrase charge you hear in Spanish, Middle Eastern and metal music.",
+      "improv": "The big leap between the 3 and the b2 is the most exciting move, so open with it. Charging straight from b2 up to 3 is the most exciting move of all."
+    },
+    "learner": {
+      "mood": "The major 3rd and b2 appear together, the augmented second is the signature, and V7(b9) resolves to minor — standard vocabulary in flamenco and metal. Good for flamenco, metal and exotic climaxes.",
+      "use": "The flamenco cadence V7(b9)–i, or the loop i–bII–V7–i; V7(b9)–i6 also closes it well. Stack b13 on the V7 for a denser sound, move the bass chromatically, and add nylon-string rasgueado and brass fills.",
+      "improv": "The augmented second between b2 and 3 is the identifying sound, and you land back on 1; b7 is stable, so avoid the natural 7, and a phrase can charge straight from b2 to 3. The augmented second rising from b2 to 3 is the most exciting move. Practise shooting straight from b2 to 3 first."
+    },
+    "pro": {
+      "mood": "The fifth mode of harmonic minor: a major 3rd against b9 and b13 gives strong dominant function with an exotic colour, common in flamenco and metal. Suits nylon-string guitar and brass — short-to-medium reverb, with impact in the low end.",
+      "use": "Dominant seven flat nine resolving to the minor tonic is flamenco's signature cadence; the loop of tonic to bII to dominant seven is common too. Stack b9 and b13 on the dominant seven and move the bass down chromatically for plenty of tension.",
+      "improv": "The augmented second formed by b2 and 3 works best rising, and b7 is the stable note; natural 7 and natural 6 erase the exotic colour. Over V7 this maps to phrygian dominant: at the cadence let b2 fall to 1, and a phrase can open by charging from b2 to 3. Make the b2-to-3 jump clean — don't stop in between."
+    }
+  },
+  "lydianSharp2": {
+    "beginner": {
+      "mood": "Like a castle in moonlight with a sliver of light through the door — mysterious and suspended.",
+      "use": "Rarely used on its own; it mostly turns up on the sixth degree of harmonic minor, twisting a section in a strange direction.",
+      "improv": "That big step at the start sounds odd, so use it to create an off-kilter mood. Open with that step, then pull back in quickly."
+    },
+    "learner": {
+      "mood": "The sixth mode of harmonic minor: it opens with the augmented second from 1 to #2, and against a maj7 it has a slightly off-colour sweetness. Weak in function, so it works better as a turn.",
+      "use": "The turn VImaj7–V7–i, or a static colour section on VImaj7; VImaj7–#IVm7b5 works as a connector. Swapping VImaj7 for VImaj7#11 floats more, and celesta with string harmonics is the best fit.",
+      "improv": "The semitone friction between #2 and 3 is the feature; use it as a chromatic decoration falling to 3. Staying too long blurs the key, so land on 3 and 7 first; practise the #2-to-3 semitone first."
+    },
+    "pro": {
+      "mood": "The VI degree of harmonic minor, where the augmented second and #11 coexist: an unusual colour, weak in function but strong as a turn, ideal for an off-colour passage between sections. Suits celesta and string harmonics — large space, low density.",
+      "use": "VI major seven into the dominant seven and back to tonic is the most typical turn in harmonic minor; VI major seven can also ring alone as static colour, or connect to #IV half-diminished seven. Hold the bass on VI instead of rushing off. An off-colour passage for fantasy scoring — good for short phrases and transitions.",
+      "improv": "The semitone friction between #2 and 3 is the core, resolving to 3 or 5; natural 2 and b7 destroy the mystery. Use the augmented second as a motive and then withdraw to the leading tone of V7 — keep #2 as a brief decoration, never a resting point."
+    }
+  },
+  "ultralocrian": {
+    "beginner": {
+      "mood": "Like a siren drifting nearer and farther — restless, almost impossible to stand still on.",
+      "use": "Almost never used as a scale on its own; only as a brief connector over a diminished seven chord.",
+      "improv": "A flash is enough: use it to charge into the target chord and don't linger. Hit it and go, before it takes root in the ear."
+    },
+    "learner": {
+      "mood": "Extremely dense with alterations — b2, b3, b5 and natural 6 sit side by side, matching VII°7. It is almost all tension, with no stable notes. Good for brief passing moments and shocks.",
+      "use": "VII°7 substituting for the dominant, or a chromatic dim7-to-dominant connection; it also works as decoration over V7b9. Replace VII°7 with vii°7, then go into V7b9. Noisy timbres, short reverb.",
+      "improv": "Best for short chromatic figures, with the landing left to the target chord; long notes lose the key. Two phrases are enough — practise the chromatic ascent into the resolution first."
+    },
+    "pro": {
+      "mood": "One of the most alteration-dense scales: b2, b3, b5 and natural 6 rub against each other and cannot establish a centre on their own, so it is almost purely passing. Suits diminished chords and noisy timbres — high density, short reverb.",
+      "use": "VII°7 as a substitute dominant and dim7 as passing harmony, usable as upper-structure material over V7b9; you can also treat the diminished seven as a temporary tonic and push back to V7 chromatically — together with half-whole it covers every tension. Resolve straight into V7 and don't end on the diminished chord.",
+      "improv": "Lean on chromatic approach to the target notes and avoid staying; treat the diminished-seven skeleton as a temporary centre and leave quickly at the resolution, never sitting on an altered note across consecutive strong beats. Approach the target chromatically, don't linger, and give the phrase a clear exit. Two chromatic rising phrases, then resolve on the third."
+    }
+  },
+  "majorPentatonic": {
+    "beginner": {
+      "mood": "Clean and easy on the ear, like a tune hummed on a sunny day — nothing sounds awkward however you sing it.",
+      "use": "The simplest five notes; nursery rhymes, folk songs and Chinese-style melodies all rely on it, and it sits fine over C, F and G.",
+      "improv": "Any of the five notes sounds good, so start by humming a smooth melody using only those notes."
+    },
+    "learner": {
+      "mood": "Major without 4 and 7 — the two semitone-tendency notes — leaves a pentatonic skeleton that produces almost no avoid notes, so melodies take shape naturally. Good for bright, folk and pop sections.",
+      "use": "A pentatonic version of I–IV–V, or a pentatonic melody over I–vi–IV–V; the pop loop I–V–vi–IV works too. Swap I for I6/9 and the pentatonic sound gets sweeter. Acoustic guitar plus whistling, natural reverb.",
+      "improv": "Land on 1, 3 and 5, using 2 and 6 as passing notes; add 4 or b3 when you want tension, but don't break the open pentatonic feel. Play only 1, 3 and 5 first, then add 2 and 6. When practising, hum only the pentatonic notes first, then find them on the instrument."
+    },
+    "pro": {
+      "mood": "Removing 4 and 7 removes the leading tone and the semitone friction, leaving an open colour suited to pentatonic substitution and upper structures. Suits acoustic guitar and whistling — natural reverb, warm midrange. Hum the melody before playing it and don't rush to add fills. The pentatonic scale is also the best harmony lesson: learn to hear the 3rd and 5th solidly first.",
+      "use": "A pentatonic melody layer over I–IV–V and I–vi–IV–V; stacking 9 and 13 on Imaj7 gives a pentatonic upper structure, and sus chords keep it open. I6/9 omits the 5th, with 9 and 13 stacked in the right hand. The usual skeleton for Chinese-style and folk melodies — the pentatonic scale sounds Eastern the moment it appears.",
+      "improv": "1, 3 and 5 are the skeleton, 2 and 6 are passing, and without 4 and 7 you can borrow blues colour with b3 and b7; favour 3 and 9 for long notes and don't clash with the 7 of maj7. In pentatonic improvising, count the beat before worrying about expression — space matters more than fills."
+    }
+  },
+  "minorPentatonic": {
+    "beginner": {
+      "mood": "Cool and direct, like a guitar riff on an old record — it hits the moment it sounds. Like the first riff jumping out of an old amp: simple and punchy.",
+      "use": "The all-purpose pentatonic for rock and blues solos; it sits solidly over Cm, Eb and Bb. Start building guitar solo phrases from these five notes.",
+      "improv": "Bend and slide freely within these five notes — you can't really go wrong."
+    },
+    "learner": {
+      "mood": "Minor without 2 and b6 leaves 1–b3–4–5–b7, the skeleton of rock and blues with almost no wrong notes. Good for rock, blues and hard-edged sections, and the beginner scale for practising bends and slides.",
+      "use": "The loop i7–bVII–bVI–bVII, or the main phrase material of a 12-bar blues; i7–IV7 also works as a vamp with the bass on the root. Swap i7 for i7#9 for more tension. Distorted guitar, drums in half-time.",
+      "improv": "b3 and b7 are the emotional landing points and 4 can pass; add b5 for a bluesier sound, but don't treat it as a chord tone or linger on it — a bend landing on b3 is the surest move."
+    },
+    "pro": {
+      "mood": "No semitones and no 2 or b6: a hard skeleton and the default bed for minor solos. Double-track the rhythm guitar hard left and right for a wider edge, and the symmetric layout makes position shifts and fast changes easy.",
+      "use": "The most common loop is minor seven to bVII to bVI and back, and the main phrase of a 12-bar blues relies on it too; stack 9 and 11 on the tonic chord and it can interchange with Dorian, keep the bass on the root, and end phrases on b3. The default starting point for rock solos — nearly every guitarist begins here.",
+      "improv": "b3 and b7 are the landings, 4 passes, and b5 adds blues tension; 2 and b6 shouldn't be held as long notes. Start bends slow and speed up, and end phrases back on 1 or b7 with half a beat to spare. Leave half a beat at the end of a phrase — don't bend all the way through."
+    }
+  },
+  "bluesScale": {
+    "beginner": {
+      "mood": "Bitter and driving at once, like headlights on a late-night highway — swaying, but always moving forward.",
+      "use": "Minor pentatonic plus one blue note, used from start to finish in a 12-bar blues.",
+      "improv": "Sliding into and out of that blue note tastes best, so don't stay too long. Slide in and slide out again; don't park on it."
+    },
+    "learner": {
+      "mood": "Minor pentatonic plus b5, where the blue note creates semitone friction that also works over a dominant chord — the smallest complete set of blues grammar. Good for night drives, bars and bittersweet sections.",
+      "use": "A 12-bar blues on I7–IV7–V7, or the vamp i7–IV7; you can also use the blue note alone over V7 for tension. Swap I7 for I7#9 for a stronger blues flavour. Harmonica and overdriven guitar, short reverb.",
+      "improv": "b5 connects 4 and 5 chromatically; b3 and b7 are the landings, and b5 shouldn't be held or it sounds like a mistake. Slide into b5 by semitone from either side, then leave. Practise without b5 first and add it once the rest is solid."
+    },
+    "pro": {
+      "mood": "b5 as a passing blue note connects to both 4 and 5, and with the minor 3rd and b7 it forms the core of blues grammar. Keep harmonica and guitar off the same line — leave room for call and response; the tension comes from semitones, not function.",
+      "use": "A 12-bar blues from I7 to IV7 to V7 uses it throughout; over I7, mix major and minor 3rds to reharmonise, treat the blue note as a chromatic passing tone, and it also works against a tritone substitution.",
+      "improv": "Treat b5 as a chromatic approach — a semitone on either side is smoothest — with b3 and b7 stable. Don't hold b5 as a chord tone; on IV7 you can emphasise b3 and 6, and slipping a chromatic passing note between the root and b3 makes it dirtier."
+    }
+  }
+}

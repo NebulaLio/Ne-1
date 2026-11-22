@@ -1,0 +1,87 @@
+{
+  "maj": {
+    "beginner": {
+      "summary": "Three notes stacked together, it sounds like pulling back the curtains on a bright clear day: open, steady, in no hurry, and not the least bit awkward.",
+      "use": "When a song needs to end, or a melody wants to land solidly, use it. It feels as settled as walking home and easing the door shut behind you.",
+      "tip": "On the piano, put the note the name points to down low, space the top two notes evenly, and press with relaxed fingers so it rings. Don't pound it; pounding just makes it noisy."
+    },
+    "learner": {
+      "summary": "A major triad built from root, major third, and perfect fifth. It's the most stable color and the most direct aural signal of key. It has no seventh, so there's no tension that has to resolve, and it can serve as a home base in any mode.",
+      "use": "Mostly the I tonic chord, though it also shows up as V and bVI; in I-V-vi-IV it handles the opening and every landing point. A perfect cadence V-I almost always arrives here, and the last line of a chorus often just sits on it, sounding most like coming home.",
+      "tip": "When arpeggiating, ease back on the fifth and let the third come through and it sings better. Going to the dominant, use second inversion so the bass can move by step instead of leaping. If the chart gives you only one chord, play it as whole-note pads."
+    },
+    "pro": {
+      "summary": "A pure major structure with no seventh, therefore no tritone tension: neutral-bright, the coordinate origin of functional harmony. In arranging it's often the color-neutral base layer, and every other chord tone is added to or subtracted from it. Whatever note it sits on basically fixes the key.",
+      "use": "The steadiest I-level cadential target; under modal interchange it can become m7 or maj7, or be wrapped by borrowed bVII and iv to form bVII-I and iv-I plagal cadences. It's also the most common pedal pivot, and the upper structure can change all it likes without anything collapsing. Functionally there's no need to substitute for it; rewrites usually happen only in the upper voices.",
+      "tip": "The triad itself doesn't have to be rootless; drop2 with the third in the top voice strengthens the pull toward the tonic, and adding a 9 or 13 in the right hand sounds more modern than a bare triad. Watch that added tones don't collide with the melody; a major second on the tonic chord is the easiest way to fight a singer's sustained note. Leave the root to the bass so the upper voices don't crowd together."
+    }
+  },
+  "min": {
+    "beginner": {
+      "summary": "Move that middle note down a little and the color darkens at once, like a cloudy day with just one small lamp lit indoors: quiet, with a bit of a heavy heart.",
+      "use": "Use it when you want to express longing, quiet, or an ache in the chest. Plenty of ballads lean on it straight through the verse to keep from falling apart.",
+      "tip": "On guitar, fret the lowest string and the middle two fingers first, then strum slowly. Don't rush it; too fast and it smears into one blurry sound."
+    },
+    "learner": {
+      "summary": "A minor triad: root plus minor third and perfect fifth. A shade darker than major, emotionally inward, but still a consonant and stable triad. Because the third is lowered a semitone, that bright upward lift is gone, and it sounds more like it's turning inward.",
+      "use": "The i in minor; in major it serves as ii and vi, and i-iv-V and vi-ii-V-I both rely on it for groundwork and transition. In pop it's often the last step before the chorus, pushing the emotion down before lifting it.",
+      "tip": "Root plus fifth in the left hand and the third and seventh spread apart in the right keeps the close minor third in the low register from crowding into mud, and makes the inversion into V smoother. Use open positions so the open strings can resonate and the dark color comes through clearer."
+    },
+    "pro": {
+      "summary": "A minor structure: lowering the third a semitone removes the bright major pull, so the color is introspective and it can be tonic or subdominant. It also has no seventh, so its function depends entirely on the scale degree it sits on, not on the chord itself. Move the same three notes to another degree and both the sound and the function change.",
+      "use": "ii7 and vi7 are its usual identities; in minor it's i, and Dorian's i7 can keep the sixth unflattened so it doesn't read as Aeolian. As vi it's the best descending bass pedal between I and ii, and it lengthens a phrase effortlessly. In a new key it's often treated as ii, paving the way for the modulation.",
+      "tip": "Keep the close minor third between root and third out of the low register; put the fifth in the bass as an inversion, and the bass moves 1-5 into V7 more solidly, so the guide tones can be heard. In the voicing, give the third a little midrange presence or the whole block collapses into mush."
+    }
+  },
+  "dim": {
+    "beginner": {
+      "summary": "Three notes packed tight together, it sounds edgy and stuck in midair, like a door that won't quite shut and keeps rattling in the wind.",
+      "use": "It rarely stays long, usually just half a beat, and its job is to push the ear from the chord before it to the chord after it.",
+      "tip": "Just remember it's a minor chord with the top note pushed down one more step. The hand shape is tiny, easy to press, and quick to lift."
+    },
+    "learner": {
+      "summary": "A diminished triad: root plus minor third and diminished fifth, two minor thirds stacked. The tension is sharp and the sense of key is weak. It's less directional than the tritone of a dominant seventh, more the tension of being squeezed and needing to leave at once.",
+      "use": "Usually a leading-tone or passing chord, as in the chromatic stepwise motion of I-#i°-ii, or an upward lead-in before V7, which makes it functionally more of a temporary push. As a chromatic bridge between two stable chords it's much smoother than jumping straight across.",
+      "tip": "Use first inversion to put the diminished fifth in an outer voice; on resolution the lowest voice moves up a semitone, which is the cleanest result. Don't let it sit for more than a beat. If you want less bite, tuck the diminished fifth into an inner voice and leave only the tartness of the minor third."
+    },
+    "pro": {
+      "summary": "A symmetrical stack of minor thirds containing the dissonant diminished fifth; functionally closer to a leading-tone chord than to an independent chord. Held alone for long it robs the key of its center of gravity, so it almost always appears as a short note or a passing voice. It can only be a process, never a destination.",
+      "use": "Mostly chromatic passing or a reduced form of V7b9; when vii° omits its root it comes from the same source as dim7, and the two can be swapped before resolving to the tonic. You can also split its three notes across different instruments to make a moving shadow, which gives more sense of space than pressing the whole block down.",
+      "tip": "In the voices, let the diminished fifth resolve to a third and the minor third to a unison; keep the arranging short and soft, since short notes in the mid-low register work better than a full string section. To make it more modern, keep only the root and diminished fifth and pull out the middle layer; the shadow thins by half."
+    }
+  },
+  "aug": {
+    "beginner": {
+      "summary": "The gaps between the three notes are all the same width, so it sounds like it's floating upward with nothing to grab, a little dreamlike, a little like a memory scene in a film.",
+      "use": "When a song wants to turn a corner suddenly, or leave a melodic line hanging in midair, use it as a cushion for a moment and then move on right away.",
+      "tip": "On the keyboard this shape looks identical every four keys, so learn one and you can shift it anywhere; it tastes the same up and down the keyboard."
+    },
+    "learner": {
+      "summary": "An augmented triad: two major thirds stacked, containing an augmented fifth. The sound is swollen and suspended, functionally adrift from the key. It divides the octave into three equal parts, so all three inversions look exactly alike, and changing the root only changes the name.",
+      "use": "Often a chromatic passing chord between I and IV, as in I-I+-IV, or a altered form of V pushing toward the tonic, with a clear sense of leaving and returning. It also pairs well with an ascending melody, letting melody and chord float up together.",
+      "tip": "Any note can be the root, and inverting it changes its identity; on resolution the smoothest move is the augmented fifth up a semitone to the third, and holding the bass still is even steadier. If you want a clean close, let the augmented fifth leap straight to the third of the target chord instead of taking a detour."
+    },
+    "pro": {
+      "summary": "A symmetrical augmented structure that divides the octave equally, with all three inversions isomorphic. It carries a naturally floating augmented color and no stable function, so it can only be a process. It belongs to neither major nor minor, which makes it ideal for the seam where two keys meet.",
+      "use": "As V7#5, or a line cliché from I to IV; you can also lay a whole-tone scale underneath to weaken the dominant function and leave only color and suspension. In film scoring it often handles the transition, carrying the listener from one emotion to the next without a cadence.",
+      "tip": "The augmented fifth must resolve, or the suspended feeling will drag the whole piece; put it in an inner voice and let the outer voices move chromatically, which is far rounder than putting it in the top voice. In the arranging, don't let the bass instrument double the augmented fifth either; the low end goes hollow at once."
+    }
+  },
+  "sus2": {
+    "beginner": {
+      "summary": "Swap the brightest note for a softer one next door and the sound turns open and airy, like standing on a prairie looking up at the sky.",
+      "use": "Use it in intros and interludes when you want the mood to spread out first without committing to anything; lots of folk and post-rock open slowly this way.",
+      "tip": "On guitar it's one finger away from a plain major chord: lift the finger holding the middle note by one fret and it opens up."
+    },
+    "learner": {
+      "summary": "A suspended second chord: the major second replaces the third, and without a third it's neither major nor minor, open in color and unresolved. Unlike sus4 it doesn't insist on resolving, so it can stay in one kind of weather for a long time.",
+      "use": "Often a substitute color for I or IV; I(sus2)-IV and vi(sus2)-IV are very common in modern pop, and it works as a static intro layer. When the lyrics risk getting too sweet, swapping it in for the major triad reins things in immediately.",
+      "tip": "The second sits next to the root and muddies easily, so put the second an octave higher and leave only root and fifth in the bass, which is clearest, and save the midrange for the melody. When arpeggiating, play the second then the fifth for a slowly opening feel."
+    },
+    "pro": {
+      "summary": "A suspended-second structure with the third omitted, no major or minor pull: negative space in the harmony, or a three-note reduction of a quartal voicing. It differs from add9 only by whether the third is there, yet its function shifts from stable tonic to a blur. Moving on to vi then sounds especially natural.",
+      "use": "A static pedal color on I, or a thin mist before V; also common in modal sections alternating with I, creating a quality that keeps breathing and never commits. It's interchangeable with add9, one note apart in light and shade, which makes it the easiest breather in an arrangement.",
+      "tip": "Avoid having the second and third sound at once and clash; use an open voicing with the second in the top voice and deliberately leave a midrange gap in the arranging for maximum transparency. If you must thicken it, add a fifth an octave down, not a third."
+    }
+  }
+}

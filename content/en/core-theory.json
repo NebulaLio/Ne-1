@@ -1,0 +1,307 @@
+{
+  "intervals": {
+    "P1": {
+      "beginner": {
+        "sound": "The same note, at exactly the same pitch, with no high-low difference at all.",
+        "use": "Unison playing is for thickening, not octave doubling; don't mistake a perfect unison for parallel octaves."
+      },
+      "learner": {
+        "sound": "Perfectly consonant, with almost no tension.",
+        "use": "Octave doubling can thicken the texture, but four-part writing should avoid parallel octaves."
+      },
+      "pro": {
+        "sound": "Perfect unison/octave, zero beating, completely blended.",
+        "use": "Reinforce the root or a melodic line; watch for hidden octaves and muddiness in the low register."
+      }
+    },
+    "m2": {
+      "beginner": {
+        "sound": "The two closest keys, pressed right up against each other, like a fingernail grazing a string.",
+        "use": "Creates unease and suspense; it usually returns quickly to a stable note."
+      },
+      "learner": {
+        "sound": "The smallest interval, strongly directional, with the highest tension.",
+        "use": "The core leading-tone-to-tonic resolution; can also serve as a neighbor tone or appoggiatura."
+      },
+      "pro": {
+        "sound": "Minor 2nd, one of the strongest dissonances.",
+        "use": "A semitone resolution engine; use sparingly in the low register, often as a b9 tension."
+      }
+    },
+    "M2": {
+      "beginner": {
+        "sound": "The distance of one step, like the natural lilt of speech.",
+        "use": "The smoothest melodic move, used to connect two chord tones."
+      },
+      "learner": {
+        "sound": "Major 2nd, a mild dissonance, the basis of stepwise motion.",
+        "use": "Passing and neighbor tones; harmonically it acts as a sus2 or a ninth."
+      },
+      "pro": {
+        "sound": "Major 2nd, the backbone of stepwise melody.",
+        "use": "The source of the 9 and of sus2; mind the second clashing with the root."
+      }
+    },
+    "m3": {
+      "beginner": {
+        "sound": "A little melancholy and gentle, the source of the minor sound.",
+        "use": "Reach for it when you want introspection, sadness, or a night-time mood."
+      },
+      "learner": {
+        "sound": "Minor 3rd, which decides the minor color.",
+        "use": "The third of a minor chord; with the root it creates a dark color."
+      },
+      "pro": {
+        "sound": "Minor 3rd, the anchor of modal quality.",
+        "use": "In blues, setting it beside the major 3rd creates conflicting tension; b3 is also the source of #9."
+      }
+    },
+    "M3": {
+      "beginner": {
+        "sound": "Bright and happy, the source of the major sound.",
+        "use": "Use it when you want something sunny, stable, and open."
+      },
+      "learner": {
+        "sound": "Major 3rd, which determines major quality.",
+        "use": "The third of a major chord; with the root it creates a bright color."
+      },
+      "pro": {
+        "sound": "Major 3rd, the core criterion of harmonic quality.",
+        "use": "Blues friction against b3; note that the guide tone resolves upward."
+      }
+    },
+    "P4": {
+      "beginner": {
+        "sound": "Open and solemn, like an echo in a valley.",
+        "use": "Creates suspense; it usually resolves back down to the third."
+      },
+      "learner": {
+        "sound": "Perfect 4th, consonant or suspended.",
+        "use": "The suspended fourth resolves to the third; also used in quartal stacking."
+      },
+      "pro": {
+        "sound": "Perfect 4th, explainable in either direction.",
+        "use": "The tension source of sus4; the basic unit of quartal voicing."
+      }
+    },
+    "TT": {
+      "beginner": {
+        "sound": "The most twisted distance of all, like two forces pulling against each other.",
+        "use": "The soul of the dominant chord; it badly wants to get back to something stable."
+      },
+      "learner": {
+        "sound": "Augmented fourth / diminished fifth, strongly dissonant.",
+        "use": "The tritone of the dominant seventh, which decides the direction of resolution."
+      },
+      "pro": {
+        "sound": "Tritone, the engine of dominant function.",
+        "use": "Tritone substitution shares the same skeleton; mind enharmonic spelling and resolution."
+      }
+    },
+    "P5": {
+      "beginner": {
+        "sound": "The steadiest support, like a pillar holding up a house.",
+        "use": "The skeleton of a chord; together with the root it holds the sound up."
+      },
+      "learner": {
+        "sound": "Perfect 5th, consonant and stable.",
+        "use": "The chord skeleton; four-part writing avoids parallel fifths."
+      },
+      "pro": {
+        "sound": "Perfect 5th, strongly related in the overtone series.",
+        "use": "Power chords and the bass skeleton; mind parallel and hidden fifths."
+      }
+    },
+    "m6": {
+      "beginner": {
+        "sound": "A darker major sixth, like the light at dusk.",
+        "use": "Adds a layer of shadow to minor or dominant chords."
+      },
+      "learner": {
+        "sound": "Minor 6th, which can be seen as the inversion of an augmented fifth.",
+        "use": "The source of b13 color; it often resolves to the fifth or the ninth."
+      },
+      "pro": {
+        "sound": "Minor 6th, both tension and color.",
+        "use": "The enharmonic world of b13/#5; note its substitution relationship with the fifth."
+      }
+    },
+    "M6": {
+      "beginner": {
+        "sound": "Warm and flowing, like a smooth melodic line.",
+        "use": "Makes a chord sound more open and more singable."
+      },
+      "learner": {
+        "sound": "Major 6th, warm and consonant.",
+        "use": "The signature interval of sixth chords and of Dorian."
+      },
+      "pro": {
+        "sound": "Major 6th, the interval underlying the 13.",
+        "use": "13 color on dominant chords; it sets a light-dark contrast with b13."
+      }
+    },
+    "m7": {
+      "beginner": {
+        "sound": "A bit loose, a bit eager to move forward.",
+        "use": "The key note of dominant and minor seventh chords; it pushes the music forward."
+      },
+      "learner": {
+        "sound": "Minor 7th, the color of dominant and minor sevenths.",
+        "use": "The seventh resolving down by step is central to voice writing."
+      },
+      "pro": {
+        "sound": "Minor 7th, one of the guide tones.",
+        "use": "Forms a tritone with the third; the resolution direction of the seventh defines harmonic grammar."
+      }
+    },
+    "M7": {
+      "beginner": {
+        "sound": "A fine layer of light, gentle but a little suspended.",
+        "use": "The flavor of major seventh chords; suits ballads and an urban feel."
+      },
+      "learner": {
+        "sound": "Major 7th, a refined tension.",
+        "use": "The hallmark of major seventh chords; usually placed in an inner voice."
+      },
+      "pro": {
+        "sound": "Major 7th, a semitone clash with the root.",
+        "use": "The tension source of maj7; in a voicing the root or fifth can be omitted."
+      }
+    },
+    "P8": {
+      "beginner": {
+        "sound": "The same note higher up, like looking in a mirror.",
+        "use": "Thickens the sound, or makes a melody brighter."
+      },
+      "learner": {
+        "sound": "Perfect octave, a stable repetition.",
+        "use": "Bass thickening and unison playing; avoid parallel octaves."
+      },
+      "pro": {
+        "sound": "Perfect octave, a same-note equivalent.",
+        "use": "Octave stacking and arranging; mind hidden octaves and voice independence."
+      }
+    }
+  },
+  "degrees": {
+    "1": {
+      "beginner": {
+        "hint": "Home. The steadiest of all; a phrase ending here feels most reassuring."
+      },
+      "learner": {
+        "hint": "Tonic function, the tonal center, where cadences come to rest."
+      },
+      "pro": {
+        "hint": "Tonic; can be substituted by vi/iii, but keep the root's inertia in mind."
+      }
+    },
+    "2": {
+      "beginner": {
+        "hint": "The next step. It wants to leave home a little, and often heads toward the dominant."
+      },
+      "learner": {
+        "hint": "Supertonic, usually the ii pre-dominant that pushes toward V."
+      },
+      "pro": {
+        "hint": "Supertonic; ii7 is the starting point of ii-V-I and can also be the tritone-sub target."
+      }
+    },
+    "3": {
+      "beginner": {
+        "hint": "The in-between color, the key note that decides major or minor."
+      },
+      "learner": {
+        "hint": "Mediant, which determines major or minor quality and also substitutes for the tonic."
+      },
+      "pro": {
+        "hint": "Mediant; iii7 can substitute for I; mind its guide-tone relationship to the tonic."
+      }
+    },
+    "4": {
+      "beginner": {
+        "hint": "The first step away from home, open and a little distant."
+      },
+      "learner": {
+        "hint": "Subdominant, S function, often followed by V to form T-S-D-T."
+      },
+      "pro": {
+        "hint": "Subdominant; IV can be borrowed as iv/IVm6, and augmented sixth chords are built from it."
+      }
+    },
+    "5": {
+      "beginner": {
+        "hint": "The note that most wants to go home: the most tension, the best payoff."
+      },
+      "learner": {
+        "hint": "Dominant, D function; V7 resolving to I is the core."
+      },
+      "pro": {
+        "hint": "Dominant; the V7 tritone and guide tones decide the resolution; alt and tritone sub are available."
+      }
+    },
+    "6": {
+      "beginner": {
+        "hint": "A slightly wistful substitute color, often used in place of home."
+      },
+      "learner": {
+        "hint": "Submediant; vi substitutes for the tonic and often leads to IV or ii."
+      },
+      "pro": {
+        "hint": "Submediant; vi7 can substitute for T and can also start a V7/ii."
+      }
+    },
+    "7": {
+      "beginner": {
+        "hint": "The note that most wants to go up, like an elevator nearing the top floor."
+      },
+      "learner": {
+        "hint": "Leading tone; vii\u00b0 leans strongly toward the tonic and usually carries dominant function."
+      },
+      "pro": {
+        "hint": "Leading tone; vii\u00b07 is a symmetrical diminished seventh and allows enharmonic modulation."
+      }
+    }
+  },
+  "voicings": {
+    "close": {
+      "beginner": "Piles all the notes together, making the chord's color easiest to hear.",
+      "learner": "Close position: the notes sit in a narrow range, good for ear training and block chords at the keyboard.",
+      "pro": "Close position; watch muddiness in the low register and avoid stacking below C3."
+    },
+    "drop2": {
+      "beginner": "Drop the second-highest note by an octave and the sound opens up at once.",
+      "learner": "Drop 2: the second-highest note moves down an octave, common in four-part writing.",
+      "pro": "Drop 2; common for four-part guitar and the piano left hand; mind the spacing between voices."
+    },
+    "drop3": {
+      "beginner": "Drop the third-highest note by an octave and the sound gets wider and lower.",
+      "learner": "Drop 3: the third-highest note moves down an octave, giving a more open bass.",
+      "pro": "Drop 3; the third-highest note drops an octave, good for mid-low positions and two-hand distribution; avoid an overly dense low register."
+    },
+    "rootless": {
+      "beginner": "Skip the root and leave that space to the bass, so the color floats more.",
+      "learner": "Rootless voicing, bringing out the third, seventh, and tension notes.",
+      "pro": "Rootless; works with the bass; mind how 3/7 stack with the upper structure."
+    },
+    "upper": {
+      "beginner": "Stack another small chord on top of a dominant chord and the color instantly sounds more sophisticated.",
+      "learner": "Upper structure: stacking a triad above a dominant chord to build altered tension.",
+      "pro": "Upper-structure triad; II/V triads over V7 are common; watch the resolution."
+    },
+    "quartal": {
+      "beginner": "Stack fourths one on top of another; it sounds modern and very open.",
+      "learner": "Quartal stacking breaks the tertian structure and is common in modal jazz.",
+      "pro": "Quartal voicing; suits modal/So What styles; mind how it blends with the root."
+    },
+    "chorale": {
+      "beginner": "Like a choir split into four voices, balanced and clean.",
+      "learner": "Four-part chorale layout, handy for checking voice-leading smoothness and guide-tone resolution.",
+      "pro": "SATB chorale; mind voice ranges, spacing, and parallel fifths and octaves."
+    },
+    "guitar": {
+      "beginner": "On guitar, fret only the essential few notes: less effort, clearer sound.",
+      "learner": "Guitar shell voicing, keeping the root, third, and seventh and omitting the fifth.",
+      "pro": "Guitar shell voicing; a three/four-note skeleton; mind position and open-string resonance."
+    }
+  }
+}

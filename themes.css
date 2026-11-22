@@ -4184,3 +4184,242 @@ body[data-theme="studio"] .fret-dot.scale-dot {
 
 .voice-index { fill: var(--muted); }
 
+
+/* ── 16. 設定面板：主題、解說層級、語言統一收納 ─────────────────────────── */
+.topbar-settings {
+  position: relative;
+}
+
+.settings-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--glass);
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  list-style: none;
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.settings-summary::-webkit-details-marker {
+  display: none;
+}
+
+.settings-summary:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.topbar-settings[open] .settings-summary {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--glass));
+}
+
+.settings-summary-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.settings-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 90;
+  display: grid;
+  gap: 14px;
+  width: 350px;
+  max-height: calc(100vh - 120px);
+  padding: 16px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-strong);
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.4);
+}
+
+body[data-theme="industrial"] .settings-panel {
+  background: #f4f5f6;
+  border-color: #b8bcc1;
+  box-shadow: 0 26px 60px rgba(20, 24, 28, 0.2);
+}
+
+.settings-group {
+  display: grid;
+  gap: 7px;
+}
+
+.settings-group-title {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.settings-divider {
+  height: 1px;
+  background: var(--line);
+}
+
+.settings-panel .theme-switch {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.settings-panel .theme-chip {
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 8px;
+}
+
+.settings-panel .theme-chip-text {
+  font-size: 11.5px;
+}
+
+.settings-panel .level-switch,
+.settings-panel .lang-switch {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.settings-panel .segment {
+  min-height: 34px;
+  padding: 0 8px;
+  font-size: 11.5px;
+}
+
+.settings-panel .select-label {
+  display: grid;
+  gap: 5px;
+}
+
+.settings-panel .select-label select {
+  width: 100%;
+}
+
+@media (max-width: 720px) {
+  .settings-summary {
+    min-width: 40px;
+    padding: 0 11px;
+  }
+
+  .settings-summary-text {
+    display: none;
+  }
+
+  .settings-panel {
+    position: fixed;
+    top: 64px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+    min-width: 0;
+  }
+}
+
+/* ── 17. 品牌標誌精修 ─────────────────────────────────────────────────── */
+.brand-mark {
+  width: 56px;
+  height: 56px;
+  border-radius: 17px;
+  border-color: rgba(129, 140, 248, 0.5);
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.32),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.brand-mark::before {
+  position: absolute;
+  inset: -1px;
+  z-index: 0;
+  pointer-events: none;
+  content: "";
+  border-radius: inherit;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.28), transparent 40%);
+  opacity: 0.7;
+}
+
+.brand-mark svg {
+  position: relative;
+  z-index: 1;
+}
+
+.brand h1 {
+  letter-spacing: 0.015em;
+  font-weight: 800;
+}
+
+.brand p {
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.brand-halo {
+  pointer-events: none;
+}
+
+body[data-theme="industrial"] .brand-mark {
+  border-color: rgba(255, 90, 31, 0.45);
+}
+
+body[data-theme="studio"] .brand-mark {
+  border-color: rgba(74, 255, 175, 0.42);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.5),
+    0 0 26px rgba(52, 245, 155, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.settings-panel .switch {
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--glass);
+}
+
+.settings-panel .style-switch {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.settings-panel > .settings-group > select {
+  width: 100%;
+  min-height: 38px;
+}
+
+body[data-theme="industrial"] .brand-orbit-2 {
+  stroke: #8a5a3a;
+}
+
+body[data-theme="studio"] .brand-orbit-2 {
+  stroke: #4fc3ff;
+}
+
+.settings-note {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 10.5px;
+  line-height: 1.55;
+}
+
+body[data-theme="industrial"] .brand-staff {
+  stroke: #3d4349;
+  stroke-opacity: 0.26;
+}
+
+body[data-theme="studio"] .brand-staff {
+  stroke: #34f59b;
+  stroke-opacity: 0.24;
+}

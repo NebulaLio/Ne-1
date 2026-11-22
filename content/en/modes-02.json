@@ -1,0 +1,104 @@
+{
+  "locrian": {
+    "beginner": {
+      "mood": "Suspended and uneasy, like standing on a tilted floor and always feeling unsteady. Like standing on a floorboard that has warped, wanting to hold on to the wall.",
+      "use": "Rarely a key of its own; mostly a temporary cushion inside a minor key, like Bm7b5. In a minor ii–V–I it sits in the middle as a stepping stone.",
+      "improv": "Don't expect it to feel like home. It works best for transitions and for building suspense."
+    },
+    "learner": {
+      "mood": "b5 turns the tonic chord into a half-diminished seventh, b2 adds more tension, and the tonic loses its support; functionally it can almost only be a minor-key iiø. Good for transitions and an unsettled bed.",
+      "use": "The minor iiø slot of iø–V7alt–i, or passing harmony before a dim7; it can also colour a V7b9. iø can give way to iiø7 before V7alt — touch the chord briefly rather than spreading it out.",
+      "improv": "Bring out b5 and b2, and land back on b3 or b7 where possible; a long note parked on b5 loses the centre. Phrases need a clear target — don't spin in place. Practise the semitone from b5 to b3; don't stop on b5."
+    },
+    "pro": {
+      "mood": "The natural match for m7b5: b5 and b2 keep the tonic from being established, so it exists almost solely as the functional scale of a minor iiø, its colour drawn inward. For arranging it suits a diminished-chord bed and a chromatically descending bass; keep the density low.",
+      "use": "The iiø stage of iø–V7alt–i; it can also chromaticise a dim7 or bVI. Try iiø11 before moving to V7alt, where a chromatic bass descent is smoothest — don't linger, or the key loses focus.",
+      "improv": "b5 is the signature and shouldn't be held; b9 and b3 are safer. Treating b7 as a temporary tonic briefly fakes a centre, but the resolution still returns to the minor tonic — don't let b5 become the new home. b5 as a passing tone, landings back on b3, phrase ends into V7alt, never cadence on b5. Pass through b5 quickly and keep phrases under two bars."
+    }
+  },
+  "melodicMinorMode": {
+    "beginner": {
+      "mood": "Light shines through the shell of minor, like a warm lamp switched on in the rain.",
+      "use": "The minor scale of jazz, paired with the string Cm(maj7), Dm7, G7 — sophisticated yet restrained. Hear the minor first, then lift the last two notes a little higher.",
+      "improv": "Compared with plain minor it has a bright sixth and seventh, so climbing upward feels especially easy."
+    },
+    "learner": {
+      "mood": "A minor third with a major sixth and major seventh — the backbone of jazz minor, dark but with a bright leading tone, and the general choice for minor ii–V. Suits urban, suspenseful and restrained lyricism.",
+      "use": "The minor ii–V–I as i(maj7)–ii7–V7–i, or a i(maj7)–IV7 vamp, with alt available on the dominant; walking in the left hand and only 3 and 7 in the right. When practising, raise the 6 and 7 to hear them against natural minor.",
+      "improv": "It's the 6 and 7 that set it apart from natural minor; the 6–7–1 ascent is smoothest, and b3 remains the emotional centre. The 9 can be held for maj7 colour; don't press on 4 for long. Practise the 6–7–1 ascent, then settle on 9."
+    },
+    "pro": {
+      "mood": "A minor third with a major sixth and seventh, combining aeolian darkness with the ionian leading tone; it is the general-purpose scale of minor functional harmony, with clear resolution. Suits jazz piano and walking bass, ride on drums, medium-short reverb. Left-hand walking, right hand playing only 3 and 7.",
+      "use": "For minor ii–V–I use i(maj7)–ii7–V7–i; the fourth degree can be made a dominant seventh borrowing Dorian colour, the tonic can stack the 9 and 11, and ending on a minor sixth chord is steadier; swapping the dominant to the altered scale tightens it, with the bass moving stepwise. Add a iiø before the cadence and then go to V7alt for a more jazz resolution.",
+      "improv": "6 and 7 lead upward, b3 and 9 can be held, and on i(maj7) the 4 is only a passing tone resolving to 3; the altered dominant can switch to altered, the guide tones are still 3 and 7, altered notes stay passing, and the root and third are home."
+    }
+  },
+  "dorianB2": {
+    "beginner": {
+      "mood": "Darkness with motion in it, like lights on a river at night — shimmering but not harsh.",
+      "use": "One note more than plain minor: a flat second pressed right up against the tonic. Play it back and forth over Cm7 and Dbmaj7.",
+      "improv": "That note a semitone low is like seasoning: touch it and move on, don't hang around."
+    },
+    "learner": {
+      "mood": "b2 sits alongside the natural 6: Phrygian darkness plus Dorian motion, with weak dominant function and a colour that sways between the two. Suits exotic, suspenseful and slow-building settings.",
+      "use": "A i7–bIImaj7–i7 vamp, or b2 as a colour tone inside i7–IV7; bIImaj7 can also be a Neapolitan-style borrowing. bIImaj7 can become bII6 for a softer shade — sustained bass, sparse percussion.",
+      "improv": "b2 works as an appoggiatura resolving to 1 or b3, and the 6 can be held; don't stress b2 and 6 at the same time or the meaning blurs, and keep b3 as the main landing. b2 slides in by semitone to 1 — don't linger. Start by practising b2 a semitone up to 1."
+    },
+    "pro": {
+      "mood": "The second mode of melodic minor: b9 set beside the natural 6 gives the darkness a sheen; suits a pedal bass and sparse arranging, longer reverb, space in the midrange, and a cold room.",
+      "use": "The i7–bIImaj7–i7 loop is the tastiest: stack the b9 and 13 on the tonic, use bIImaj7 as a Neapolitan-style borrowing, move the bass chromatically — cold and fluid at once, ideal for a slow build. For something darker, swap i7 for i7b9 and leave the 6 as the bright note.",
+      "improv": "b2 as an appoggiatura, the 6 as a hidden guide tone — bring in b6 and it degrades into phrygian. A bII triad can serve as a contrapuntal pivot; hold the landings on 1 and b3 and don't let b2 steal the tonic. End phrases on b3 or 9, and don't let b2 become the new centre."
+    }
+  },
+  "lydianAug": {
+    "beginner": {
+      "mood": "Like a jellyfish in an aquarium, opening and closing — beautiful but weightless.",
+      "use": "A major chord made both bigger and wider, ringing on and on — film music uses it for dreams and outer space.",
+      "improv": "Press the two raised notes together and don't rush to land; the more suspended it is, the better it sounds."
+    },
+    "learner": {
+      "mood": "#4 and #5 together, yet the major third stays stable; the tonic chord is maj7#5, maximally floating with almost no need to resolve. Suits dreams, space and weightlessness.",
+      "use": "A static Imaj7#5 vamp, or the hovering Imaj7#5–IV7 progression; Imaj7#5–iv also gives a colour contrast. Swapping IV7 for IVmaj7 suspends even longer — long notes fill the space and the drums keep only hi-hat.",
+      "improv": "#4 and #5 are the signature and can be long notes; keep 3 and 7 steady and avoid natural 5 and b7, or the floating quality disappears at once. #4 and #5 as long notes, 3 and 7 held firm. Start by practising #5 resolving to 7."
+    },
+    "pro": {
+      "mood": "The third mode of melodic minor: #11 and #5 together remove dominant function, forming a fully suspended augmented colour suited to film-score hovering. Suits synth pads and long reverb, low density, bright highs. Synth long notes fill the space, drums keep only hi-hat.",
+      "use": "Let maj7#5 ring on the tonic, stacking the 9 and raised eleventh as upper structure; it can lead into a modulation to bVI, or serve as the hovering pivot for a whole section. Keep the bass on the tonic, don't rush to land, and leaving space between the voices sounds better. When modulating, treat it as a suspended bVI chord and then land on the new tonic.",
+      "improv": "#5 and #11 are the core tension and resolve to 3 or 7; natural 5 is an avoid over an augmented chord, and b7 breaks the colour. The whole-tone scale works as an approximate substitute; leave space between the voices and don't rush to land. Push the long notes along slowly and keep the dynamics even."
+    }
+  },
+  "lydianDominant": {
+    "beginner": {
+      "mood": "Like a tuned-up car cruising a neon street — bright and a little wild, lively with a touch of strange.",
+      "use": "A dominant seventh with a raised fourth, often used to replace the original dominant chord — very common in jazz.",
+      "improv": "Slip that raised fourth between the third and the flat seventh and the line instantly sounds sci-fi."
+    },
+    "learner": {
+      "mood": "A dominant seventh plus #11: it both leads and hovers, the default scale for tritone substitution and the standard choice over a 7#11 chord. Suits sci-fi, highway and driving sections.",
+      "use": "The tritone substitution bII7–Imaj7, or a static V7#11 vamp; V7#11–I6/9 also makes a cadence with a very light sense of resolution. Swap V7#11 for bII7 and the tritone sub flows more easily. Brass in unison, brightness at full.",
+      "improv": "3 and b7 are the guide tones, #11 is the signature, and 9 and 13 can be added; avoid natural 4 and natural 7, or the colour gets pulled back to Mixolydian. Practise #11 descending to 3, then compare the sound before and after raising the 4."
+    },
+    "pro": {
+      "mood": "The tension skeleton of the dominant seventh is opened up by #11, giving both a direction of resolution and a suspended colour; a distorted guitar through light compression bites harder on tritone subs — the first-choice chord-scale for a tritone sub.",
+      "use": "The bII7 into the tonic is the most typical tritone substitution; you can also hang a 7#11 on the tonic as a static loop, stacking the #11 into the upper structure for a light cadence with a chromatic bass descent. A staple of fusion guitar solos over dominant chords, and a regular in tritone subs.",
+      "improv": "3 and b7 are the guide tones, #11 is tension resolving to 3 or 5; natural 4 is an avoid, and natural 7 muddies the key. On bII7 the same scale can simply be shifted up, with the #11 soft then strong and easing off as it resolves."
+    }
+  },
+  "mixoB6": {
+    "beginner": {
+      "mood": "A trace of bitterness under a bright surface, like remembering something old halfway through a smile.",
+      "use": "A dominant seventh with a flat sixth — common in jazz tunes with a minor flavour.",
+      "improv": "The moment the flat sixth arrives the sunlight dims a notch; land on it slowly."
+    },
+    "learner": {
+      "mood": "A major third with b6 and b7 — dominant function together with minor-key darkness, gloomier than Mixolydian and usually resolving to a minor tonic. Suits bittersweet, nostalgic and minor-flavoured songs.",
+      "use": "A I7–bVI–I7 vamp, or V7–b13 resolving to a minor tonic; I7–bVI–iv also gives a plagal colour. Swap bVI for bVImaj7 for a thicker shade. Breathy sax, and don't overdo the reverb.",
+      "improv": "3 and b7 still lead, and b13 is the colour; natural 6 turns it back into Mixolydian. Prefer b13 and 9 for long notes — practise b13 falling to 9, then try bridging through bVI."
+    },
+    "pro": {
+      "mood": "The b13 over a dominant seventh sets the major third against the minor sixth in an augmented-fifth tension; the resolution leans toward minor, and the colour is softer than altered. Suits sax and electric piano, medium-short reverb, with a woody midrange. Breathy sax, and don't overdo the room reverb.",
+      "use": "The most common use is a dominant seventh on the tonic going to bVI and back; 7b13 resolving to a minor tonic, with a b9 stacked on the tonic for variation, bVI as the bridge and the bass descending throughout. Swap bVI for bVImaj7 for a stronger bridge and a softer resolution.",
+      "improv": "b13 is the core tension, usually resolving to 9 or 5; b7 is stable, so avoid natural 6 and natural 7 diluting the colour. A bVI triad works as counterpoint, and mind the semitone between b13 and 5. Resolve b13 to 9 or 5, never land on natural 6, and end long lines on b7. In the dominant passages of minor jazz tunes, resolving to the minor tonic tastes best."
+    }
+  }
+}

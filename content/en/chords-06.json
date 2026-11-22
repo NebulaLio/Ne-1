@@ -1,0 +1,87 @@
+{
+  "7sus4": {
+    "beginner": {
+      "summary": "A chord that usually pushes forward, but it swaps its most important note for one that just hovers. It sounds strong, yet it never lands.",
+      "use": "Huge in funk and Japanese pop — players often repeat it over and over, keeping you waiting for that final release.",
+      "tip": "On guitar, lift or shift your middle finger one fret and you're back to the original chord. Switch back and forth for a rhythm part — it feels great."
+    },
+    "learner": {
+      "summary": "Dominant seventh sus4: a fourth suspension that keeps dominant function while the third is delayed, so tension is present without rushing to resolve. It trades the forward push of a dominant seventh for a state of hanging in mid-air, ready to let go at any moment.",
+      "use": "V7sus4 as a delayed form of V7, or I7sus4 for a gospel groove; also a resting station before a ii–V. In funk it often never resolves for a whole section, using the alternation between the fourth and the third as the groove.",
+      "tip": "The resolution from the fourth to the third can be delayed for several beats; alternating between 7sus4 and a dominant seventh that contains the third creates a strong syncopated groove. To stretch the suspense, put the fourth in the top voice and don't hurry to lower it."
+    },
+    "pro": {
+      "summary": "A dominant seventh with the third replaced by the fourth: the functional direction survives, but its guide tone is suspended — a rhythmic core of gospel and fusion. Its fourth rubs against the root at a second, so it is coarser than a plain dominant seventh and better suited to syncopation.",
+      "use": "V7sus4 as a lead-in to V7, or an unresolved vamp for a whole section; also a backdoor color as bVII7sus4, with a more surprising landing. In modulations it often stands in for V7, pushing the resolution into the next bar. Going to V7, you only lower the fourth a semitone and leave everything else alone.",
+      "tip": "Think Mixolydian sus; voice it 1-4-b7-9 and keep the second between fourth and root in the inner voices, where it bites hardest. If you add the ninth, drop the fourth an octave so two seconds don't crowd into mud."
+    }
+  },
+  "9sus4": {
+    "beginner": {
+      "summary": "Suspended but not tense — open and sunny, like a weekend morning with the window open, wind and light coming in.",
+      "use": "City Pop and bright pop often use it in intros and at the turn into a chorus; it widens the picture and changes the weather in one move.",
+      "tip": "The guitar shape is easy — two or three fingers across five strings — so it strums comfortably and takes syncopation well."
+    },
+    "learner": {
+      "summary": "Nine sus4: a ninth stacked on a dominant seventh sus4. The color is wide and the function sits between dominant and suspended, not clearly resolved. It is warmer and fuller than 7sus4, because the ninth wraps a layer around the fourth's blunt rub.",
+      "use": "V9sus4 as a softened dominant, or I9sus4 for a static vamp; extremely common in City Pop and fusion. Two beats before a chorus it pushes without giving the answer away too early.",
+      "tip": "Enharmonically it equals an inversion of m11, so they are interchangeable; once the third appears it must resolve at once, or it fights the fourth. For more brightness, put the ninth on top and keep the fourth inside as the rub."
+    },
+    "pro": {
+      "summary": "Dominant nine sus4, structurally identical to the second inversion of m11: ambiguous function, wide color, a common choice for static harmony. The bass decides its identity — the same sonority sounds dominant over its root and minor over another.",
+      "use": "A soft resolution as V9sus4, or a whole modal vamp; it can also replace I7 going to IV, taming the dominant's aggression. In a backdoor progression it is looser than bVII7 and lands on I with almost no attack. For a minor target, b9 instead of 9 sits closer.",
+      "tip": "Mixolydian or Dorian; voice it 1-4-b7-9, letting the third appear only at the moment of resolution so it doesn't lock against the fourth. For thinner material keep only 1-4-b7 and let the melody supply the ninth."
+    }
+  },
+  "7b9": {
+    "beginner": {
+      "summary": "A tense chord with one note pressed very low — like a distant alarm, it tightens your chest and you want it to end soon.",
+      "use": "It usually shows up just before the return to a settled chord, often in sad or dramatic passages: brief, but strong.",
+      "tip": "On piano that tightness comes through more clearly in the right hand, so keep the left hand light and leave it room."
+    },
+    "learner": {
+      "summary": "Dominant flat-nine: a dominant seventh plus b9. The b9 sits a minor ninth from the root and marks Phrygian dominant and minor-key dominants. That b9 is very close to the root, giving a pressed, uneasy rub that sounds classical.",
+      "use": "V7b9 resolving to i is the most common, and to I as well; the minor iiø–V7b9–i is grammar shared by classical and jazz. In flamenco and Spanish colors it also appears as V7b9.",
+      "tip": "The b9 must resolve down a semitone to the fifth of the target chord; the upper four voices actually form a diminished seventh, so the whole block can be shifted as one. To soften it, put the b9 in an inner voice and expose only the third and seventh."
+    },
+    "pro": {
+      "summary": "A dominant seventh plus b9; the minor ninth against the root supplies strong dark tension, while the tritone of third and seventh still drives the resolution. Its upper four voices form a diminished seventh, so the block transposes to find other dominants.",
+      "use": "V7b9 into i or I; also a rooted form of vii°7, or a b9 alteration of a tritone sub, used to cut into different keys. In modulation it is nearly a master key — it opens doors in four keys. Its diminished upper layer can shift as a block to look for another dominant chord.",
+      "tip": "Half-whole diminished or Phrygian dominant; the b9 is sharpest on top, and resolving down a semitone to the fifth sits best. If the target is I, the b9 can also rise to the tonic for a brighter exit."
+    }
+  },
+  "7sharp9": {
+    "beginner": {
+      "summary": "The chord holds a bright and a dark note at once, very close together — like sandpaper, rough, with a little defiant wildness.",
+      "use": "Common in blues, rock and funk, for moods that are driven and a bit stubborn; the noisier it gets, the better it sounds.",
+      "tip": "With distortion on guitar it is especially tasty, but watch that the neighboring finger doesn't mute that string — it has to ring out."
+    },
+    "learner": {
+      "summary": "Dominant sharp-nine: a dominant seventh plus #9. The #9 sits a minor second from the third (enharmonically a minor third), producing a strong blues rub. It holds both a major and a minor third, so it sounds bright and dirty at once — exactly the contradiction blues wants.",
+      "use": "V7#9 into i or I; I7#9 in blues and funk as a static color — the so-called Hendrix chord. In rock it is often a pedal you can stand on for a long time without ever resolving.",
+      "tip": "Keep the minor second between #9 and the third; don't delete it as a wrong note. The #9 is wilder on top and darker, thicker inside. With heavy distortion, flatten the third slightly and the rub sounds more like a rasping voice."
+    },
+    "pro": {
+      "summary": "A dominant seventh plus #9; the minor-second friction between third and #9 is its signature. Functionally still a strong dominant, but the color is bluesy rather than purely functional. Because it stacks major and minor thirds in one chord, it carries a naturally torn character.",
+      "use": "V7#9 into i; I7#9 as a static blues field; also part of an altered voicing, combined with b9 for denser tension. In funk it often joins the 13 for a dirty-bright syncopation. It works just as well on a blues IV7, with no resolution needed.",
+      "tip": "Half-whole diminished or blues scale; rootless as 3, b7, #9, watching that the #9 and third don't blur into one mass. With b9 added, spread the two altered tones into different octaves or they smear. Under heavy distortion keep only the third and #9 and leave the rest to the bass."
+    }
+  },
+  "7b13": {
+    "beginner": {
+      "summary": "A tense chord with one more low note pressing down on it — gloomy and heavy, like the low cloud bank just before rain.",
+      "use": "Good right before a turn into a very dark, heavy section; one hit lowers the mood and lets you feel the weight that's coming.",
+      "tip": "On guitar it differs from the ordinary tense chord by only the top note — lift a finger and you're there; try it a few times and you'll feel it."
+    },
+    "learner": {
+      "summary": "Dominant flat-thirteen: a dominant seventh plus b13. The b13 is enharmonically #5, carries harmonic minor color and usually resolves to the minor tonic. It darkens the top of the dominant, so it is heavier than V7 and points more clearly to minor.",
+      "use": "V7b13 into i, often combined with V7b9 as a minor dominant; also a chromatic lead-in to bVI, showing the minor color early. In a minor cadence it has more of that must-fall weight than a plain V7.",
+      "tip": "The b13 is an augmented fifth from the third, so the third must stay for dominant function; put the b13 on top and its resolution down a semitone to the tonic is clearest. For more darkness, flatten the fifth to b5 as well — but that becomes another chord."
+    },
+    "pro": {
+      "summary": "A dominant seventh plus b13 (enharmonically #5), the marker tone of the harmonic-minor dominant: concentrated tension with a clear vector toward the minor tonic. Its b13 is an augmented fifth from the third — wider and heavier than b9, and better suited to large ensembles.",
+      "use": "V7b13 into i, often merged with b9 as V7b9b13; also the b13 upper structure of a tritone sub — change the bass and it becomes another route. In modulation it often pushes the minor door open before the tonic enters. Used with b9, place the two altered tones in different octaves.",
+      "tip": "Mixolydian b6 or Phrygian dominant; the b13 on top resolving down a semitone to the tonic works best — don't bury it inside. With b9 added, separate the two into adjacent octaves so they don't crowd into a diminished octave."
+    }
+  }
+}
