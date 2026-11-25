@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAkNzl65mZO2DjbpQy-ouU_GfJ7Ya9ZPvo",
@@ -20,7 +20,6 @@ const provider = new GoogleAuthProvider();
 window.firebaseAuth = auth;
 window.firebaseDb = db;
 
-// 登入按鈕
 document.addEventListener("DOMContentLoaded", () => {
   const loginBtn = document.getElementById("loginBtn");
   const logoutBtn = document.getElementById("logoutBtn");
@@ -38,11 +37,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
       if (loginBtn) loginBtn.hidden = true;
       if (logoutBtn) logoutBtn.hidden = false;
       if (userDisplay) userDisplay.textContent = user.displayName || user.email;
+
+      // 測試：寫入一筆資料
+      try {
+        await setDoc(doc(db, "users", user.uid, "profile", "info"), {
+          displayName: user.displayName,
+          email: user.email,
+          lastLogin: new Date().toISOString()
+        });
+        console.log("資料寫入成功");
+      } catch (e) {
+        console.error("寫入失敗", e);
+      }
     } else {
       if (loginBtn) loginBtn.hidden = false;
       if (logoutBtn) logoutBtn.hidden = true;
