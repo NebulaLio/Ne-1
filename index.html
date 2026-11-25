@@ -16,6 +16,7 @@
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%236366f1'/%3E%3Ccircle cx='25' cy='43' r='7' fill='%23f59e0b'/%3E%3Crect x='30' y='17' width='3' height='26' fill='%23f59e0b'/%3E%3Cpath d='M33 18c7 2 10 6 9 13-3-4-6-6-9-7z' fill='%23f59e0b'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="themes.css" />
+    <link rel="stylesheet" href="studio/gp-studio.css" />
   </head>
   <body>
     <a class="skip-link" href="#mainWorkspace">跳到主要内容</a>
@@ -732,6 +733,15 @@
         </section>
 
         <section id="scores" class="view" aria-labelledby="viewTitle">
+          <div class="gp-mode-bar">
+            <div class="gp-mode-switch segmented" role="tablist" aria-label="譜例編輯器模式切換">
+              <button type="button" class="segment active" data-score-mode="pro" aria-selected="true">🎸 多軌專業工作台 (Guitar Pro 模式)</button>
+              <button type="button" class="segment" data-score-mode="classic" aria-selected="false">🎹 經典雙欄編輯器（原有六線譜 + 鋼琴）</button>
+            </div>
+            <span class="gp-mode-hint">支援多軌五線譜 + 六線譜同步、吉他技法、AB 循環播放、MIDI / MusicXML / PDF 匯出與 Firebase 雲端同步</span>
+          </div>
+          <div id="gpStudioRoot" class="gp-studio-root"></div>
+          <div id="classicScorePane" hidden>
           <div class="score-global-bar" aria-label="曲谱全局结构与历史控制">
             <div class="score-meta-controls">
               <label>
@@ -1065,6 +1075,8 @@
               <div id="savedScores" class="saved-score-list"></div>
             </section>
           </div>
+        
+          </div>
         </section>
 
         <section id="analysis" class="view" aria-labelledby="viewTitle">
@@ -1305,5 +1317,12 @@
     <script src="en-map.js"></script>
     <script src="app.js"></script>
     <script src="studio.js"></script>
+    <script src="studio/gp-model.js"></script>
+    <script src="studio/gp-audio.js"></script>
+    <script src="studio/gp-storage.js"></script>
+    <script src="studio/gp-renderer.js"></script>
+    <script src="studio/gp-studio.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/15.1.22/Tone.js"></script>
+    <script src="audio-engine.js"></script>
   </body>
 </html>
