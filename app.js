@@ -5250,6 +5250,16 @@ function persist() {
     })
   );
   localStorage.setItem(STORAGE_KEYS.customPhrases, JSON.stringify(state.customPhrases));
+  // 同步到 Firestore
+if (window.firebaseAuth?.currentUser && window.firebaseDb) {
+  const user = window.firebaseAuth.currentUser;
+  import("https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js").then(({ doc, setDoc }) => {
+    setDoc(doc(window.firebaseDb, "users", user.uid, "data", "phrases"), {
+      phrases: state.customPhrases,
+      updatedAt: new Date().toISOString()
+    }).catch(err => console.error("樂句同步失敗", err));
+  });
+}
   localStorage.setItem(STORAGE_KEYS.scores, JSON.stringify(state.scores));
   } catch {
     if (!persist.warned) {
@@ -5304,6 +5314,25 @@ function loadState() {
     state.pianoChordRoot = Number.isFinite(prefs.pianoChordRoot) ? prefs.pianoChordRoot : 0;
     state.pianoChordQuality = prefs.pianoChordQuality || "maj";
     state.customPhrases = JSON.parse(localStorage.getItem(STORAGE_KEYS.customPhrases) || "[]");
+    // 從 Firestore 載入（如果已登入）
+if (window.firebaseAuth?.currentUser && window.firebaseDb) {
+  const user = window.firebaseAuth.currentUser;
+  import("https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js").then(async ({ doc, getDoc }) => {
+    try {
+      const snap = await getDoc(doc(window.firebaseDb, "users", user.uid, "data", "phrases"));
+      if (snap.exists()) {
+        const data = snap.data();
+        if (Array.isArray(data.phrases)) {
+          state.customPhrases = data.phrases;
+          renderCustomPhrases?.(); // 如果有這個函數就呼叫，沒有可忽略
+          console.log("已從雲端載入樂句");
+        }
+      }
+    } catch (e) {
+      console.error("載入樂句失敗", e);
+    }
+  });
+}
     state.scores = JSON.parse(localStorage.getItem(STORAGE_KEYS.scores) || "[]");
     // 清理舊版收藏與自訂 Logo 殘留的本機資料
     localStorage.removeItem("music-dictionary-favorites-v2");
