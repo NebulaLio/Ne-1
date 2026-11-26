@@ -2350,24 +2350,33 @@ function playChordNotes(notes, { arpeggio = false, octave = 4, octaveLift = 0 } 
   }).filter((value) => value !== null);
   if (!baseMidi.length) return;
 
-  // 優先使用新的採樣鋼琴
-  if (window.playSampledChord && !arpeggio) {
-    const noteNames = baseMidi.map(midi => {
-      const names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-      const octave = Math.floor(midi / 12) - 1;
-      return names[midi % 12] + octave;
-    });
-    window.playSampledChord(noteNames, "2n");
+  if (window.playSampledNote) {
+    const noteNames = baseMidi.map(midi => midiToNoteName(midi));
+    if (arpeggio) {
+      noteNames.forEach((n, i) => {
+        setTimeout(() => window.playSampledNote(n, "8n"), i * 180);
+      });
+    } else {
+      window.playSampledChord(noteNames, "2n");
+    }
     return;
   }
 
-  // 備用：舊的合成音
   playNotes(baseMidi, { mode: arpeggio ? "arp" : state.playbackMode, duration: arpeggio ? 0.32 : 0.9, gap: 0.06, velocity: 0.85 });
 }
 
 function playSequence(noteNames, { ascending = true, tempo = 0.26 } = {}) {
   stopAllAudio();
   const seq = ascending ? noteNames : [...noteNames].reverse();
+  
+  if (window.playSampledNote) {
+    seq.forEach((note, index) => {
+      const noteName = `${note}4`;
+      setTimeout(() => window.playSampledNote(noteName, "8n"), index * tempo * 1000);
+    });
+    return;
+  }
+
   const ctx = getAudioContext();
   const now = ctx.currentTime + 0.04;
   seq.forEach((note, index) => {
