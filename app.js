@@ -3667,7 +3667,11 @@ function updatePlayedNoteBadge(midi) {
 function pressPianoKey(midi, keyEl) {
   if (!Number.isFinite(midi)) return;
   updatePlayedNoteBadge(midi);
-  startPianoVoice(midi, 0.85);
+  if (window.playSampledNote) {
+    window.playSampledNote(midiToNoteName(midi), "8n");
+  } else {
+    startPianoVoice(midi, 0.85);
+  }
   if (keyEl) keyEl.classList.add("playing");
 }
 
