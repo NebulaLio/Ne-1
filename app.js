@@ -1287,17 +1287,21 @@ const GUITAR_OPEN_SHAPES = {
 };
 
 // 封閉把位模板（形狀為空弦把位，由低到高 E A D G B e；x＝悶音）
-const GUITAR_E_FORM = { rootOpen: 4, shapes: {
-  maj: "022100", min: "022000", dim: "0120xx", aug: "032110",
-  sus4: "022200", "6": "022120", m6: "022020", "7": "020100",
-  maj7: "021100", m7: "022030", mMaj7: "021000", halfDim: "012030",
-  dim7: "012020", add9: "022102", "9": "020102",
-} };
-const GUITAR_A_FORM = { rootOpen: 9, shapes: {
-  maj: "x02220", min: "x02210", dim: "x0121x", sus2: "x02200", sus4: "x02230",
-  "6": "x02222", "7": "x02020", m7: "x02010", maj7: "x02120",
-  halfDim: "x0101x", "9": "x02423",
-} };
+const GUITAR_E_FORM = {
+  rootOpen: 4, shapes: {
+    maj: "022100", min: "022000", dim: "0120xx", aug: "032110",
+    sus4: "022200", "6": "022120", m6: "022020", "7": "020100",
+    maj7: "021100", m7: "022030", mMaj7: "021000", halfDim: "012030",
+    dim7: "012020", add9: "022102", "9": "020102",
+  }
+};
+const GUITAR_A_FORM = {
+  rootOpen: 9, shapes: {
+    maj: "x02220", min: "x02210", dim: "x0121x", sus2: "x02200", sus4: "x02230",
+    "6": "x02222", "7": "x02020", m7: "x02010", maj7: "x02120",
+    halfDim: "x0101x", "9": "x02423",
+  }
+};
 
 // 吉他一鍵輸入支援的和弦性質（順序即下拉選單順序）
 const GUITAR_CHORD_INSERT_QUALITIES = CHORD_QUALITY_LIBRARY.map((item) => ({
@@ -2814,8 +2818,8 @@ function getTheoryHtml(chord = getSelectedChord()) {
           <span>${noteListFromSteps(choice.notes)}</span>
           <p>${choice.why}</p>
           <small>${isEnglish()
-            ? `Characteristic: ${choice.characteristic.join(", ") || "chord tones"} · Avoid: ${choice.avoid.join(", ") || "no strict avoid notes"} · Use: ${choice.use}`
-            : `特征音：${choice.characteristic.join("、") || "和弦骨干音"} · 避用音：${choice.avoid.join("、") || "无严格避用音"} · 适用场景：${choice.use}`}</small>
+          ? `Characteristic: ${choice.characteristic.join(", ") || "chord tones"} · Avoid: ${choice.avoid.join(", ") || "no strict avoid notes"} · Use: ${choice.use}`
+          : `特征音：${choice.characteristic.join("、") || "和弦骨干音"} · 避用音：${choice.avoid.join("、") || "无严格避用音"} · 适用场景：${choice.use}`}</small>
         </article>
       `;
     })
@@ -2823,27 +2827,27 @@ function getTheoryHtml(chord = getSelectedChord()) {
   const functionLabel = getFunctionLabel(chord, isBeginnerLevel());
   const styleAdvice = isEnglish()
     ? {
-        jazz: isBeginnerLevel()
-          ? "In jazz, treat the 7th and 9th as seasoning: don't play every extension at once. The 3rd and 7th matter most."
-          : "Jazz view: focus on the 3rd/7th guide-tone line and upper tensions (9/11/13); you can omit the perfect 5th or use a tritone substitution.",
-        classical: isBeginnerLevel()
-          ? "In classical music the important thing is the pull away from home and back again; don't let two voices move in parallel forever."
-          : "Classical view: tonic–subdominant–dominant logic, standard cadences and suspension resolutions; avoid parallel fifths and octaves strictly.",
-        pop: isBeginnerLevel()
-          ? "In pop, keep the melody singable and the bass moving smoothly; the chord doesn't need to be packed full."
-          : "Pop view: singable melodic lines, smooth bass motion (slash chords) and the open, spacious colour of spread voicings.",
-      }[state.styleMode] || ""
+      jazz: isBeginnerLevel()
+        ? "In jazz, treat the 7th and 9th as seasoning: don't play every extension at once. The 3rd and 7th matter most."
+        : "Jazz view: focus on the 3rd/7th guide-tone line and upper tensions (9/11/13); you can omit the perfect 5th or use a tritone substitution.",
+      classical: isBeginnerLevel()
+        ? "In classical music the important thing is the pull away from home and back again; don't let two voices move in parallel forever."
+        : "Classical view: tonic–subdominant–dominant logic, standard cadences and suspension resolutions; avoid parallel fifths and octaves strictly.",
+      pop: isBeginnerLevel()
+        ? "In pop, keep the melody singable and the bass moving smoothly; the chord doesn't need to be packed full."
+        : "Pop view: singable melodic lines, smooth bass motion (slash chords) and the open, spacious colour of spread voicings.",
+    }[state.styleMode] || ""
     : {
-        jazz: isBeginnerLevel()
-          ? "爵士里先把七音、九音当成「加料」，不要一次全弹；三音和七音最重要。"
-          : "爵士视角：聚焦三音、七音导向线与高叠张力音（9/11/13），可省略纯五音或引入三全音替代。",
-        classical: isBeginnerLevel()
-          ? "古典里最重要的是「离开—回家」的方向，并且不要让两个声部一直平行走。"
-          : "古典视角：注重主–下属–属功能逻辑、终止式规范、挂留音解决，严格避免平行五度与平行八度。",
-        pop: isBeginnerLevel()
-          ? "流行里先让旋律好唱，低音走得顺，和弦不用塞太满。"
-          : "流行视角：强调旋律线条的歌唱性、顺畅的低音走向（Slash Chord）以及开放和弦的空间色彩。",
-      }[state.styleMode] || "";
+      jazz: isBeginnerLevel()
+        ? "爵士里先把七音、九音当成「加料」，不要一次全弹；三音和七音最重要。"
+        : "爵士视角：聚焦三音、七音导向线与高叠张力音（9/11/13），可省略纯五音或引入三全音替代。",
+      classical: isBeginnerLevel()
+        ? "古典里最重要的是「离开—回家」的方向，并且不要让两个声部一直平行走。"
+        : "古典视角：注重主–下属–属功能逻辑、终止式规范、挂留音解决，严格避免平行五度与平行八度。",
+      pop: isBeginnerLevel()
+        ? "流行里先让旋律好唱，低音走得顺，和弦不用塞太满。"
+        : "流行视角：强调旋律线条的歌唱性、顺畅的低音走向（Slash Chord）以及开放和弦的空间色彩。",
+    }[state.styleMode] || "";
   const lv = chordLevelText(chord);
   const label = (key, fallback) => escapeHtml(uiText(`labels.${key}`) || fallback);
   const intro = isBeginnerLevel()
@@ -3674,6 +3678,9 @@ function releasePianoKey(midi, keyEl) {
 
 function playInteractivePianoKey(midi, keyEl) {
   pressPianoKey(midi, keyEl);
+  if (window.playSampledNote) {
+    window.playSampledNote(midiToNoteName(midi), "8n");
+  }
   window.setTimeout(() => releasePianoKey(midi, keyEl), 340);
 }
 
@@ -4009,7 +4016,7 @@ function renderProgressionBuilder() {
     }
   } else {
     levelSummary = analysis.empty
-    ? `
+      ? `
       <p class="theory-lead">${escapeHtml(uiText("progressions.lead"))}</p>
       <ul>
         <li><strong>进行状态：</strong>尚未建立和弦，所以不显示分数（不是 46 分，也不是 0 分）。</li>
@@ -4017,8 +4024,8 @@ function renderProgressionBuilder() {
         <li><strong>下一步：</strong>从左侧素材点选级数，或直接拖进轨道。</li>
       </ul>
     `
-    : isBeginnerLevel()
-      ? (() => {
+      : isBeginnerLevel()
+        ? (() => {
           const feel = analysis.score >= 80 ? "很顺、很有回家的感觉" : analysis.score >= 60 ? "大致顺，但中间会拐一下" : "走向比较意外，适合想要惊喜的段落";
           return `
           <p class="theory-lead">${escapeHtml(uiText("progressions.lead"))}</p>
@@ -4029,7 +4036,7 @@ function renderProgressionBuilder() {
           </ul>
         `;
         })()
-      : `
+        : `
       <ul>
         <li><strong>功能链：</strong>${analysis.functions}</li>
         <li><strong>${isProLevel() ? "四维评分" : "综合评分"}：</strong>${isProLevel() ? renderScoreLine(analysis.scores) : `${analysis.score}/100`}</li>
@@ -4079,17 +4086,17 @@ function renderModes() {
         <h4 class="mode-group-title">${group.category} <span>${group.modes.length}</span></h4>
         <div class="mode-group-cards">
           ${group.modes
-            .map((mode) => {
-              const notes = mode.intervals.map((step) => noteName(state.root + step)).join(" ");
-              return `
+        .map((mode) => {
+          const notes = mode.intervals.map((step) => noteName(state.root + step)).join(" ");
+          return `
                 <article class="mode-card ${mode.id === state.selectedModeId ? "active" : ""}" data-mode-detail="${mode.id}">
                   <h4>${mode.label}</h4>
                   <p class="mode-card-notes">${notes}</p>
                   <p>${mode.feature}</p>
                 </article>
               `;
-            })
-            .join("")}
+        })
+        .join("")}
         </div>
       </div>
     `)
@@ -4730,15 +4737,15 @@ function renderAbrsmKnowledge() {
     </div>
     <div class="abrsm-topic-grid">
       ${gradeData.topics
-        .map(
-          (topic) => `
+      .map(
+        (topic) => `
             <article class="abrsm-topic">
               <h4>${topic.title}</h4>
               <ul>${topic.points.map((point) => `<li>${point}</li>`).join("")}</ul>
             </article>
           `
-        )
-        .join("")}
+      )
+      .join("")}
     </div>
   `;
 }
@@ -4749,7 +4756,7 @@ function renderTheoryHistory() {
   els.theoryHistoryTimeline.innerHTML = `
     <p class="history-intro">${escapeHtml(intro)}</p>
     ${THEORY_HISTORY.map(
-      (item) => `
+    (item) => `
       <div class="history-item">
         <div class="history-dot"></div>
         <div class="history-body">
@@ -4759,7 +4766,7 @@ function renderTheoryHistory() {
         </div>
       </div>
     `
-    ).join("")}
+  ).join("")}
   `;
   refreshLanguage(els.theoryHistoryTimeline);
 }
@@ -5217,63 +5224,63 @@ function renderSavedScores() {
 
 function persist() {
   try {
-  localStorage.setItem(
-    STORAGE_KEYS.prefs,
-    JSON.stringify({
-      useFlats: state.useFlats,
-      mode: state.mode,
-      root: state.root,
-      selectedChordId: state.selectedChordId,
-      category: state.category,
-      chordSearch: state.chordSearch,
-      phraseStyle: state.phraseStyle,
-      styleMode: state.styleMode,
-      lang: state.lang,
-      level: state.level,
-      theme: state.theme || "nebula",
-      playbackMode: state.playbackMode,
-      tabTuning: state.tabTuning || "standard",
-      tabCapo: state.tabCapo || 0,
-      tabCompact: !!state.tabCompact,
-      tabDurations: state.tabDurations || [],
-      tabChordPosition: state.tabChordPosition || 0,
-      scoreTimeSig: state.scoreTimeSig || "4/4",
-      scoreKeySig: state.scoreKeySig || "C",
-      scoreBpm: state.scoreBpm || 100,
-      scoreRepeat: state.scoreRepeat || "none",
-      audioTone: state.audioTone,
-      swing: state.swing,
-      humanize: state.humanize,
-      theoryFocus: state.theoryFocus,
-      selectedModeId: state.selectedModeId,
-      progression: state.progression,
-      voiceAdjustments: state.voiceAdjustments,
-      voiceExample: state.voiceExample,
-      voiceAValue: state.voiceAValue,
-      voiceBValue: state.voiceBValue,
-      tabBeats: state.tabBeats,
-      tabGrid: state.tabGrid,
-      quizGrade: state.quizGrade,
-      quizCategory: state.quizCategory,
-      abrsmGrade: state.abrsmGrade,
-      tabChordRoot: state.tabChordRoot,
-      tabChordQuality: state.tabChordQuality,
-      pianoChordRoot: state.pianoChordRoot,
-      pianoChordQuality: state.pianoChordQuality,
-    })
-  );
-  localStorage.setItem(STORAGE_KEYS.customPhrases, JSON.stringify(state.customPhrases));
-  // 同步到 Firestore
-if (window.firebaseAuth?.currentUser && window.firebaseDb) {
-  const user = window.firebaseAuth.currentUser;
-  import("https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js").then(({ doc, setDoc }) => {
-    setDoc(doc(window.firebaseDb, "users", user.uid, "data", "phrases"), {
-      phrases: state.customPhrases,
-      updatedAt: new Date().toISOString()
-    }).catch(err => console.error("樂句同步失敗", err));
-  });
-}
-  localStorage.setItem(STORAGE_KEYS.scores, JSON.stringify(state.scores));
+    localStorage.setItem(
+      STORAGE_KEYS.prefs,
+      JSON.stringify({
+        useFlats: state.useFlats,
+        mode: state.mode,
+        root: state.root,
+        selectedChordId: state.selectedChordId,
+        category: state.category,
+        chordSearch: state.chordSearch,
+        phraseStyle: state.phraseStyle,
+        styleMode: state.styleMode,
+        lang: state.lang,
+        level: state.level,
+        theme: state.theme || "nebula",
+        playbackMode: state.playbackMode,
+        tabTuning: state.tabTuning || "standard",
+        tabCapo: state.tabCapo || 0,
+        tabCompact: !!state.tabCompact,
+        tabDurations: state.tabDurations || [],
+        tabChordPosition: state.tabChordPosition || 0,
+        scoreTimeSig: state.scoreTimeSig || "4/4",
+        scoreKeySig: state.scoreKeySig || "C",
+        scoreBpm: state.scoreBpm || 100,
+        scoreRepeat: state.scoreRepeat || "none",
+        audioTone: state.audioTone,
+        swing: state.swing,
+        humanize: state.humanize,
+        theoryFocus: state.theoryFocus,
+        selectedModeId: state.selectedModeId,
+        progression: state.progression,
+        voiceAdjustments: state.voiceAdjustments,
+        voiceExample: state.voiceExample,
+        voiceAValue: state.voiceAValue,
+        voiceBValue: state.voiceBValue,
+        tabBeats: state.tabBeats,
+        tabGrid: state.tabGrid,
+        quizGrade: state.quizGrade,
+        quizCategory: state.quizCategory,
+        abrsmGrade: state.abrsmGrade,
+        tabChordRoot: state.tabChordRoot,
+        tabChordQuality: state.tabChordQuality,
+        pianoChordRoot: state.pianoChordRoot,
+        pianoChordQuality: state.pianoChordQuality,
+      })
+    );
+    localStorage.setItem(STORAGE_KEYS.customPhrases, JSON.stringify(state.customPhrases));
+    // 同步到 Firestore
+    if (window.firebaseAuth?.currentUser && window.firebaseDb) {
+      const user = window.firebaseAuth.currentUser;
+      import("https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js").then(({ doc, setDoc }) => {
+        setDoc(doc(window.firebaseDb, "users", user.uid, "data", "phrases"), {
+          phrases: state.customPhrases,
+          updatedAt: new Date().toISOString()
+        }).catch(err => console.error("樂句同步失敗", err));
+      });
+    }
+    localStorage.setItem(STORAGE_KEYS.scores, JSON.stringify(state.scores));
   } catch {
     if (!persist.warned) {
       persist.warned = true;
@@ -5328,24 +5335,24 @@ function loadState() {
     state.pianoChordQuality = prefs.pianoChordQuality || "maj";
     state.customPhrases = JSON.parse(localStorage.getItem(STORAGE_KEYS.customPhrases) || "[]");
     // 從 Firestore 載入（如果已登入）
-if (window.firebaseAuth?.currentUser && window.firebaseDb) {
-  const user = window.firebaseAuth.currentUser;
-  import("https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js").then(async ({ doc, getDoc }) => {
-    try {
-      const snap = await getDoc(doc(window.firebaseDb, "users", user.uid, "data", "phrases"));
-      if (snap.exists()) {
-        const data = snap.data();
-        if (Array.isArray(data.phrases)) {
-          state.customPhrases = data.phrases;
-          renderCustomPhrases?.(); // 如果有這個函數就呼叫，沒有可忽略
-          console.log("已從雲端載入樂句");
+    if (window.firebaseAuth?.currentUser && window.firebaseDb) {
+      const user = window.firebaseAuth.currentUser;
+      import("https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js").then(async ({ doc, getDoc }) => {
+        try {
+          const snap = await getDoc(doc(window.firebaseDb, "users", user.uid, "data", "phrases"));
+          if (snap.exists()) {
+            const data = snap.data();
+            if (Array.isArray(data.phrases)) {
+              state.customPhrases = data.phrases;
+              renderCustomPhrases?.(); // 如果有這個函數就呼叫，沒有可忽略
+              console.log("已從雲端載入樂句");
+            }
+          }
+        } catch (e) {
+          console.error("載入樂句失敗", e);
         }
-      }
-    } catch (e) {
-      console.error("載入樂句失敗", e);
+      });
     }
-  });
-}
     state.scores = JSON.parse(localStorage.getItem(STORAGE_KEYS.scores) || "[]");
     // 清理舊版收藏與自訂 Logo 殘留的本機資料
     localStorage.removeItem("music-dictionary-favorites-v2");
@@ -6796,31 +6803,31 @@ const THEME_OPTIONS = ["nebula", "industrial", "studio"];
 
 const GUITAR_TUNINGS = {
   standard: { label: "标准调弦 (E A D G B e)", midi: [40, 45, 50, 55, 59, 64], names: ["E", "A", "D", "G", "B", "e"] },
-  dropD:    { label: "Drop D 调弦 (D A D G B e)", midi: [38, 45, 50, 55, 59, 64], names: ["D", "A", "D", "G", "B", "e"] },
+  dropD: { label: "Drop D 调弦 (D A D G B e)", midi: [38, 45, 50, 55, 59, 64], names: ["D", "A", "D", "G", "B", "e"] },
   halfDown: { label: "降半音调弦 (Eb Ab Db Gb Bb eb)", midi: [39, 44, 49, 54, 58, 63], names: ["Eb", "Ab", "Db", "Gb", "Bb", "eb"] },
-  openD:    { label: "开放 D 调弦 (D A D F# A d)", midi: [38, 45, 50, 54, 57, 62], names: ["D", "A", "D", "F#", "A", "d"] },
-  openG:    { label: "开放 G 调弦 (D G D G B d)", midi: [38, 43, 50, 55, 59, 62], names: ["D", "G", "D", "G", "B", "d"] },
-  dadgad:   { label: "DADGAD 指弹调弦 (D A D G A d)", midi: [38, 45, 50, 55, 57, 62], names: ["D", "A", "D", "G", "A", "d"] },
+  openD: { label: "开放 D 调弦 (D A D F# A d)", midi: [38, 45, 50, 54, 57, 62], names: ["D", "A", "D", "F#", "A", "d"] },
+  openG: { label: "开放 G 调弦 (D G D G B d)", midi: [38, 43, 50, 55, 59, 62], names: ["D", "G", "D", "G", "B", "d"] },
+  dadgad: { label: "DADGAD 指弹调弦 (D A D G A d)", midi: [38, 45, 50, 55, 57, 62], names: ["D", "A", "D", "G", "A", "d"] },
 };
 
 const DURATION_SPECS = {
-  w:  { code: "w",  symbol: "𝅝", label: "全音符 (4拍)", beats: 4, xmlType: "whole" },
-  h:  { code: "h",  symbol: "𝅗𝅥", label: "二分 (2拍)", beats: 2, xmlType: "half" },
+  w: { code: "w", symbol: "𝅝", label: "全音符 (4拍)", beats: 4, xmlType: "whole" },
+  h: { code: "h", symbol: "𝅗𝅥", label: "二分 (2拍)", beats: 2, xmlType: "half" },
   qd: { code: "qd", symbol: "♩.", label: "附点四分 (1.5拍)", beats: 1.5, xmlType: "quarter", dot: true },
-  q:  { code: "q",  symbol: "♩", label: "四分 (1拍)", beats: 1, xmlType: "quarter" },
-  e:  { code: "e",  symbol: "♪", label: "八分 (1/2拍)", beats: 0.5, xmlType: "eighth" },
-  s:  { code: "s",  symbol: "♬", label: "十六分 (1/4拍)", beats: 0.25, xmlType: "16th" },
+  q: { code: "q", symbol: "♩", label: "四分 (1拍)", beats: 1, xmlType: "quarter" },
+  e: { code: "e", symbol: "♪", label: "八分 (1/2拍)", beats: 0.5, xmlType: "eighth" },
+  s: { code: "s", symbol: "♬", label: "十六分 (1/4拍)", beats: 0.25, xmlType: "16th" },
 };
 
 const KEY_SIGNATURE_SPECS = {
-  C:  { label: "C 大调 / A 小调 (0)", fifths: 0, sharps: [], flats: [] },
-  G:  { label: "G 大调 / E 小调 (1♯)", fifths: 1, sharps: ["F"], flats: [] },
-  D:  { label: "D 大调 / B 小调 (2♯)", fifths: 2, sharps: ["F", "C"], flats: [] },
-  A:  { label: "A 大调 / F♯ 小调 (3♯)", fifths: 3, sharps: ["F", "C", "G"], flats: [] },
-  E:  { label: "E 大调 / C♯ 小调 (4♯)", fifths: 4, sharps: ["F", "C", "G", "D"], flats: [] },
-  B:  { label: "B 大调 / G♯ 小调 (5♯)", fifths: 5, sharps: ["F", "C", "G", "D", "A"], flats: [] },
+  C: { label: "C 大调 / A 小调 (0)", fifths: 0, sharps: [], flats: [] },
+  G: { label: "G 大调 / E 小调 (1♯)", fifths: 1, sharps: ["F"], flats: [] },
+  D: { label: "D 大调 / B 小调 (2♯)", fifths: 2, sharps: ["F", "C"], flats: [] },
+  A: { label: "A 大调 / F♯ 小调 (3♯)", fifths: 3, sharps: ["F", "C", "G"], flats: [] },
+  E: { label: "E 大调 / C♯ 小调 (4♯)", fifths: 4, sharps: ["F", "C", "G", "D"], flats: [] },
+  B: { label: "B 大调 / G♯ 小调 (5♯)", fifths: 5, sharps: ["F", "C", "G", "D", "A"], flats: [] },
   "F#": { label: "F♯ 大调 / D♯ 小调 (6♯)", fifths: 6, sharps: ["F", "C", "G", "D", "A", "E"], flats: [] },
-  F:  { label: "F 大调 / D 小调 (1♭)", fifths: -1, sharps: [], flats: ["B"] },
+  F: { label: "F 大调 / D 小调 (1♭)", fifths: -1, sharps: [], flats: ["B"] },
   Bb: { label: "B♭ 大调 / G 小调 (2♭)", fifths: -2, sharps: [], flats: ["B", "E"] },
   Eb: { label: "E♭ 大调 / C 小调 (3♭)", fifths: -3, sharps: [], flats: ["B", "E", "A"] },
   Ab: { label: "A♭ 大调 / F 小调 (4♭)", fifths: -4, sharps: [], flats: ["B", "E", "A", "D"] },
@@ -8278,18 +8285,18 @@ initialize();
 
 // 1. 扩展时值规格表（兼容字母与数字语法：/w /1, /hd /2., /h /2, /qd /4., /qdd /4.., /q /4, /qt /4t, /ed /8., /e /8, /et /8t, /s /16, /st /16t）
 Object.assign(DURATION_SPECS, {
-  w:   { code: "w",   symbol: "𝅝",   label: "全音符 (4拍)",      beats: 4,         xmlType: "whole",   beamLevel: 0 },
-  hd:  { code: "hd",  symbol: "𝅗𝅥.",  label: "附点二分 (3拍)",    beats: 3,         xmlType: "half",    dot: true, beamLevel: 0 },
-  h:   { code: "h",   symbol: "𝅗𝅥",   label: "二分 (2拍)",        beats: 2,         xmlType: "half",    beamLevel: 0 },
-  qdd: { code: "qdd", symbol: "♩..", label: "双附点四分 (1.75拍)", beats: 1.75,    xmlType: "quarter", dot: true, doubleDot: true, beamLevel: 0 },
-  qd:  { code: "qd",  symbol: "♩.",  label: "附点四分 (1.5拍)",  beats: 1.5,       xmlType: "quarter", dot: true, beamLevel: 0 },
-  q:   { code: "q",   symbol: "♩",   label: "四分 (1拍)",        beats: 1,         xmlType: "quarter", beamLevel: 0 },
-  qt:  { code: "qt",  symbol: "♩³",  label: "四分三连音 (2/3拍)", beats: 2 / 3,    xmlType: "quarter", triplet: true, beamLevel: 0 },
-  ed:  { code: "ed",  symbol: "♪.",  label: "附点八分 (3/4拍)",  beats: 0.75,      xmlType: "eighth",  dot: true, beamLevel: 1 },
-  e:   { code: "e",   symbol: "♪",   label: "八分 (1/2拍)",      beats: 0.5,       xmlType: "eighth",  beamLevel: 1 },
-  et:  { code: "et",  symbol: "♪³",  label: "八分三连音 (1/3拍)", beats: 1 / 3,    xmlType: "eighth",  triplet: true, beamLevel: 1 },
-  s:   { code: "s",   symbol: "♬",   label: "十六分 (1/4拍)",    beats: 0.25,      xmlType: "16th",    beamLevel: 2 },
-  st:  { code: "st",  symbol: "♬³",  label: "十六分三连 (1/6拍)", beats: 1 / 6,    xmlType: "16th",    triplet: true, beamLevel: 2 },
+  w: { code: "w", symbol: "𝅝", label: "全音符 (4拍)", beats: 4, xmlType: "whole", beamLevel: 0 },
+  hd: { code: "hd", symbol: "𝅗𝅥.", label: "附点二分 (3拍)", beats: 3, xmlType: "half", dot: true, beamLevel: 0 },
+  h: { code: "h", symbol: "𝅗𝅥", label: "二分 (2拍)", beats: 2, xmlType: "half", beamLevel: 0 },
+  qdd: { code: "qdd", symbol: "♩..", label: "双附点四分 (1.75拍)", beats: 1.75, xmlType: "quarter", dot: true, doubleDot: true, beamLevel: 0 },
+  qd: { code: "qd", symbol: "♩.", label: "附点四分 (1.5拍)", beats: 1.5, xmlType: "quarter", dot: true, beamLevel: 0 },
+  q: { code: "q", symbol: "♩", label: "四分 (1拍)", beats: 1, xmlType: "quarter", beamLevel: 0 },
+  qt: { code: "qt", symbol: "♩³", label: "四分三连音 (2/3拍)", beats: 2 / 3, xmlType: "quarter", triplet: true, beamLevel: 0 },
+  ed: { code: "ed", symbol: "♪.", label: "附点八分 (3/4拍)", beats: 0.75, xmlType: "eighth", dot: true, beamLevel: 1 },
+  e: { code: "e", symbol: "♪", label: "八分 (1/2拍)", beats: 0.5, xmlType: "eighth", beamLevel: 1 },
+  et: { code: "et", symbol: "♪³", label: "八分三连音 (1/3拍)", beats: 1 / 3, xmlType: "eighth", triplet: true, beamLevel: 1 },
+  s: { code: "s", symbol: "♬", label: "十六分 (1/4拍)", beats: 0.25, xmlType: "16th", beamLevel: 2 },
+  st: { code: "st", symbol: "♬³", label: "十六分三连 (1/6拍)", beats: 1 / 6, xmlType: "16th", triplet: true, beamLevel: 2 },
 });
 
 const NUMERIC_DURATION_ALIASES = {
@@ -8745,7 +8752,13 @@ playPhraseNotes = function (text, cardEl = null) {
   events.forEach((ev, idx) => {
     const durSec = Math.max(0.12, ev.durBeats * secPerBeat);
     const startAt = ctx.currentTime + elapsed;
-    triggerMidi(ev.midi, startAt, durSec * 0.92, 0.84);
+    // 優先使用採樣鋼琴
+    if (window.playSampledNote) {
+      const noteName = midiToNoteName(ev.midi);
+      window.setTimeout(() => window.playSampledNote(noteName, "8n"), elapsed * 1000);
+    } else {
+      triggerMidi(ev.midi, startAt, durSec * 0.92, 0.84);
+    }
 
     const delayMs = Math.round(elapsed * 1000);
     phrasePlayTimers.push(
@@ -9498,7 +9511,7 @@ renderTabStaffVisual = function () {
       // 贯穿五线谱与六线谱的联合小节线
       allMeasuresStaffSvg += `<line x1="${barX}" y1="${staffStepToY(8, staffBottomY, staffLineGap)}" x2="${barX}" y2="${tabBottomY}" stroke="rgba(148,163,184,0.62)" stroke-width="1.5" />`;
     }
-    allMeasuresStaffSvg += `<text x="${ (m === 0 ? startX - 18 : barX + 5) }" y="22" fill="#94a3b8" font-size="10" font-weight="800">M${m + 1}</text>`;
+    allMeasuresStaffSvg += `<text x="${(m === 0 ? startX - 18 : barX + 5)}" y="22" fill="#94a3b8" font-size="10" font-weight="800">M${m + 1}</text>`;
 
     const measureEvents = [];
     for (let col = startCol; col < endCol; col++) {
@@ -10100,7 +10113,7 @@ optimizePianoScoreVoiceLeading = function () {
           const iv2 = mod(candAll[v] - candAll[u], 12);
           const dU = Math.sign(candAll[u] - prevAll[u]);
           const dV = Math.sign(candAll[v] - prevAll[v]);
-          if (dU !== 0 && dU === dV && ( (iv1 === 7 && iv2 === 7) || (iv1 === 0 && iv2 === 0) )) {
+          if (dU !== 0 && dU === dV && ((iv1 === 7 && iv2 === 7) || (iv1 === 0 && iv2 === 0))) {
             cost += 60;
           }
         }
@@ -10507,36 +10520,36 @@ function clearModeAnim() {
 
 // ── 四：精简全站核心文案（一句话秒懂 + 核心公式 + 实战场景） ──
 const CONCISE_CHORD_TEXT = {
-  maj:     { theory: "明亮稳定，大调收尾与主歌落点首选。", guitar: "开放把位与分解伴奏最常用。" },
-  min:     { theory: "柔和内省，小调主和弦或大调 ii/vi 级。", guitar: "民谣、流行与爵士小调基础。" },
-  dim:     { theory: "紧绷不安，常作导音和弦推向主和弦。", guitar: "适合半音经过连接。" },
-  aug:     { theory: "悬浮扩张，半音上行或梦幻转折常用。", guitar: "每 4 品指型完全对称重复。" },
-  sus2:    { theory: "拿掉三音换大二度，空灵现代、不甜腻。", guitar: "民谣指弹与后摇空弦伴奏利器。" },
-  sus4:    { theory: "纯四度制造悬念，极想落回大三音。", guitar: "常与大三和弦交替弹奏增加律动。" },
-  "6":     { theory: "大三加六度，复古温暖，可替代大七。", guitar: "爵士摇摆与 Bossa 收尾常用。" },
-  "7":     { theory: "含三全音张力，强烈倾向下行五度解决。", guitar: "Blues 与 ii-V-I 的推进引擎。" },
-  maj7:    { theory: "温柔通透，爵士、R&B 与都市流行灵魂。", guitar: "省略五音后按弦更轻松清晰。" },
-  m7:      { theory: "温润松弛，Neo-Soul 与爵士 ii 级核心。", guitar: "5 弦与 6 弦根音把位最实用。" },
-  mMaj7:   { theory: "小三配大七，悬疑电影感（007 招牌色彩）。", guitar: "常用于小调内声部半音下行线。" },
+  maj: { theory: "明亮稳定，大调收尾与主歌落点首选。", guitar: "开放把位与分解伴奏最常用。" },
+  min: { theory: "柔和内省，小调主和弦或大调 ii/vi 级。", guitar: "民谣、流行与爵士小调基础。" },
+  dim: { theory: "紧绷不安，常作导音和弦推向主和弦。", guitar: "适合半音经过连接。" },
+  aug: { theory: "悬浮扩张，半音上行或梦幻转折常用。", guitar: "每 4 品指型完全对称重复。" },
+  sus2: { theory: "拿掉三音换大二度，空灵现代、不甜腻。", guitar: "民谣指弹与后摇空弦伴奏利器。" },
+  sus4: { theory: "纯四度制造悬念，极想落回大三音。", guitar: "常与大三和弦交替弹奏增加律动。" },
+  "6": { theory: "大三加六度，复古温暖，可替代大七。", guitar: "爵士摇摆与 Bossa 收尾常用。" },
+  "7": { theory: "含三全音张力，强烈倾向下行五度解决。", guitar: "Blues 与 ii-V-I 的推进引擎。" },
+  maj7: { theory: "温柔通透，爵士、R&B 与都市流行灵魂。", guitar: "省略五音后按弦更轻松清晰。" },
+  m7: { theory: "温润松弛，Neo-Soul 与爵士 ii 级核心。", guitar: "5 弦与 6 弦根音把位最实用。" },
+  mMaj7: { theory: "小三配大七，悬疑电影感（007 招牌色彩）。", guitar: "常用于小调内声部半音下行线。" },
   halfDim: { theory: "小调 iiø 级标配，半忧郁半紧张的前属和弦。", guitar: "4 根邻弦紧凑按法，连接 V7alt。" },
-  dim7:    { theory: "全由小三度叠成，极度紧张的万能转调枢纽。", guitar: "同一指型每隔 3 品即可平移复用。" },
-  "9":     { theory: "属七加九音，比普通属七更饱满且富律动。", guitar: "Funk 切音与蓝调伴奏必备手型。" },
-  "11":    { theory: "宽广悬浮，实战中常省去三音（作 9sus4）。", guitar: "适合现代流行与融合爵士铺底。" },
-  "13":    { theory: "属和弦华丽顶点，保留 3、b7、13 最通透。", guitar: "省去五音与十一音，四弦把位即可。" },
-  alt:     { theory: "汇集 b9/#9/b5/#5 极限张力，解决感最强。", guitar: "V7alt 进入主和弦前的终极增压器。" },
-  add9:    { theory: "大三直接加九音（无七音），清澈青春感。", guitar: "流行分解和弦与指弹前奏高频和弦。" },
-  "5":     { theory: "只留根音与五音，无大小调属性，力量纯粹。", guitar: "摇滚失真节奏与重型 Riff 基石。" },
-  m6:      { theory: "小三加还原六度，Dorian 与小调终止标志。", guitar: "吉普赛爵士与抒情小调收尾首选。" },
-  "69":    { theory: "六音配九音，比大七更柔和开阔的主和弦。", guitar: "Bossa Nova 与爵士结尾常用。" },
-  maj9:    { theory: "大七加九音，高级感拉满的现代都会色彩。", guitar: "5 弦根音阶梯指型手感极佳。" },
-  maj13:   { theory: "大七叠十三音，开阔优雅的现代爵士声场。", guitar: "常配合 #11 音展现 Lydian 光泽。" },
-  m9:      { theory: "小七加九音，丝滑深邃，Lo-Fi 与 R&B 最爱。", guitar: "无名指小横按 3-2-1 弦即可成型。" },
-  m11:     { theory: "四度叠置感极强，现代模态爵士与空灵铺垫。", guitar: "按弦简单且音响宽广通透。" },
+  dim7: { theory: "全由小三度叠成，极度紧张的万能转调枢纽。", guitar: "同一指型每隔 3 品即可平移复用。" },
+  "9": { theory: "属七加九音，比普通属七更饱满且富律动。", guitar: "Funk 切音与蓝调伴奏必备手型。" },
+  "11": { theory: "宽广悬浮，实战中常省去三音（作 9sus4）。", guitar: "适合现代流行与融合爵士铺底。" },
+  "13": { theory: "属和弦华丽顶点，保留 3、b7、13 最通透。", guitar: "省去五音与十一音，四弦把位即可。" },
+  alt: { theory: "汇集 b9/#9/b5/#5 极限张力，解决感最强。", guitar: "V7alt 进入主和弦前的终极增压器。" },
+  add9: { theory: "大三直接加九音（无七音），清澈青春感。", guitar: "流行分解和弦与指弹前奏高频和弦。" },
+  "5": { theory: "只留根音与五音，无大小调属性，力量纯粹。", guitar: "摇滚失真节奏与重型 Riff 基石。" },
+  m6: { theory: "小三加还原六度，Dorian 与小调终止标志。", guitar: "吉普赛爵士与抒情小调收尾首选。" },
+  "69": { theory: "六音配九音，比大七更柔和开阔的主和弦。", guitar: "Bossa Nova 与爵士结尾常用。" },
+  maj9: { theory: "大七加九音，高级感拉满的现代都会色彩。", guitar: "5 弦根音阶梯指型手感极佳。" },
+  maj13: { theory: "大七叠十三音，开阔优雅的现代爵士声场。", guitar: "常配合 #11 音展现 Lydian 光泽。" },
+  m9: { theory: "小七加九音，丝滑深邃，Lo-Fi 与 R&B 最爱。", guitar: "无名指小横按 3-2-1 弦即可成型。" },
+  m11: { theory: "四度叠置感极强，现代模态爵士与空灵铺垫。", guitar: "按弦简单且音响宽广通透。" },
   "7sus4": { theory: "锁住属和弦三音不放，兼具推进力与开阔感。", guitar: "Herbie 式放克与日系流行招牌。" },
   "9sus4": { theory: "属九挂四（等价于 m7/5音），阳光都市感。", guitar: "City Pop 前奏与副歌转折王牌。" },
-  "7b9":   { theory: "古典与爵士小调属和弦，强烈的悲剧解决欲。", guitar: "高三弦实质是一个减七和弦。" },
+  "7b9": { theory: "古典与爵士小调属和弦，强烈的悲剧解决欲。", guitar: "高三弦实质是一个减七和弦。" },
   "7sharp9": { theory: "大三与 #9(小三) 同框摩擦，Hendrix 蓝调摇滚味。", guitar: "Funk 与 Blues-Rock 极具侵略性。" },
-  "7b13":  { theory: "属七配降十三（#5），准备落入小调或大七。", guitar: "指型紧凑，向主和弦三音半音解决。" },
+  "7b13": { theory: "属七配降十三（#5），准备落入小调或大七。", guitar: "指型紧凑，向主和弦三音半音解决。" },
 };
 
 CHORD_QUALITY_LIBRARY.forEach((c) => {
@@ -10658,76 +10671,76 @@ function playTermDemo(demoType) {
     midis.forEach((m, i) => triggerMidi(m, now + i * gap, dur, vel));
   };
   switch (demoType) {
-    case "piccolo":    playSeq([79, 81, 84, 88, 91], 0.11, 0.25, 0.78); break;
-    case "flute":      playSeq([67, 71, 74, 79, 76], 0.15, 0.4, 0.8); break;
-    case "altoflute":  playSeq([55, 59, 62, 67, 64], 0.2, 0.55, 0.78); break;
-    case "oboe":       playSeq([69, 69, 71, 72, 69], 0.22, 0.48, 0.82); break;
-    case "ehorn":      playSeq([57, 60, 64, 62, 57], 0.25, 0.65, 0.8); break;
-    case "clarinet":   playSeq([53, 57, 60, 65, 72, 77], 0.13, 0.35, 0.82); break;
-    case "bclarinet":  playSeq([41, 45, 48, 53, 48], 0.22, 0.55, 0.85); break;
-    case "bassoon":    playSeq([40, 43, 47, 52, 47, 40], 0.15, 0.2, 0.85); break;
-    case "cbassoon":   playSeq([28, 31, 36, 40], 0.28, 0.7, 0.9); break;
-    case "sax":        playSeq([58, 61, 62, 65, 67, 65], 0.16, 0.4, 0.86); break;
-    case "flutter":    playSeq([67, 68, 67, 68, 67, 68, 72], 0.055, 0.12, 0.82); break;
-    case "horn":       playSeq([53, 60, 65, 69, 65], 0.22, 0.65, 0.86); break;
-    case "trumpet":    playSeq([60, 67, 72, 72, 76], 0.14, 0.35, 0.9); break;
-    case "flugel":     playSeq([58, 62, 65, 69, 67], 0.24, 0.6, 0.76); break;
-    case "trombone":   playSeq([46, 53, 58, 62], 0.24, 0.65, 0.9); break;
-    case "euphonium":  playSeq([48, 52, 55, 60, 59, 60], 0.2, 0.5, 0.84); break;
-    case "tuba":       playSeq([36, 43, 36, 31, 36], 0.26, 0.65, 0.92); break;
-    case "stopped":    playSeq([64, 65, 64], 0.18, 0.25, 0.85); break;
-    case "brassy":     [48, 55, 60, 64, 67, 72].forEach((m) => triggerMidi(m, now, 0.9, 0.95)); break;
-    case "mute":       playSeq([62, 65, 68, 67], 0.2, 0.35, 0.6); break;
-    case "violin":     playSeq([55, 62, 69, 76], 0.22, 0.6, 0.85); break;
-    case "viola":      playSeq([48, 55, 62, 69], 0.22, 0.6, 0.85); break;
-    case "cello":      playSeq([36, 43, 50, 57], 0.24, 0.75, 0.88); break;
-    case "dbass":      playSeq([28, 33, 38, 43], 0.26, 0.75, 0.92); break;
-    case "harp":       playSeq([60, 62, 64, 66, 67, 69, 71, 72, 76, 79], 0.06, 0.9, 0.78); break;
-    case "guitar":     playSeq([40, 45, 50, 55, 59, 64], 0.05, 0.95, 0.82); break;
-    case "mandolin":   playSeq([76, 76, 76, 76, 79, 79, 79, 79, 81, 81], 0.05, 0.12, 0.8); break;
-    case "pizz":       playSeq([60, 64, 67, 72, 67, 64, 60], 0.14, 0.08, 0.85); break;
+    case "piccolo": playSeq([79, 81, 84, 88, 91], 0.11, 0.25, 0.78); break;
+    case "flute": playSeq([67, 71, 74, 79, 76], 0.15, 0.4, 0.8); break;
+    case "altoflute": playSeq([55, 59, 62, 67, 64], 0.2, 0.55, 0.78); break;
+    case "oboe": playSeq([69, 69, 71, 72, 69], 0.22, 0.48, 0.82); break;
+    case "ehorn": playSeq([57, 60, 64, 62, 57], 0.25, 0.65, 0.8); break;
+    case "clarinet": playSeq([53, 57, 60, 65, 72, 77], 0.13, 0.35, 0.82); break;
+    case "bclarinet": playSeq([41, 45, 48, 53, 48], 0.22, 0.55, 0.85); break;
+    case "bassoon": playSeq([40, 43, 47, 52, 47, 40], 0.15, 0.2, 0.85); break;
+    case "cbassoon": playSeq([28, 31, 36, 40], 0.28, 0.7, 0.9); break;
+    case "sax": playSeq([58, 61, 62, 65, 67, 65], 0.16, 0.4, 0.86); break;
+    case "flutter": playSeq([67, 68, 67, 68, 67, 68, 72], 0.055, 0.12, 0.82); break;
+    case "horn": playSeq([53, 60, 65, 69, 65], 0.22, 0.65, 0.86); break;
+    case "trumpet": playSeq([60, 67, 72, 72, 76], 0.14, 0.35, 0.9); break;
+    case "flugel": playSeq([58, 62, 65, 69, 67], 0.24, 0.6, 0.76); break;
+    case "trombone": playSeq([46, 53, 58, 62], 0.24, 0.65, 0.9); break;
+    case "euphonium": playSeq([48, 52, 55, 60, 59, 60], 0.2, 0.5, 0.84); break;
+    case "tuba": playSeq([36, 43, 36, 31, 36], 0.26, 0.65, 0.92); break;
+    case "stopped": playSeq([64, 65, 64], 0.18, 0.25, 0.85); break;
+    case "brassy": [48, 55, 60, 64, 67, 72].forEach((m) => triggerMidi(m, now, 0.9, 0.95)); break;
+    case "mute": playSeq([62, 65, 68, 67], 0.2, 0.35, 0.6); break;
+    case "violin": playSeq([55, 62, 69, 76], 0.22, 0.6, 0.85); break;
+    case "viola": playSeq([48, 55, 62, 69], 0.22, 0.6, 0.85); break;
+    case "cello": playSeq([36, 43, 50, 57], 0.24, 0.75, 0.88); break;
+    case "dbass": playSeq([28, 33, 38, 43], 0.26, 0.75, 0.92); break;
+    case "harp": playSeq([60, 62, 64, 66, 67, 69, 71, 72, 76, 79], 0.06, 0.9, 0.78); break;
+    case "guitar": playSeq([40, 45, 50, 55, 59, 64], 0.05, 0.95, 0.82); break;
+    case "mandolin": playSeq([76, 76, 76, 76, 79, 79, 79, 79, 81, 81], 0.05, 0.12, 0.8); break;
+    case "pizz": playSeq([60, 64, 67, 72, 67, 64, 60], 0.14, 0.08, 0.85); break;
     case "ponticello": playSeq([76, 83, 88, 91], 0.14, 0.4, 0.75); break;
-    case "collegno":   playSeq([60, 67, 63, 70, 60], 0.12, 0.05, 0.8); break;
-    case "spiccato":   playSeq([67, 69, 71, 72, 74, 76], 0.1, 0.07, 0.82); break;
+    case "collegno": playSeq([60, 67, 63, 70, 60], 0.12, 0.05, 0.8); break;
+    case "spiccato": playSeq([67, 69, 71, 72, 74, 76], 0.1, 0.07, 0.82); break;
     case "martellato": playSeq([60, 64, 67, 72], 0.2, 0.18, 0.95); break;
-    case "tremolo":    playSeq([64, 67, 64, 67, 64, 67, 64, 67], 0.06, 0.12, 0.8); break;
-    case "harmonic":   playSeq([76, 83, 88, 95], 0.22, 0.85, 0.7); break;
-    case "doublestop": [60, 64].forEach((m) => triggerMidi(m, now, 0.45, 0.84)); [62, 65].forEach((m) => triggerMidi(m, now + 0.45, 0.45, 0.84)); [64, 67].forEach((m) => triggerMidi(m, now + 0.9, 0.7, 0.86)); break;
-    case "timpani":    playSeq([48, 43, 43, 48], 0.22, 0.55, 0.95); break;
-    case "marimba":    playSeq([60, 64, 67, 71, 72, 67, 64, 60], 0.09, 0.28, 0.85); break;
+    case "tremolo": playSeq([64, 67, 64, 67, 64, 67, 64, 67], 0.06, 0.12, 0.8); break;
+    case "harmonic": playSeq([76, 83, 88, 95], 0.22, 0.85, 0.7); break;
+    case "doublestop": [60, 64].forEach((m) => triggerMidi(m, now, 0.45, 0.84));[62, 65].forEach((m) => triggerMidi(m, now + 0.45, 0.45, 0.84));[64, 67].forEach((m) => triggerMidi(m, now + 0.9, 0.7, 0.86)); break;
+    case "timpani": playSeq([48, 43, 43, 48], 0.22, 0.55, 0.95); break;
+    case "marimba": playSeq([60, 64, 67, 71, 72, 67, 64, 60], 0.09, 0.28, 0.85); break;
     case "vibraphone": [60, 64, 67, 71, 74].forEach((m, i) => triggerMidi(m, now + i * 0.08, 1.4, 0.78)); break;
-    case "celesta":    playSeq([76, 75, 76, 71, 74, 72, 69], 0.13, 0.45, 0.76); break;
-    case "perc":       playSeq([48, 48, 48, 60, 48, 60], 0.11, 0.06, 0.9); break;
-    case "bell":       playSeq([84, 91, 96], 0.28, 1.3, 0.82); break;
-    case "piano":      playSeq([60, 64, 67, 72, 76, 72, 67, 64, 60], 0.11, 0.45, 0.84); break;
-    case "pedal":      [48, 55, 60, 64, 67, 72, 76].forEach((m, i) => triggerMidi(m, now + i * 0.08, 1.8, 0.82)); break;
-    case "unacorda":   [60, 64, 67, 71].forEach((m, i) => triggerMidi(m, now + i * 0.18, 1.1, 0.45)); break;
-    case "arp":        playSeq([48, 52, 55, 60, 64, 67, 72, 76], 0.055, 1.1, 0.82); break;
-    case "grave":      playSeq([48, 51, 55, 53], 0.55, 0.85, 0.88); break;
-    case "largo":      playSeq([60, 62, 64, 60, 64, 62, 60], 0.45, 0.75, 0.82); break;
-    case "adagio":     playSeq([60, 64, 67, 69, 67, 64], 0.36, 0.65, 0.78); break;
-    case "andante":    playSeq([60, 62, 64, 65, 67, 64, 60], 0.26, 0.38, 0.8); break;
-    case "moderato":   playSeq([60, 64, 62, 65, 64, 67, 72], 0.2, 0.3, 0.82); break;
-    case "allegro":    playSeq([60, 62, 64, 65, 67, 69, 71, 72], 0.11, 0.2, 0.86); break;
-    case "presto":     playSeq([60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79, 84], 0.065, 0.14, 0.88); break;
-    case "accel":      [0, 0.34, 0.62, 0.84, 1.0, 1.12, 1.21, 1.28].forEach((t, i) => triggerMidi(60 + i * 2, now + t, 0.2, 0.84)); break;
-    case "rit":        [0, 0.1, 0.22, 0.38, 0.6, 0.9, 1.32].forEach((t, i) => triggerMidi(72 - i * 2, now + t, 0.35, 0.82)); break;
-    case "rubato":     [0, 0.28, 0.44, 0.58, 0.82, 1.2].forEach((t, i) => triggerMidi([60, 64, 67, 71, 69, 67][i], now + t, 0.45, 0.8)); break;
-    case "piano_dyn":  playSeq([60, 64, 67, 72], 0.22, 0.5, 0.36); break;
-    case "forte_dyn":  playSeq([60, 64, 67, 72], 0.18, 0.65, 0.95); break;
-    case "cresc":      [0.3, 0.45, 0.6, 0.78, 0.95].forEach((v, i) => triggerMidi(60 + i * 2, now + i * 0.2, 0.35, v)); break;
-    case "sfz":        [48, 60, 64, 67, 72].forEach((m) => triggerMidi(m, now, 0.45, 0.98)); break;
-    case "tenuto":     playSeq([60, 62, 64, 67], 0.28, 0.27, 0.86); break;
-    case "staccato":   playSeq([60, 64, 67, 72, 67, 64, 60], 0.13, 0.06, 0.84); break;
-    case "dolce":      playSeq([64, 67, 72, 71, 69, 67], 0.26, 0.6, 0.68); break;
-    case "leggiero":   playSeq([72, 74, 76, 79, 76, 74, 72], 0.09, 0.12, 0.7); break;
-    case "morendo":    [0.85, 0.68, 0.5, 0.34, 0.2].forEach((v, i) => triggerMidi(67 - i * 2, now + i * 0.28, 0.5, v)); break;
-    case "tutti":      [36, 48, 55, 60, 64, 67, 72, 76].forEach((m) => triggerMidi(m, now, 1.0, 0.92)); break;
-    case "fermata":    playSeq([60, 64, 67], 0.18, 0.25, 0.8); triggerMidi(72, now + 0.56, 1.5, 0.9); break;
-    case "ostinato":   playSeq([48, 55, 58, 55, 48, 55, 58, 55], 0.14, 0.2, 0.84); break;
-    case "canon":      playSeq([60, 62, 64, 65, 67], 0.18, 0.35, 0.82); [60, 62, 64, 65, 67].forEach((m, i) => triggerMidi(m + 12, now + 0.36 + i * 0.18, 0.35, 0.78)); break;
-    case "trill":      playSeq([72, 74, 72, 74, 72, 74, 71, 72], 0.065, 0.12, 0.82); break;
-    default:           playSeq([60, 64, 67, 72], 0.14, 0.4, 0.82);
+    case "celesta": playSeq([76, 75, 76, 71, 74, 72, 69], 0.13, 0.45, 0.76); break;
+    case "perc": playSeq([48, 48, 48, 60, 48, 60], 0.11, 0.06, 0.9); break;
+    case "bell": playSeq([84, 91, 96], 0.28, 1.3, 0.82); break;
+    case "piano": playSeq([60, 64, 67, 72, 76, 72, 67, 64, 60], 0.11, 0.45, 0.84); break;
+    case "pedal": [48, 55, 60, 64, 67, 72, 76].forEach((m, i) => triggerMidi(m, now + i * 0.08, 1.8, 0.82)); break;
+    case "unacorda": [60, 64, 67, 71].forEach((m, i) => triggerMidi(m, now + i * 0.18, 1.1, 0.45)); break;
+    case "arp": playSeq([48, 52, 55, 60, 64, 67, 72, 76], 0.055, 1.1, 0.82); break;
+    case "grave": playSeq([48, 51, 55, 53], 0.55, 0.85, 0.88); break;
+    case "largo": playSeq([60, 62, 64, 60, 64, 62, 60], 0.45, 0.75, 0.82); break;
+    case "adagio": playSeq([60, 64, 67, 69, 67, 64], 0.36, 0.65, 0.78); break;
+    case "andante": playSeq([60, 62, 64, 65, 67, 64, 60], 0.26, 0.38, 0.8); break;
+    case "moderato": playSeq([60, 64, 62, 65, 64, 67, 72], 0.2, 0.3, 0.82); break;
+    case "allegro": playSeq([60, 62, 64, 65, 67, 69, 71, 72], 0.11, 0.2, 0.86); break;
+    case "presto": playSeq([60, 62, 64, 65, 67, 69, 71, 72, 74, 76, 77, 79, 84], 0.065, 0.14, 0.88); break;
+    case "accel": [0, 0.34, 0.62, 0.84, 1.0, 1.12, 1.21, 1.28].forEach((t, i) => triggerMidi(60 + i * 2, now + t, 0.2, 0.84)); break;
+    case "rit": [0, 0.1, 0.22, 0.38, 0.6, 0.9, 1.32].forEach((t, i) => triggerMidi(72 - i * 2, now + t, 0.35, 0.82)); break;
+    case "rubato": [0, 0.28, 0.44, 0.58, 0.82, 1.2].forEach((t, i) => triggerMidi([60, 64, 67, 71, 69, 67][i], now + t, 0.45, 0.8)); break;
+    case "piano_dyn": playSeq([60, 64, 67, 72], 0.22, 0.5, 0.36); break;
+    case "forte_dyn": playSeq([60, 64, 67, 72], 0.18, 0.65, 0.95); break;
+    case "cresc": [0.3, 0.45, 0.6, 0.78, 0.95].forEach((v, i) => triggerMidi(60 + i * 2, now + i * 0.2, 0.35, v)); break;
+    case "sfz": [48, 60, 64, 67, 72].forEach((m) => triggerMidi(m, now, 0.45, 0.98)); break;
+    case "tenuto": playSeq([60, 62, 64, 67], 0.28, 0.27, 0.86); break;
+    case "staccato": playSeq([60, 64, 67, 72, 67, 64, 60], 0.13, 0.06, 0.84); break;
+    case "dolce": playSeq([64, 67, 72, 71, 69, 67], 0.26, 0.6, 0.68); break;
+    case "leggiero": playSeq([72, 74, 76, 79, 76, 74, 72], 0.09, 0.12, 0.7); break;
+    case "morendo": [0.85, 0.68, 0.5, 0.34, 0.2].forEach((v, i) => triggerMidi(67 - i * 2, now + i * 0.28, 0.5, v)); break;
+    case "tutti": [36, 48, 55, 60, 64, 67, 72, 76].forEach((m) => triggerMidi(m, now, 1.0, 0.92)); break;
+    case "fermata": playSeq([60, 64, 67], 0.18, 0.25, 0.8); triggerMidi(72, now + 0.56, 1.5, 0.9); break;
+    case "ostinato": playSeq([48, 55, 58, 55, 48, 55, 58, 55], 0.14, 0.2, 0.84); break;
+    case "canon": playSeq([60, 62, 64, 65, 67], 0.18, 0.35, 0.82);[60, 62, 64, 65, 67].forEach((m, i) => triggerMidi(m + 12, now + 0.36 + i * 0.18, 0.35, 0.78)); break;
+    case "trill": playSeq([72, 74, 72, 74, 72, 74, 71, 72], 0.065, 0.12, 0.82); break;
+    default: playSeq([60, 64, 67, 72], 0.14, 0.4, 0.82);
   }
 }
 
@@ -11592,13 +11605,13 @@ sendGuitarAtlasPatternToTab = function () {
 
 // ── 二：调式大全可视化互动升级（明暗光谱条 + 互动调式钢琴 + 互动指板 + 五维雷达条 + Vamp 伴奏试听） ──
 const MODE_VISUAL_META = {
-  lydian:        { charSemi: 6,  charLabel: "#4 (#11)", formula: "自然大调 + #4", bright: 100, tension: 35, modern: 95, groove: 70, exotic: 60, vamp: [[0,4,7,11], [2,6,9,14]] },
-  ionian:        { charSemi: 11, charLabel: "♮4 与 ♮7",  formula: "自然大调基准 (1 2 3 4 5 6 7)", bright: 86, tension: 20, modern: 60, groove: 75, exotic: 20, vamp: [[0,4,7,11], [5,9,12,16]] },
-  mixolydianFull:{ charSemi: 10, charLabel: "b7 (降七音)", formula: "自然大调 + b7", bright: 72, tension: 42, modern: 75, groove: 96, exotic: 35, vamp: [[0,4,7,10], [10,14,17,21]] },
-  dorianFull:    { charSemi: 9,  charLabel: "♮6 (还原六)", formula: "自然小调 + ♮6", bright: 58, tension: 40, modern: 90, groove: 95, exotic: 45, vamp: [[0,3,7,10], [5,9,12,15]] },
-  aeolian:       { charSemi: 8,  charLabel: "b6 (降六音)", formula: "自然小调基准 (1 2 b3 4 5 b6 b7)", bright: 42, tension: 48, modern: 65, groove: 72, exotic: 35, vamp: [[0,3,7,10], [8,12,15,19]] },
-  phrygian:      { charSemi: 1,  charLabel: "b2 (降二音)", formula: "自然小调 + b2", bright: 26, tension: 78, modern: 82, groove: 68, exotic: 92, vamp: [[0,3,7], [1,5,8]] },
-  locrian:       { charSemi: 6,  charLabel: "b5 与 b2",  formula: "自然小调 + b2 + b5", bright: 12, tension: 96, modern: 88, groove: 50, exotic: 85, vamp: [[0,3,6,10], [1,5,8,12]] },
+  lydian: { charSemi: 6, charLabel: "#4 (#11)", formula: "自然大调 + #4", bright: 100, tension: 35, modern: 95, groove: 70, exotic: 60, vamp: [[0, 4, 7, 11], [2, 6, 9, 14]] },
+  ionian: { charSemi: 11, charLabel: "♮4 与 ♮7", formula: "自然大调基准 (1 2 3 4 5 6 7)", bright: 86, tension: 20, modern: 60, groove: 75, exotic: 20, vamp: [[0, 4, 7, 11], [5, 9, 12, 16]] },
+  mixolydianFull: { charSemi: 10, charLabel: "b7 (降七音)", formula: "自然大调 + b7", bright: 72, tension: 42, modern: 75, groove: 96, exotic: 35, vamp: [[0, 4, 7, 10], [10, 14, 17, 21]] },
+  dorianFull: { charSemi: 9, charLabel: "♮6 (还原六)", formula: "自然小调 + ♮6", bright: 58, tension: 40, modern: 90, groove: 95, exotic: 45, vamp: [[0, 3, 7, 10], [5, 9, 12, 15]] },
+  aeolian: { charSemi: 8, charLabel: "b6 (降六音)", formula: "自然小调基准 (1 2 b3 4 5 b6 b7)", bright: 42, tension: 48, modern: 65, groove: 72, exotic: 35, vamp: [[0, 3, 7, 10], [8, 12, 15, 19]] },
+  phrygian: { charSemi: 1, charLabel: "b2 (降二音)", formula: "自然小调 + b2", bright: 26, tension: 78, modern: 82, groove: 68, exotic: 92, vamp: [[0, 3, 7], [1, 5, 8]] },
+  locrian: { charSemi: 6, charLabel: "b5 与 b2", formula: "自然小调 + b2 + b5", bright: 12, tension: 96, modern: 88, groove: 50, exotic: 85, vamp: [[0, 3, 6, 10], [1, 5, 8, 12]] },
 };
 
 function getModeVisualMeta(mode) {
@@ -11624,13 +11637,13 @@ renderModes = function () {
   if (!els.modeGallery) return;
   const spectrumBar = document.getElementById("modeSpectrumBar");
   const spectrumOrder = [
-    { id: "lydian",         name: "Lydian 利底亚",     tag: "#4 极亮星空",   lv: "亮度 100%" },
-    { id: "ionian",         name: "Ionian 自然大调",   tag: "♮4 阳光基准",   lv: "亮度 86%" },
+    { id: "lydian", name: "Lydian 利底亚", tag: "#4 极亮星空", lv: "亮度 100%" },
+    { id: "ionian", name: "Ionian 自然大调", tag: "♮4 阳光基准", lv: "亮度 86%" },
     { id: "mixolydianFull", name: "Mixolydian 混合利底亚", tag: "b7 暖亮摇摆", lv: "亮度 72%" },
-    { id: "dorianFull",     name: "Dorian 多利亚",     tag: "b3+♮6 酷感律动", lv: "亮度 58%" },
-    { id: "aeolian",        name: "Aeolian 自然小调",  tag: "b6 柔和内省",   lv: "亮度 42%" },
-    { id: "phrygian",       name: "Phrygian 弗里几亚", tag: "b2 异域冷暗",   lv: "亮度 26%" },
-    { id: "locrian",        name: "Locrian 洛克里亚",  tag: "b2+b5 极暗张力", lv: "亮度 12%" },
+    { id: "dorianFull", name: "Dorian 多利亚", tag: "b3+♮6 酷感律动", lv: "亮度 58%" },
+    { id: "aeolian", name: "Aeolian 自然小调", tag: "b6 柔和内省", lv: "亮度 42%" },
+    { id: "phrygian", name: "Phrygian 弗里几亚", tag: "b2 异域冷暗", lv: "亮度 26%" },
+    { id: "locrian", name: "Locrian 洛克里亚", tag: "b2+b5 极暗张力", lv: "亮度 12%" },
   ];
 
   if (spectrumBar) {
@@ -11668,10 +11681,10 @@ renderModes = function () {
         <h4 class="mode-group-title">${group.category} <span>${group.modes.length}</span></h4>
         <div class="mode-group-cards">
           ${group.modes
-            .map((mode) => {
-              const notes = mode.intervals.map((step) => noteName(state.root + step)).join(" ");
-              const meta = getModeVisualMeta(mode);
-              return `
+        .map((mode) => {
+          const notes = mode.intervals.map((step) => noteName(state.root + step)).join(" ");
+          const meta = getModeVisualMeta(mode);
+          return `
                 <article class="mode-card ${mode.id === state.selectedModeId ? "active" : ""}" data-mode-detail="${mode.id}" role="button" tabindex="0" aria-pressed="${mode.id === state.selectedModeId}">
                   <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:4px;">
                     <h4 style="margin:0;">${mode.label}</h4>
@@ -11681,8 +11694,8 @@ renderModes = function () {
                   <p>${escapeHtml(modeLevelText(mode).mood || mode.feature)}</p>
                 </article>
               `;
-            })
-            .join("")}
+        })
+        .join("")}
         </div>
       </div>
     `)
@@ -11965,13 +11978,13 @@ renderAbrsmKnowledge = function () {
         <p>${qIdx + 1}. ${escapeHtml(q.prompt)}</p>
         <div class="abrsm-q-opts">
           ${q.options.map((opt) => {
-            let cls = "abrsm-q-btn";
-            if (chosen !== undefined) {
-              if (opt === q.answer) cls += " correct";
-              else if (opt === chosen) cls += " wrong";
-            }
-            return `<button type="button" class="${cls}" data-abrsm-inline-key="${key}" data-abrsm-inline-opt="${escapeHtml(opt)}" data-abrsm-inline-ans="${escapeHtml(q.answer)}">${escapeHtml(opt)}</button>`;
-          }).join("")}
+      let cls = "abrsm-q-btn";
+      if (chosen !== undefined) {
+        if (opt === q.answer) cls += " correct";
+        else if (opt === chosen) cls += " wrong";
+      }
+      return `<button type="button" class="${cls}" data-abrsm-inline-key="${key}" data-abrsm-inline-opt="${escapeHtml(opt)}" data-abrsm-inline-ans="${escapeHtml(q.answer)}">${escapeHtml(opt)}</button>`;
+    }).join("")}
         </div>
         ${chosen !== undefined ? `<div class="abrsm-q-explain">${chosen === q.answer ? "✓ 回答正确！" : `✕ 正确答案：${escapeHtml(q.answer)}。`} ${escapeHtml(q.hint)}</div>` : ""}
       </article>
@@ -11996,15 +12009,15 @@ renderAbrsmKnowledge = function () {
     </div>
     <div class="abrsm-topic-grid">
       ${gradeData.topics
-        .map(
-          (topic) => `
+      .map(
+        (topic) => `
             <article class="abrsm-topic">
               <h4>${topic.title}</h4>
               <ul>${topic.points.map((point) => `<li>${point}</li>`).join("")}</ul>
             </article>
           `
-        )
-        .join("")}
+      )
+      .join("")}
     </div>
     <div class="abrsm-inline-quiz">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
