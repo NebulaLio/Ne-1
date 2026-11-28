@@ -160,7 +160,8 @@
                 '<button id="gpDeleteTrackBtn" class="gp-btn xs danger" type="button">刪除音軌</button>' +
               '</div>' +
               '<label class="gp-prop-label">音軌名稱 <input id="gpTrackNameInput" type="text" /></label>' +
-              '<label class="gp-prop-label">樂器音色 <select id="gpTrackInstrumentSelect">' + instOpts + '</select></label>' +
+              '<label class="gp-prop-label">樂器（記譜／調弦） <select id="gpTrackInstrumentSelect">' + instOpts + '</select></label>' +
+              '<p class="gp-hint-line">發聲統一使用右上角的「音色」，此處只決定記譜、音域與調弦。</p>' +
               '<div class="gp-check-row">' +
                 '<label><input id="gpTrackShowStaff" type="checkbox" /> 顯示五線譜</label>' +
                 '<label><input id="gpTrackShowTab" type="checkbox" /> 顯示六線譜</label>' +

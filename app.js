@@ -1743,13 +1743,14 @@ function applyLanguage(root = document.body) {
       button.classList.toggle("active", button.dataset.lang === lang);
     });
     const meta = VIEW_META[currentViewId] || VIEW_META.dictionary;
-    document.title = convertText(`${meta.title} · Nebula 乐理与创作的星际地图`, lang);
+    document.title = convertText(`${meta.title} · Nebula 乐理与创作星图`, lang);
   }
   if (els.viewTitle) {
     const meta = VIEW_META[currentViewId] || VIEW_META.dictionary;
     els.viewTitle.textContent = isEnglish() ? EN_VIEW_META[currentViewId]?.title || meta.title : convertText(meta.title, state.lang);
   }
   renderLevelChrome();
+  syncAudioToneUI();
   if (languageObserver && document.body) {
     languageObserver.observe(document.body, {
       childList: true,
@@ -2172,15 +2173,187 @@ function getAudioContext() {
   return audioContext;
 }
 
-function getAudioProfile() {
-  const profiles = {
-    piano: { osc: "triangle", attack: 0.015, decay: 1.05, filter: 2400, velocity: 0.36 },
-    rhodes: { osc: "sine", attack: 0.025, decay: 1.3, filter: 1700, velocity: 0.34 },
-    guitar: { osc: "sawtooth", attack: 0.006, decay: 0.62, filter: 1150, velocity: 0.24 },
-    synth: { osc: "square", attack: 0.018, decay: 0.85, filter: 1800, velocity: 0.22 },
-  };
-  return profiles[state.audioTone] || profiles.piano;
+/* ── 全站音色 ─────────────────────────────────────────────────────────────
+   所有合成發聲（和弦、音階、鋼琴鍵、樂句、測驗、聲譜分析、播放控制條、譜例播放）
+   都讀同一份設定：右上的音色選單改了，整站立刻跟著改，只有一種聲音。 */
+const AUDIO_TONES = [
+  {
+    id: "piano",
+    label: "钢琴",
+    en: "Piano",
+    osc: "triangle",
+    detune: 2,
+    attack: 0.004,
+    decay: 1.15,
+    filter: 3400,
+    filterEnd: 900,
+    q: 0.6,
+    velocity: 0.34,
+    partial: { type: "sine", ratio: 2, gain: 0.22, detune: 2 },
+    release: 0.14,
+  },
+  {
+    id: "rhodes",
+    label: "电钢琴",
+    en: "Electric piano",
+    osc: "sine",
+    attack: 0.012,
+    decay: 1.5,
+    filter: 2000,
+    filterEnd: 1100,
+    q: 1.1,
+    velocity: 0.36,
+    partial: { type: "sine", ratio: 3, gain: 0.15, detune: -3 },
+    release: 0.3,
+  },
+  {
+    id: "guitar",
+    label: "木吉他",
+    en: "Acoustic guitar",
+    osc: "sawtooth",
+    attack: 0.003,
+    decay: 0.62,
+    filter: 1600,
+    filterEnd: 380,
+    q: 0.9,
+    velocity: 0.27,
+    partial: { type: "triangle", ratio: 2, gain: 0.16, detune: 5 },
+    release: 0.1,
+  },
+  {
+    id: "electric",
+    label: "电吉他",
+    en: "Electric guitar",
+    osc: "sawtooth",
+    attack: 0.006,
+    decay: 0.85,
+    filter: 2400,
+    filterEnd: 900,
+    q: 1.2,
+    velocity: 0.23,
+    partial: { type: "square", ratio: 1, gain: 0.1, detune: 7 },
+    drive: 2.4,
+    release: 0.14,
+  },
+  {
+    id: "synth",
+    label: "合成器",
+    en: "Synth",
+    osc: "sawtooth",
+    attack: 0.05,
+    decay: 1.2,
+    filter: 1500,
+    filterEnd: 620,
+    q: 1.6,
+    velocity: 0.22,
+    partial: { type: "sawtooth", ratio: 1, gain: 0.45, detune: 9 },
+    release: 0.35,
+  },
+  {
+    id: "bell",
+    label: "音乐盒",
+    en: "Music box",
+    osc: "sine",
+    attack: 0.002,
+    decay: 1,
+    filter: 6200,
+    filterEnd: 2600,
+    q: 0.5,
+    velocity: 0.3,
+    partial: { type: "sine", ratio: 3, gain: 0.28, detune: 0 },
+    release: 0.5,
+  },
+];
+
+const AUDIO_TONE_MAP = Object.fromEntries(AUDIO_TONES.map((tone) => [tone.id, tone]));
+
+function normalizeAudioTone(id) {
+  return AUDIO_TONE_MAP[id] ? id : "piano";
 }
+
+function getAudioTone(id = state.audioTone) {
+  return AUDIO_TONE_MAP[normalizeAudioTone(id)];
+}
+
+function getAudioToneLabel(id, lang = state.lang) {
+  const tone = getAudioTone(id);
+  if (lang === "en") return tone.en;
+  return convertText(tone.label, lang === "zh-CN" ? "zh-CN" : "zh-HK");
+}
+
+function getAudioProfile() {
+  return getAudioTone();
+}
+
+function syncAudioToneUI() {
+  const current = normalizeAudioTone(state.audioTone);
+  document.querySelectorAll("[data-tone-select]").forEach((select) => {
+    if (select.options.length !== AUDIO_TONES.length) {
+      select.innerHTML = AUDIO_TONES.map((tone) => `<option value="${tone.id}">${getAudioToneLabel(tone.id)}</option>`).join("");
+    } else {
+      AUDIO_TONES.forEach((tone, index) => {
+        const label = getAudioToneLabel(tone.id);
+        if (select.options[index] && select.options[index].textContent !== label) {
+          select.options[index].textContent = label;
+        }
+      });
+    }
+    if (select.value !== current) select.value = current;
+  });
+  syncAuditionToneNote();
+}
+
+function syncAuditionToneNote() {
+  const note = document.getElementById("auditionToneNote");
+  if (!note) return;
+  const label = getAudioToneLabel(state.audioTone);
+  note.textContent = isEnglish() ? `Tone: ${label} · top right` : `音色：${label} · 右上角切换`;
+}
+
+function setAudioTone(id, options = {}) {
+  const { preview = false, silent = false, save = true } = options;
+  const next = normalizeAudioTone(id);
+  const changed = next !== state.audioTone;
+  state.audioTone = next;
+  syncAudioToneUI();
+  if (save) persist();
+  if (changed) {
+    stopAllAudio();
+    try {
+      window.dispatchEvent(new CustomEvent("nebula:tonechange", { detail: { tone: next } }));
+    } catch {
+      /* ignore */
+    }
+    if (!silent) {
+      const label = getAudioToneLabel(next);
+      showToast(isEnglish() ? `Sound: ${label} — applied everywhere` : `音色已换成「${label}」，全站统一`, "success");
+    }
+  }
+  if (preview) {
+    window.setTimeout(() => playNotes([60, 64, 67], { mode: "block", duration: 0.9, velocity: 0.85, startAt: 0.01 }), 30);
+  }
+  return next;
+}
+
+function stopVoiceOscillators(voice, when) {
+  (voice.oscs || [voice.osc]).forEach((osc) => {
+    try {
+      osc.stop(when);
+    } catch {
+      /* already stopped */
+    }
+  });
+}
+
+// 對外統一入口：studio.js / GP 譜例 / 其他模組都由此讀取目前音色
+window.NebulaTone = {
+  list: () => AUDIO_TONES.map((tone) => ({ id: tone.id, label: tone.label, en: tone.en })),
+  get: () => normalizeAudioTone(state.audioTone),
+  label: (id) => getAudioToneLabel(id),
+  set: (id, options) => setAudioTone(id, options),
+  preview: () => setAudioTone(state.audioTone, { preview: true, silent: true, save: false }),
+  profile: () => ({ ...getAudioProfile() }),
+};
 
 function noteStartOffset(index, mode, duration, gap) {
   const base = mode === "arp" ? index * (duration + gap) : mode === "strum" ? index * 0.028 : 0;
@@ -2197,45 +2370,99 @@ function buildAudioVoice(midi, at, velocity = 0.7) {
   const ctx = getAudioContext();
   const profile = getAudioProfile();
   const start = Math.max(Number.isFinite(at) ? at : ctx.currentTime, ctx.currentTime + 0.002);
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
+  const frequency = pitchToFrequency(midi);
+
+  const mix = ctx.createGain();
+  mix.gain.value = 1;
+  const oscs = [];
+  const nodes = [mix];
+
+  const fundamental = ctx.createOscillator();
+  fundamental.type = profile.osc;
+  fundamental.frequency.value = frequency;
+  if (profile.detune) fundamental.detune.value = profile.detune;
+  fundamental.connect(mix);
+  oscs.push(fundamental);
+
+  if (profile.partial) {
+    const partial = ctx.createOscillator();
+    partial.type = profile.partial.type || "sine";
+    partial.frequency.value = frequency * (profile.partial.ratio || 2);
+    partial.detune.value = profile.partial.detune || 0;
+    const partialGain = ctx.createGain();
+    partialGain.gain.value = profile.partial.gain == null ? 0.2 : profile.partial.gain;
+    partial.connect(partialGain);
+    partialGain.connect(mix);
+    oscs.push(partial);
+    nodes.push(partialGain);
+  }
+
   const filter = ctx.createBiquadFilter();
-  osc.type = profile.osc;
-  osc.frequency.value = pitchToFrequency(midi);
   filter.type = "lowpass";
+  filter.Q.value = profile.q == null ? 0.7 : profile.q;
   filter.frequency.setValueAtTime(profile.filter, start);
-  filter.frequency.exponentialRampToValueAtTime(Math.max(420, profile.filter * 0.45), start + 0.9);
-  const peak = Math.max(0.03, Math.min(0.9, velocity * profile.velocity));
+  filter.frequency.exponentialRampToValueAtTime(
+    Math.max(220, profile.filterEnd || profile.filter * 0.45),
+    start + 0.9
+  );
+
+  let chainTail = mix;
+  if (profile.drive) {
+    const shaper = ctx.createWaveShaper();
+    const curve = new Float32Array(256);
+    for (let i = 0; i < 256; i += 1) {
+      const x = (i * 2) / 256 - 1;
+      curve[i] = Math.tanh(x * profile.drive);
+    }
+    shaper.curve = curve;
+    shaper.oversample = "2x";
+    mix.connect(shaper);
+    chainTail = shaper;
+    nodes.push(shaper);
+  }
+  chainTail.connect(filter);
+
+  const gain = ctx.createGain();
+  const peak = Math.max(0.02, Math.min(0.9, velocity * profile.velocity));
   gain.gain.setValueAtTime(0.0001, start);
   gain.gain.exponentialRampToValueAtTime(peak, start + profile.attack);
-  osc.connect(filter);
   filter.connect(gain);
   gain.connect(masterGain);
-  const voice = { osc, gain, filter, start, released: false };
+  nodes.push(filter, gain);
+
+  const voice = { osc: fundamental, oscs, gain, filter, start, released: false };
   activeAudioVoices.add(voice);
-  osc.onended = () => {
+  fundamental.onended = () => {
     activeAudioVoices.delete(voice);
-    try {
-      osc.disconnect();
-      gain.disconnect();
-      filter.disconnect();
-    } catch {
-      /* ignore */
-    }
+    oscs.forEach((osc) => {
+      try {
+        osc.disconnect();
+      } catch {
+        /* ignore */
+      }
+    });
+    nodes.forEach((node) => {
+      try {
+        node.disconnect();
+      } catch {
+        /* ignore */
+      }
+    });
   };
-  osc.start(start);
+  oscs.forEach((osc) => osc.start(start));
   return voice;
 }
 
 function releaseAudioVoice(voice) {
   if (!voice || voice.released) return;
   voice.released = true;
+  const profile = getAudioProfile();
   try {
     const ctx = getAudioContext();
     const now = Math.max(ctx.currentTime + 0.004, voice.start + 0.02);
     voice.gain.gain.cancelScheduledValues(now);
     voice.gain.gain.setTargetAtTime(0.0001, now, 0.03);
-    voice.osc.stop(now + 0.14);
+    stopVoiceOscillators(voice, now + (profile.release || 0.14));
   } catch {
     /* ignore */
   }
@@ -2247,7 +2474,7 @@ function triggerMidi(midi, at, duration, velocity = 0.7) {
   const end = voice.start + Math.max(0.1, duration * profile.decay);
   try {
     voice.gain.gain.setTargetAtTime(0.0001, Math.max(voice.start + profile.attack + 0.02, end - 0.1), 0.05);
-    voice.osc.stop(end + 0.12);
+    stopVoiceOscillators(voice, end + 0.12);
   } catch {
     /* ignore */
   }
@@ -2350,33 +2577,12 @@ function playChordNotes(notes, { arpeggio = false, octave = 4, octaveLift = 0 } 
   }).filter((value) => value !== null);
   if (!baseMidi.length) return;
 
-  if (window.playSampledNote) {
-    const noteNames = baseMidi.map(midi => midiToNoteName(midi));
-    if (arpeggio) {
-      noteNames.forEach((n, i) => {
-        setTimeout(() => window.playSampledNote(n, "8n"), i * 180);
-      });
-    } else {
-      window.playSampledChord(noteNames, "2n");
-    }
-    return;
-  }
-
   playNotes(baseMidi, { mode: arpeggio ? "arp" : state.playbackMode, duration: arpeggio ? 0.32 : 0.9, gap: 0.06, velocity: 0.85 });
 }
 
 function playSequence(noteNames, { ascending = true, tempo = 0.26 } = {}) {
   stopAllAudio();
   const seq = ascending ? noteNames : [...noteNames].reverse();
-  
-  if (window.playSampledNote) {
-    seq.forEach((note, index) => {
-      const noteName = `${note}4`;
-      setTimeout(() => window.playSampledNote(noteName, "8n"), index * tempo * 1000);
-    });
-    return;
-  }
-
   const ctx = getAudioContext();
   const now = ctx.currentTime + 0.04;
   seq.forEach((note, index) => {
@@ -3510,11 +3716,11 @@ function rootLabel(note) {
 function renderRootStrip() {
   const roots = Array.from({ length: 12 }, (_, i) => i);
   els.rootStrip.innerHTML = `
-    <label class="root-select-label" for="rootSelect">目前主音</label>
+    <label class="root-select-label" for="rootSelect">主音</label>
     <select id="rootSelect" class="root-select" aria-label="选择当前主音">
       ${roots.map((note) => `<option value="${note}" ${note === state.root ? "selected" : ""}>${rootLabel(note)}</option>`).join("")}
     </select>
-    <span class="root-hint">${escapeHtml(getModeLabel())} · ${escapeHtml(getDegreeLabels()[0] || "I")}</span>
+    <span class="root-hint">${escapeHtml(getModeLabel())}</span>
   `;
 }
 
@@ -3541,8 +3747,9 @@ function renderChordDetails(chord) {
     const label = chordToneLabel(chord, interval);
     const role = chordToneRole(label);
     const note = chordToneNote(chord, interval);
+    const roleCap = role ? role.charAt(0).toUpperCase() + role.slice(1) : role;
     return isEnglish()
-      ? `${role} ${label} = ${note} (${interval} semitones)`
+      ? `${roleCap} ${label} = ${note} (${interval} semitones)`
       : `${role} ${label} = ${note}（${interval} 半音）`;
   });
   const pitchInfo = notes
@@ -3667,7 +3874,7 @@ function updatePlayedNoteBadge(midi) {
   const freq = pitchToFrequency(midi).toFixed(1);
   const badge = document.getElementById("lastPlayedNoteBadge");
   if (badge) {
-    const roleLabel = relSemitones === 0 ? "当前主音" : `距主音 ${intervalInfo.name} (${intervalToLabel(relSemitones)})`;
+    const roleLabel = relSemitones === 0 ? "主音" : `距主音 ${intervalInfo.name} (${intervalToLabel(relSemitones)})`;
     badge.textContent = convertText(`♪ ${fullNote} · ${freq} Hz · ${roleLabel}`, state.lang);
     badge.classList.add("active");
   }
@@ -3676,11 +3883,7 @@ function updatePlayedNoteBadge(midi) {
 function pressPianoKey(midi, keyEl) {
   if (!Number.isFinite(midi)) return;
   updatePlayedNoteBadge(midi);
-  if (window.playSampledNote) {
-    window.playSampledNote(midiToNoteName(midi), "8n");
-  } else {
-    startPianoVoice(midi, 0.85);
-  }
+  startPianoVoice(midi, 0.85);
   if (keyEl) keyEl.classList.add("playing");
 }
 
@@ -3691,9 +3894,6 @@ function releasePianoKey(midi, keyEl) {
 
 function playInteractivePianoKey(midi, keyEl) {
   pressPianoKey(midi, keyEl);
-  if (window.playSampledNote) {
-    window.playSampledNote(midiToNoteName(midi), "8n");
-  }
   window.setTimeout(() => releasePianoKey(midi, keyEl), 340);
 }
 
@@ -5327,7 +5527,7 @@ function loadState() {
     state.scoreRepeat = prefs.scoreRepeat || "none";
     state.tabDurations = normalizeTabDurations(prefs.tabDurations, Number.isFinite(prefs.tabBeats) ? prefs.tabBeats : 4);
     state.playbackMode = prefs.playbackMode || "block";
-    state.audioTone = prefs.audioTone || "piano";
+    state.audioTone = normalizeAudioTone(prefs.audioTone || "piano");
     state.swing = !!prefs.swing;
     state.humanize = prefs.humanize !== false;
     state.theoryFocus = prefs.theoryFocus || "chord";
@@ -5377,13 +5577,13 @@ function loadState() {
 }
 
 const VIEW_META = {
-  dictionary: { title: "和弦词典", sector: "SECTOR 01 · HARMONY ATLAS", eyebrow: "探索和声与旋律的无限可能", lead: "dictionary.focusLead" },
+  dictionary: { title: "和弦词典", sector: "SECTOR 01 · HARMONY ATLAS", eyebrow: "探索和声与旋律的无限可能", lead: "dictionary.focusLead", leadText: "选一个和弦，看它的功能、构成、声部连接与可配音阶。" },
   theory: { title: "乐理解析", sector: "SECTOR 02 · SCALE SYSTEM", eyebrow: "调式音阶与自然音和弦", lead: "theory.scaleLead" },
   intervals: { title: "音程词典", sector: "SECTOR 03 · INTERVAL RANGE", eyebrow: "音程测算与听辨", lead: "intervals.lead" },
-  fifths: { title: "五度圈", sector: "SECTOR 04 · CIRCLE OF FIFTHS", eyebrow: "12 个调、调号与关系大小调", leadText: "沿着五度圈读调号、找关系大小调、规划转调路径，并直接试听 I–IV–V–I。" },
+  fifths: { title: "五度圈", sector: "SECTOR 04 · CIRCLE OF FIFTHS", eyebrow: "12 个调、调号与关系大小调", leadText: "读调号、找关系大小调、规划转调，并直接试听 I–IV–V–I。" },
   progressions: { title: "功能和声", sector: "SECTOR 05 · FUNCTION CHAIN", eyebrow: "经典和声范式与功能评估", lead: "progressions.lead" },
   modes: { title: "调式大全", sector: "SECTOR 06 · MODAL SPECTRUM", eyebrow: "调式色彩与即兴指南", lead: "modes.galleryLead" },
-  analysis: { title: "声谱分析", sector: "SECTOR 07 · SIGNAL LAB", eyebrow: "对数频谱、泛音列与十二半音色度", leadText: "以对数坐标即时观察低、中、高频能量，拆解泛音结构，并把能量对应到 12 个半音。" },
+  analysis: { title: "声谱分析", sector: "SECTOR 07 · SIGNAL LAB", eyebrow: "对数频谱、泛音列与十二半音色度", leadText: "即时观察频率能量、泛音结构与十二半音分布。" },
   voice: { title: "声部进行", sector: "SECTOR 08 · VOICE ORBIT", eyebrow: "四部和声与导向音连接", lead: "voice.lead" },
   library: { title: "乐理图书馆", sector: "SECTOR 09 · TERM ARCHIVE", eyebrow: "五语术语与指法图鉴", lead: "library.termsLead" },
   phrases: { title: "乐句工坊", sector: "SECTOR 10 · PHRASE FORGE", eyebrow: "结构化语汇与创作工坊", lead: "phrases.lead" },
@@ -5417,7 +5617,7 @@ function renderLevelChrome() {
   const metaView = VIEW_META[currentViewId] || VIEW_META.dictionary;
   const enMeta = isEnglish() ? (EN_VIEW_META[currentViewId] || EN_VIEW_META.dictionary) : null;
   const leadPath = currentViewId === "library" && state.libActiveTab === "guitar-atlas" ? "library.atlasLead" : metaView.lead;
-  if (els.viewLeadText) els.viewLeadText.textContent = enMeta ? `${enMeta.lead} · Lesson notes remain in Chinese for now.` : metaView.leadText || uiText(leadPath);
+  if (els.viewLeadText) els.viewLeadText.textContent = enMeta ? enMeta.lead : metaView.leadText || uiText(leadPath);
   if (els.viewCoord) els.viewCoord.textContent = metaView.sector;
   if (els.topbarEyebrow) els.topbarEyebrow.textContent = enMeta ? enMeta.eyebrow : metaView.eyebrow;
   refreshLanguage(els.viewLeadText, els.viewCoord, els.topbarEyebrow, els.levelChipText);
@@ -5467,7 +5667,7 @@ function setView(name, options = {}) {
   renderLevelChrome();
   document.title = isEnglish()
     ? `${EN_VIEW_META[next]?.title || VIEW_META[next].title} · Nebula Music Theory`
-    : convertText(`${VIEW_META[next].title} · Nebula 乐理与创作的星际地图`, state.lang);
+    : convertText(`${VIEW_META[next].title} · Nebula 乐理与创作星图`, state.lang);
   if (push && location.hash !== `#${next}`) {
     try {
       history.pushState({ view: next }, "", `#${next}`);
@@ -5816,8 +6016,13 @@ function bindEvents() {
   });
 
   els.audioToneSelect.addEventListener("change", () => {
-    state.audioTone = els.audioToneSelect.value;
-    persist();
+    setAudioTone(els.audioToneSelect.value, { preview: true });
+  });
+
+  document.getElementById("tonePreviewBtn")?.addEventListener("click", () => {
+    setAudioTone(state.audioTone, { preview: true, silent: true, save: false });
+    const label = getAudioToneLabel(state.audioTone);
+    showToast(isEnglish() ? `Preview: ${label}` : `正在试听：${label}`, "info");
   });
 
   els.swingToggle.addEventListener("change", () => {
@@ -6163,7 +6368,7 @@ function bindEvents() {
   els.playScaleDownBtn.addEventListener("click", () => playSequence(getScaleNotes().map((note) => noteName(note)), { ascending: false }));
   document.getElementById("stopAllAudioBtn")?.addEventListener("click", () => {
     stopAllAudio();
-    showToast("已停止所有合成示意音", "info");
+    showToast(isEnglish() ? "Sound stopped" : "已停止发声", "info");
   });
 
   document.getElementById("exportWorkspaceBtn")?.addEventListener("click", () => {
@@ -6753,7 +6958,7 @@ function renderAll() {
   applyTheme();
   syncScoreStructureSelectors();
   els.playbackModeSelect.value = state.playbackMode;
-  els.audioToneSelect.value = state.audioTone;
+  syncAudioToneUI();
   els.swingToggle.checked = state.swing;
   els.humanizeToggle.checked = state.humanize;
   populateModeSelect();
@@ -7128,10 +7333,14 @@ function renderDictionaryStaffVisual(chord) {
   container.innerHTML = `
     <div class="staff-card-header">
       <div>
-        <strong>五线谱音位对照（${getChordDisplayName(chord)} 与 ${noteName(state.root)} ${getModeLabel()}）</strong>
-        <span>点击谱面任意音符可直接发声 · 蓝紫色为和弦音，琥珀色为音阶音</span>
+        <strong>${isEnglish()
+          ? `Staff map · ${getChordDisplayName(chord)} & ${noteName(state.root)} ${getModeLabel()}`
+          : `五线谱音位对照（${getChordDisplayName(chord)} 与 ${noteName(state.root)} ${getModeLabel()}）`}</strong>
+        <span>${isEnglish()
+          ? "Click any note to hear it · violet = chord tone, amber = scale tone"
+          : "点击谱面任意音符可直接发声 · 蓝紫色为和弦音，琥珀色为音阶音"}</span>
       </div>
-      <button type="button" class="ghost-button mini-button" data-play-staff-chord="1">▶ 试听五线谱和弦</button>
+      <button type="button" class="ghost-button mini-button" data-play-staff-chord="1">${isEnglish() ? "▶ Play staff chord" : "▶ 试听五线谱和弦"}</button>
     </div>
     <div class="staff-svg-wrap">
       <svg class="staff-svg" viewBox="0 0 780 162" aria-label="和弦与调式五线谱视图" style="color: var(--staff-line)">
@@ -8009,13 +8218,39 @@ function openPrintPreviewModal(type = "tab") {
 }
 
 function initialize() {
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   loadState();
   bindEvents();
   renderAll();
   initLanguageObserver();
   const initial = (location.hash || "").replace("#", "");
+  const initialHash = location.hash;
+  // 移除錨點再載入，避免瀏覽器把 #view 當錨點捲到半頁（頁首與導語會被藏住）
+  if (initialHash && VIEW_META[initial]) {
+    try {
+      history.replaceState({ view: initial }, "", location.pathname + location.search);
+    } catch {
+      /* ignore */
+    }
+  }
   setView(VIEW_META[initial] ? initial : "dictionary", { push: false, scroll: false, focus: false, animate: false });
   renderLevelChrome();
+  window.scrollTo(0, 0);
+  if (initialHash && VIEW_META[initial]) {
+    window.addEventListener(
+      "load",
+      () => {
+        window.scrollTo(0, 0);
+        window.requestAnimationFrame(() => window.scrollTo(0, 0));
+        try {
+          history.replaceState({ view: initial }, "", initialHash);
+        } catch {
+          /* ignore */
+        }
+      },
+      { once: true }
+    );
+  }
 }
 
 /* ── English interface layer ─────────────────────────────────────────── */
@@ -8136,6 +8371,133 @@ const EN_UI = new Map(Object.entries({
   "德文 (Deutsch)": "German",
   "法文 (Français)": "French",
   "英文 (English)": "English",
+
+  /* ── UI refresh (2026-11)：簡潔版文案的英文對照 ── */
+  "乐理与创作星图": "Music theory & creation",
+  "主音": "Root",
+  "解说深度": "Explanation depth",
+  "语言": "Language",
+  "显示": "Display",
+  "主题": "Theme",
+  "默认调式": "Default mode",
+  "预设调式": "Default mode",
+  "英文模式会一并翻译课程与回馈。": "English mode also translates lessons and feedback.",
+  "工作区备份": "Workspace backup",
+  "导出": "Export",
+  "导入": "Import",
+  "偏好、乐句与谱例只存这台设备。": "Preferences, phrases and scores stay on this device.",
+  "登录": "Sign in",
+  "登出": "Sign out",
+  "试听": "Audition",
+  "试听和弦": "Play chord",
+  "分解琶音": "Arpeggio",
+  "上行音阶": "Scale up",
+  "下行音阶": "Scale down",
+  "停止": "Stop",
+  "A 起": "SET A",
+  "B 止": "SET B",
+  "清除": "Clear",
+  "全站音色": "Global tone",
+  "音色": "Tone",
+  "试听当前音色": "Preview this sound",
+  "钢琴": "Piano",
+  "电钢琴": "Electric piano",
+  "木吉他": "Acoustic guitar",
+  "电吉他": "Electric guitar",
+  "合成器": "Synth",
+  "音乐盒": "Music box",
+  "选择一个和弦：功能、构成、声部连接与可配音阶。": "Pick a chord: function, construction, voice leading and matching scales.",
+  "搜索和弦：maj7、变化属、挂留…": "Search chords: maj7, altered, sus…",
+  "当前和弦": "Current chord",
+  "互动钢琴": "Interactive piano",
+  "点击或拖拽弹奏 · 键盘 A S D F G H J K": "Click or drag to play · keys A S D F G H J K",
+  "准备": "Ready",
+  "解析": "Analysis",
+  "和声与配器": "Harmony & voicing",
+  "奏法": "Playing style",
+  "柱式和弦": "Block chords",
+  "摇摆": "Swing",
+  "人性化": "Humanize",
+  "调式与自然音和弦": "Mode & diatonic chords",
+  "ABRSM 1–8 级": "ABRSM grades 1–8",
+  "分级乐理大纲": "Graded theory syllabus",
+  "和声演进": "Harmony timeline",
+  "和声体系如何演进": "How harmony evolved",
+  "音程计算与听辨": "Interval calculator & ear training",
+  "音程计算器": "Interval calculator",
+  "下方音": "Lower note",
+  "上方音": "Upper note",
+  "上方八度": "Upper octave",
+  "先后响": "Sequential",
+  "一起响": "Together",
+  "常用进行": "Common progressions",
+  "和声进行库": "Progression library",
+  "点击或拖拽编排": "Click or drag to arrange",
+  "级数与功能评估": "Degrees & function",
+  "载入范例": "Load example",
+  "点击卡片，联动右侧琴键与指板": "Click a card to sync the keys and fretboard",
+  "全部调式与特征音阶": "All modes & characteristic scales",
+  "四部声部连接": "Four-part voice leading",
+  "声部轨迹分析": "Voice-leading paths",
+  "更新声部轨迹": "Update voice paths",
+  "对比试听": "Compare",
+  "自动平滑": "Auto-smooth",
+  "平滑范例": "Smooth example",
+  "问题对照": "Problem example",
+  "术语词典 · 五语": "Term dictionary · 5 languages",
+  "吉他指法图鉴": "Guitar shape atlas",
+  "西洋乐器与术语五语对照": "Western instruments & terms in five languages",
+  "五语检索（中／英／意／德／法）": "Search in Chinese, English, Italian, German or French",
+  "搜索术语：Pizzicato、拨弦、慢板…": "Search terms: Pizzicato, plucked, adagio…",
+  "CAGED · 3NP · 五声蓝调 · 现代流行": "CAGED · 3NP · pentatonic blues · modern pop",
+  "吉他指法系统图鉴": "Guitar shape-system atlas",
+  "试听把位": "Audition position",
+  "逐音演示": "Note-by-note demo",
+  "送入六线谱": "Send to tab",
+  "左手指法": "Fingering",
+  "音程度数": "Degrees",
+  "音名": "Note names",
+  "30 条乐句 · 可筛选 · 可试听": "30 phrases · filterable · auditionable",
+  "乐句语汇库": "Phrase library",
+  "BPM": "BPM",
+  "写下自己的乐句": "Write your own phrase",
+  "记录原创乐句": "Save an original phrase",
+  "音符与时值（如 C4/8；| 分小节）": "Notes & durations (e.g. C4/8; | per bar)",
+  "要点（可选）": "Notes (optional)",
+  "保存乐句": "Save phrase",
+  "我的乐句": "My phrases",
+  "听辨与刷题": "Ear training & drills",
+  "乐理闯关": "Theory quiz",
+  "级别": "Grade",
+  "题型": "Category",
+  "综合": "Mixed",
+  "术语记号": "Term marks",
+  "多轨工作台": "Multi-track workbench",
+  "六线谱 + 钢琴": "Tab + piano",
+  "多轨五线谱 + 六线谱 · 技法 · 循环播放 · MIDI / MusicXML / PDF": "Multi-track staff + tab · techniques · looping · MIDI / MusicXML / PDF",
+  "多轨五线谱与六线谱 · 可导出 MIDI / MusicXML / PDF": "Multi-track staff & tab · export MIDI / MusicXML / PDF",
+  "六线谱与五线谱": "Tab & staff",
+  "六线谱编辑": "Tab editing",
+  "大谱表与钢琴卷帘": "Grand staff & piano roll",
+  "钢琴双声部": "Two-hand piano",
+  "填入当前拍位": "Insert at cursor",
+  "存为乐句": "Save as phrase",
+  "双手填入": "Fill both hands",
+  "存为快照": "Save snapshot",
+  "打印 / 存为 PDF": "Print / save PDF",
+  "看见声音的结构": "See the structure of sound",
+  "即时频谱、泛音列与十二半音色度，把声音拆成看得见的图。": "Real-time spectrum, harmonics and 12-pitch chroma — sound made visible.",
+  "持续发声": "Hold tone",
+  "播放和弦": "Play chord",
+  "播放音阶": "Play scale",
+  "按下「持续发声」或弹奏音符即可显示频谱": "Press Hold tone or play a note to see the spectrum",
+  "12 个调与关系大小调": "12 keys & relative minors",
+  "点击选调 · 双击设为主音": "Click to select · double-click to set the tonic",
+  "设为主音": "Set as tonic",
+  "键盘快捷键": "Keyboard shortcuts",
+  "关闭": "Close",
+  "在输入框打字时，快捷键会自动停用。": "Shortcuts pause while you type in a field.",
+  "已停止发声": "Sound stopped",
 }));
 
 const EN_LEVEL_LABEL = { beginner: "Beginner", learner: "Learner", pro: "Musician" };
@@ -8765,13 +9127,7 @@ playPhraseNotes = function (text, cardEl = null) {
   events.forEach((ev, idx) => {
     const durSec = Math.max(0.12, ev.durBeats * secPerBeat);
     const startAt = ctx.currentTime + elapsed;
-    // 優先使用採樣鋼琴
-    if (window.playSampledNote) {
-      const noteName = midiToNoteName(ev.midi);
-      window.setTimeout(() => window.playSampledNote(noteName, "8n"), elapsed * 1000);
-    } else {
-      triggerMidi(ev.midi, startAt, durSec * 0.92, 0.84);
-    }
+    triggerMidi(ev.midi, startAt, durSec * 0.92, 0.84);
 
     const delayMs = Math.round(elapsed * 1000);
     phrasePlayTimers.push(
@@ -11354,8 +11710,8 @@ renderWesternTermsLibrary = function () {
         <tr>
           <td><span class="term-cat-pill">${escapeHtml(item.cat)}</span></td>
           <td class="term-lang-primary">
-            <div>${escapeHtml(item.zh)}</div>
-            <button type="button" class="chip-btn" style="margin-top:4px;min-height:24px;padding:0 8px;font-size:11px;" data-term-demo="${escapeHtml(item.demo || "piano")}">🔊 ${isEnglish() ? "Audition" : "试听示范"}</button>
+            <div data-no-lang>${escapeHtml(item.zh)}</div>
+            <button type="button" class="chip-btn" style="margin-top:4px;min-height:24px;padding:0 8px;font-size:11.5px;" data-term-demo="${escapeHtml(item.demo || "piano")}">${isEnglish() ? "Play" : "试听"}</button>
           </td>
           <td class="term-lang-it">${escapeHtml(item.it)}</td>
           <td class="term-lang-de">${escapeHtml(item.de)}</td>

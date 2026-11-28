@@ -1,0 +1,1464 @@
+/* ============================================================================
+   Nebula · UI refinement layer
+   Loaded after styles.css / themes.css / gp-studio.css.
+
+   Design goals
+   1. One clear page header (sticky), one global sound control.
+   2. Calmer surfaces: fewer glows, fewer decorative marks, even spacing.
+   3. Readable type: a small, fixed size scale; no 9–10px UI labels.
+   4. Uniform grids so cards line up instead of forming an irregular mosaic.
+   ========================================================================== */
+
+:root {
+  --radius: 12px;
+  --gap: 20px;
+  --ui-line: color-mix(in srgb, var(--line) 88%, transparent);
+  --ui-card: color-mix(in srgb, var(--surface) 96%, transparent);
+  --ui-radius-sm: 9px;
+  --ui-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  scroll-padding-top: 96px;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* ── 1. Shell ────────────────────────────────────────────────────────────── */
+
+.app-shell {
+  grid-template-columns: 244px minmax(0, 1fr);
+}
+
+.sidebar {
+  gap: 18px;
+  padding: 18px 14px;
+  border-right: 1px solid var(--ui-line);
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+.brand {
+  gap: 10px;
+  padding: 2px 4px 0;
+}
+
+.brand-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.26);
+}
+
+.brand h1 {
+  font-size: 19px;
+  letter-spacing: -0.01em;
+}
+
+.brand p {
+  margin-top: 2px;
+  font-size: 11px;
+}
+
+.nav-list {
+  gap: 3px;
+}
+
+.nav-button {
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: var(--ui-radius-sm);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.nav-button:hover,
+.nav-button.active {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+  box-shadow: none;
+  color: var(--ink);
+}
+
+.nav-button.active {
+  border-color: color-mix(in srgb, var(--accent) 34%, transparent);
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  font-weight: 700;
+}
+
+.nav-button.active::before {
+  top: 9px;
+  bottom: 9px;
+  left: 3px;
+  width: 2px;
+  box-shadow: none;
+}
+
+.quick-panel {
+  padding: 11px 12px;
+  border-radius: var(--ui-radius-sm);
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  box-shadow: none;
+}
+
+.quick-panel strong {
+  margin: 2px 0;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.quick-panel span {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.quick-panel .eyebrow {
+  font-size: 10px;
+}
+
+.workspace {
+  padding: 22px 26px 132px;
+}
+
+/* ── 2. Sticky header ────────────────────────────────────────────────────── */
+
+.topbar {
+  position: sticky !important;
+  top: 0;
+  z-index: 70;
+  flex-wrap: nowrap !important;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 16px;
+  padding: 9px 10px 9px 14px;
+  border: 1px solid var(--ui-line);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.18);
+  backdrop-filter: blur(20px) saturate(1.15);
+  -webkit-backdrop-filter: blur(20px) saturate(1.15);
+}
+
+body[data-theme="nebula"] .topbar {
+  background: color-mix(in srgb, #0a0f22 88%, transparent);
+}
+
+body[data-theme="industrial"] .topbar {
+  background: color-mix(in srgb, #f2f3f4 92%, transparent);
+  box-shadow: 0 8px 22px rgba(22, 26, 31, 0.12);
+}
+
+body[data-theme="studio"] .topbar {
+  background: color-mix(in srgb, #050a0a 90%, transparent);
+}
+
+.topbar-title {
+  align-items: center;
+  gap: 10px;
+  width: auto !important;
+}
+
+/* 頁首只留標題；說明文字交給下方的頁面導語，避免兩層重複 */
+.topbar .eyebrow {
+  display: none;
+}
+
+.topbar h2 {
+  margin: 0;
+  font-size: 24px !important;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+
+.topbar p {
+  margin: 0;
+}
+
+.topbar-actions {
+  flex-wrap: nowrap !important;
+  justify-content: flex-end !important;
+  gap: 8px;
+  width: auto !important;
+}
+
+.topbar .icon-button {
+  position: static !important;
+  width: 38px;
+  min-height: 38px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+/* ── 3. Global timbre picker ─────────────────────────────────────────────── */
+
+.tone-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 38px;
+  padding: 0 3px 0 10px;
+  border: 1px solid var(--ui-line);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.tone-picker:hover,
+.tone-picker:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--ui-line));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.tone-picker-icon {
+  color: var(--accent);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.tone-picker-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tone-picker-label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tone-picker select {
+  width: auto;
+  min-width: 76px;
+  min-height: 0;
+  height: 30px;
+  padding: 0 18px 0 0;
+  border: 0 !important;
+  border-radius: 6px;
+  background-color: transparent !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23808b9e' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: 9px 6px;
+  box-shadow: none !important;
+  color: var(--ink) !important;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.tone-picker select:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.tone-preview {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--accent);
+  font-size: 9px;
+  line-height: 1;
+}
+
+body[data-theme] .tone-picker .tone-preview {
+  width: 28px;
+  height: 28px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent) !important;
+  color: var(--accent) !important;
+  box-shadow: none;
+}
+
+.tone-preview:hover {
+  background: color-mix(in srgb, var(--accent) 26%, transparent);
+  transform: none;
+}
+
+/* ── 4. Settings & account ───────────────────────────────────────────────── */
+
+.settings-summary {
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
+.settings-panel {
+  width: 336px;
+  padding: 16px;
+  gap: 16px;
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(2, 6, 23, 0.36);
+}
+
+body[data-theme="nebula"] .settings-panel {
+  background: #151d2f;
+}
+
+body[data-theme="industrial"] .settings-panel {
+  background: #f7f8f9;
+}
+
+body[data-theme="studio"] .settings-panel {
+  background: #08100f;
+}
+
+.settings-group {
+  gap: 8px;
+}
+
+.settings-group-title {
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+
+.settings-note {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--subtle);
+}
+
+.account-cluster {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.account-button {
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--ui-line);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.account-button:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--ui-line));
+  transform: none;
+}
+
+.user-display {
+  max-width: 120px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-display:empty {
+  display: none;
+}
+
+/* ── 5. Page lead (one flat line, no second card) ────────────────────────── */
+
+.view-lead {
+  display: flex;
+  margin: 0 0 16px;
+  padding: 0 2px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+/* 首頁原本刻意隱藏導語；新版統一顯示，讓每一頁都有同一層說明 */
+body:has(#dictionary.active) .view-lead {
+  display: flex;
+}
+
+/* 三個主題統一用同一種扁平導語，不再有主題專屬的卡片底 */
+body[data-theme] .view-lead {
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+.view-coord {
+  display: none;
+  margin-bottom: 3px;
+  color: var(--subtle);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.view-lead-body p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.level-chip {
+  height: 30px;
+  padding: 0 11px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 650;
+}
+
+.level-chip-icon {
+  animation: none;
+}
+
+/* ── 6. Type & headings ─────────────────────────────────────────────────── */
+
+.section-title {
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.section-title h3 {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.section-title h3::before {
+  content: none !important;
+}
+
+.section-title .eyebrow {
+  margin-bottom: 3px;
+  color: var(--subtle);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.theory-panel {
+  padding: 16px;
+  border-color: var(--ui-line);
+  border-radius: var(--radius);
+  background-image: none;
+  box-shadow: none;
+  line-height: 1.6;
+}
+
+.theory-panel h4 {
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.theory-panel p,
+.theory-panel li {
+  font-size: 13px;
+}
+
+/* ── 7. Buttons, inputs, segmented controls ─────────────────────────────── */
+
+.primary-button,
+.secondary-button,
+.ghost-button {
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: var(--ui-radius-sm);
+  font-size: 12.5px;
+  font-weight: 650;
+}
+
+.primary-button {
+  border-color: transparent;
+}
+
+.primary-button:hover,
+.secondary-button:hover,
+.ghost-button:hover {
+  box-shadow: none;
+  filter: brightness(1.05);
+}
+
+.secondary-button {
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+
+.ghost-button {
+  background: transparent;
+}
+
+.mini-button {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 11.5px;
+}
+
+.icon-button {
+  width: 38px;
+  min-height: 38px;
+  border-radius: 10px;
+}
+
+input,
+select,
+textarea {
+  border-radius: var(--ui-radius-sm);
+  font-size: 13px;
+}
+
+input,
+select {
+  min-height: 38px;
+}
+
+.segment {
+  min-height: 34px;
+  padding: 0 11px;
+  border-radius: var(--ui-radius-sm);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.segment.active {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow: none;
+  color: var(--ink);
+}
+
+.segment.active::after {
+  display: none;
+}
+
+.segmented {
+  gap: 4px;
+}
+
+/* ── 8. Surfaces and uniform grids ─────────────────────────────────────── */
+
+.chord-focus,
+.scale-panel,
+.library-panel,
+.creator-panel,
+.score-panel,
+.knowledge-card,
+.phrase-card,
+.calculator-panel,
+.reference-panel,
+.progression-library,
+.progression-builder,
+.quiz-card,
+.voice-controls,
+.voice-visual-wrap,
+.theory-sidebar {
+  border-color: var(--ui-line);
+  border-radius: var(--radius);
+  background: var(--ui-card);
+  box-shadow: 0 10px 28px rgba(2, 6, 23, 0.12);
+  backdrop-filter: blur(14px);
+}
+
+.chord-focus {
+  min-height: 0;
+  padding: 20px;
+  border-color: var(--ui-line);
+  background: var(--ui-card);
+  box-shadow: 0 10px 28px rgba(2, 6, 23, 0.12);
+}
+
+.chord-focus::after {
+  display: none;
+}
+
+.theory-sidebar {
+  min-height: 0;
+  padding: 18px;
+}
+
+.focus-header h3 {
+  margin-top: 2px;
+  font-size: 46px;
+  text-shadow: none;
+}
+
+.tone-row {
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.tone-pill {
+  min-height: 38px;
+  border-radius: var(--ui-radius-sm);
+  font-size: 13px;
+}
+
+.detail-grid div,
+.degree-row,
+.construction-step {
+  border-radius: var(--ui-radius-sm);
+}
+
+.construction-step {
+  grid-template-columns: 62px minmax(0, 1fr);
+  gap: 8px;
+  padding: 10px 12px;
+}
+
+.construction-step span {
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.level-badge {
+  display: none;
+}
+
+.analysis-level {
+  display: none;
+}
+
+.analysis-text {
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+/* 和弦卡改成整齊的四欄，不再用大小不一的拼貼 */
+.chord-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.chord-card,
+.chord-card:nth-child(8n + 1),
+.chord-card:nth-child(8n + 3),
+.chord-card:nth-child(8n + 6) {
+  grid-column: span 1;
+  min-height: 0;
+  padding: 16px;
+  border-radius: var(--radius);
+  box-shadow: none;
+}
+
+.chord-card:hover,
+.chord-card.active {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(2, 6, 23, 0.18);
+}
+
+.chord-card h4 {
+  font-size: 20px;
+}
+
+.chord-card p {
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.chord-card .tone-row {
+  margin: 10px 0;
+}
+
+.chord-card .tone-pill {
+  min-height: 30px;
+  padding: 0 9px;
+  font-size: 11.5px;
+}
+
+/* 首屏和弦焦點：三欄重新配重，右側解析不再被壓成 240px */
+@media (min-width: 1281px) {
+  #dictionary .hero-tool {
+    grid-template-columns: minmax(250px, 0.8fr) minmax(320px, 1.2fr) minmax(300px, 0.95fr) !important;
+    gap: 16px !important;
+  }
+
+  #dictionary .hero-tool .theory-sidebar {
+    max-height: none !important;
+    overflow: visible !important;
+    padding-right: 18px;
+  }
+}
+
+.hero-tool {
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.focus-header h3,
+.chord-focus h3 {
+  font-size: 44px;
+}
+
+.instrument-map {
+  gap: 14px;
+  padding: 16px;
+  border-color: var(--ui-line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  box-shadow: none;
+}
+
+.instrument-header {
+  padding: 0 2px;
+}
+
+.instrument-title {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.instrument-hint {
+  font-size: 11px;
+}
+
+/* ── 9. Chord dictionary controls ───────────────────────────────────────── */
+
+.picker-dock {
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.picker-dock .root-strip {
+  grid-column: 1;
+  align-self: stretch;
+  padding: 0 10px;
+  border: 1px solid var(--ui-line);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+}
+
+.picker-dock .toolbar {
+  grid-column: 2;
+  align-items: center;
+  gap: 10px;
+}
+
+.picker-dock .chord-rail {
+  grid-column: auto;
+  margin-top: 2px;
+  padding: 0;
+}
+
+.chord-rail-row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.chord-rail-row .chord-rail {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-bottom: 2px;
+}
+
+.chord-rail-row .result-count {
+  flex: 0 0 auto;
+}
+
+.root-select-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.root-select {
+  min-height: 30px;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.root-hint {
+  font-size: 11px;
+}
+
+.search-box {
+  width: min(340px, 100%);
+}
+
+.search-box > label,
+.search-box > span {
+  display: none;
+}
+
+.search-field input {
+  min-height: 38px;
+  font-size: 13px;
+}
+
+.filter-cluster {
+  gap: 8px;
+}
+
+.chord-rail {
+  gap: 5px;
+  padding-bottom: 2px;
+}
+
+.chord-chip {
+  min-height: 30px;
+  padding: 0 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.chord-chip.active {
+  box-shadow: none;
+}
+
+.result-count {
+  padding: 4px 9px;
+  font-size: 11px;
+}
+
+.playback-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px;
+  border-radius: var(--ui-radius-sm);
+}
+
+.playback-mode-field {
+  flex: 1 1 128px;
+  gap: 4px !important;
+}
+
+.playback-controls label span {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.playback-toggles {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.playback-toggles .compact-check {
+  min-height: 34px;
+  font-size: 12px;
+}
+
+.theory-sidebar .audio-actions {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.theory-sidebar .audio-actions button {
+  grid-column: span 2;
+}
+
+.theory-sidebar .audio-actions button:nth-child(n + 4) {
+  grid-column: span 3;
+}
+
+.theory-sidebar .audio-actions .stop-button {
+  grid-column: span 3;
+}
+
+/* 試聽區移到右側解析卡顶部，先聽再看解析 */
+.audition-block {
+  display: grid;
+  gap: 8px;
+  max-width: 460px;
+  padding: 10px 12px 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--ui-line));
+  border-radius: var(--ui-radius-sm);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+.audition-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.audition-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.audition-note {
+  color: var(--muted);
+  font-size: 10.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.audition-block .playback-controls {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.audition-block .playback-toggles .compact-check {
+  min-height: 30px;
+}
+
+.audition-block .audio-actions button {
+  min-height: 34px;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+.audio-actions {
+  gap: 6px;
+}
+
+.audio-actions .secondary-button,
+.audio-actions .ghost-button {
+  padding: 0 12px;
+}
+
+/* ── 10. Floating transport ────────────────────────────────────────────── */
+
+.transport-bar {
+  left: 50%;
+  right: auto;
+  bottom: 14px;
+  width: max-content;
+  max-width: calc(100vw - 20px);
+  padding: 8px 10px;
+  border-radius: 16px;
+  gap: 6px;
+  transform: translateX(-50%);
+}
+
+.transport-body {
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+
+.transport-divider {
+  display: none;
+}
+
+.transport-kicker {
+  display: none;
+}
+
+.transport-pad {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  font-size: 11px;
+}
+
+.transport-pad.pad-play {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+}
+
+.transport-pad.pad-text {
+  width: auto;
+  padding: 0 8px;
+  font-size: 10.5px;
+}
+
+.transport-reading {
+  min-width: 68px;
+}
+
+.transport-reading strong {
+  font-size: 10.5px;
+}
+
+.knob {
+  width: 38px;
+  height: 38px;
+}
+
+.knob-indicator {
+  height: 9px;
+  margin-top: 4px;
+}
+
+.knob-caption span {
+  display: none;
+}
+
+.knob-caption strong {
+  font-size: 12px;
+}
+
+.knob-unit {
+  gap: 6px;
+}
+
+.beat-leds {
+  gap: 4px;
+}
+
+.beat-led {
+  width: 6px;
+  height: 6px;
+}
+
+.transport-select span {
+  display: none;
+}
+
+.transport-select select {
+  min-height: 28px;
+  font-size: 10.5px;
+}
+
+.transport-loop {
+  min-width: 0;
+  gap: 4px;
+}
+
+.loop-head {
+  gap: 4px;
+}
+
+.loop-buttons {
+  gap: 4px;
+}
+
+.loop-track {
+  height: 14px;
+  border-radius: 5px;
+  padding: 1px;
+}
+
+.loop-seg {
+  border-radius: 3px;
+  font-size: 8px;
+}
+
+.transport-volume {
+  gap: 4px;
+}
+
+.transport-volume label {
+  font-size: 10px;
+  letter-spacing: 0;
+}
+
+.fader {
+  width: 64px;
+}
+
+.transport-chord {
+  font-size: 12px;
+  padding: 5px 9px;
+  border-radius: 7px;
+}
+
+.transport-collapse {
+  width: 18px;
+  height: 18px;
+  font-size: 9px;
+}
+
+.pad-practice {
+  width: 34px;
+  height: 34px;
+}
+
+.workspace {
+  padding-bottom: 104px;
+}
+
+/* ── 11. Library / phrases / analysis / scores polish ──────────────────── */
+
+.library-module-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.library-module-switch .segment {
+  min-height: 36px;
+  font-size: 12.5px;
+}
+
+.analysis-header h3 {
+  font-size: 22px;
+  letter-spacing: -0.01em;
+}
+
+.analysis-layout {
+  align-items: start;
+}
+
+.analysis-lead {
+  max-width: 70ch;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.viz-card-head h4 {
+  font-size: 15px;
+}
+
+.viz-sub {
+  font-size: 11px;
+}
+
+.band-meter small,
+.viz-note,
+.viz-empty {
+  font-size: 10.5px;
+  line-height: 1.5;
+}
+
+.quiz-layout {
+  align-items: start;
+}
+
+.quiz-grade-bar,
+.quiz-cat-bar {
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.quiz-grade-bar .segmented,
+.quiz-cat-bar .segmented {
+  flex: 1 1 auto;
+  justify-content: flex-start;
+}
+
+.quiz-grade-bar .segment,
+.quiz-cat-bar .segment,
+.quiz-grade-bar .chip-btn,
+.quiz-cat-bar .chip-btn {
+  min-height: 32px;
+  padding: 0 9px;
+  font-size: 12px;
+}
+
+.quiz-grade-label {
+  padding-top: 7px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.transport-volume label {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.gp-mode-bar {
+  border-radius: var(--radius);
+}
+
+.gp-mode-hint {
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.score-global-bar {
+  border-radius: var(--radius);
+}
+
+.terms-table th,
+.terms-table td {
+  font-size: 12px;
+}
+
+/* GP workbench: calmer chrome, same density */
+.gp-workspace {
+  border-radius: var(--radius);
+}
+
+.gp-transport {
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.gp-section-title {
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
+.gp-hint-line {
+  margin: 4px 0 6px;
+  color: var(--subtle);
+  font-size: 10.5px;
+  line-height: 1.45;
+}
+
+/* ── 12. Responsive ───────────────────────────────────────────────────── */
+
+@media (max-width: 1280px) {
+  .app-shell {
+    grid-template-columns: 228px minmax(0, 1fr);
+  }
+
+  .workspace {
+    padding: 18px 20px 112px;
+  }
+
+  .chord-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1080px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    padding: 18px;
+    background: color-mix(in srgb, var(--bg) 97%, transparent);
+  }
+
+  .topbar {
+    flex-wrap: wrap !important;
+  }
+
+  .topbar-title {
+    width: 100% !important;
+  }
+
+  .topbar-actions {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+  }
+
+  .chord-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .picker-dock {
+    grid-template-columns: 1fr;
+  }
+
+  .picker-dock .root-strip,
+  .picker-dock .toolbar,
+  .picker-dock .chord-rail {
+    grid-column: 1;
+  }
+
+  .picker-dock .toolbar {
+    flex-wrap: wrap;
+  }
+
+  #dictionary .hero-tool {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 860px) {
+  .transport-bar {
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-width: none;
+    transform: none;
+    bottom: 8px;
+  }
+
+  .transport-body {
+    overflow-x: auto;
+    gap: 6px;
+  }
+
+  .transport-loop {
+    display: none;
+  }
+
+  .transport-volume {
+    display: none;
+  }
+
+  .workspace {
+    padding-bottom: 96px;
+  }
+}
+
+@media (max-width: 720px) {
+  .workspace {
+    padding: 12px 12px 92px;
+  }
+
+  .settings-panel {
+    width: auto;
+    max-width: none;
+  }
+
+  .theme-chip-text {
+    display: inline;
+  }
+
+  .theme-chip {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0 8px;
+    justify-content: center;
+  }
+
+  .topbar {
+    padding: 8px 8px 8px 10px;
+    gap: 8px;
+    border-radius: 12px;
+  }
+
+  .topbar h2 {
+    font-size: 21px !important;
+  }
+
+  .topbar-actions {
+    gap: 6px;
+  }
+
+  .tone-picker {
+    height: 36px;
+  }
+
+  .tone-picker-label {
+    display: none;
+  }
+
+  .tone-picker select {
+    min-width: 66px;
+  }
+
+  .settings-summary {
+    min-height: 36px;
+    padding: 0 10px;
+  }
+
+  .settings-summary-text {
+    display: none;
+  }
+
+  .account-button,
+  .topbar .icon-button {
+    height: 36px;
+    min-height: 36px;
+  }
+
+  .view-lead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .view-lead-body {
+    text-align: left;
+  }
+
+  .view-coord {
+    display: none;
+  }
+
+  .view-lead-body p {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .chord-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .focus-header h3,
+  .chord-focus h3 {
+    font-size: 38px;
+  }
+
+  .section-title h3 {
+    font-size: 17px;
+  }
+
+  .audition-note {
+    display: none;
+  }
+
+  .transport-pad {
+    width: 34px;
+    height: 34px;
+  }
+
+  .transport-pad.pad-play {
+    width: 38px;
+    height: 38px;
+  }
+
+  .transport-reading {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .tone-preview {
+    display: none;
+  }
+
+  .tone-picker {
+    padding-right: 6px;
+  }
+
+  .level-chip {
+    display: none;
+  }
+
+  .chord-rail-row .result-count {
+    display: none;
+  }
+
+  .transport-bar {
+    padding: 6px;
+  }
+
+  .transport-pad.pad-text {
+    display: none;
+  }
+
+  .transport-collapse,
+  .transport-metro .transport-select,
+  .transport-chord {
+    display: none;
+  }
+
+  .knob {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar,
+  .tone-picker,
+  .chord-card,
+  .level-chip-icon {
+    transition: none !important;
+  }
+}

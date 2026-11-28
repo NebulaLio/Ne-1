@@ -68,7 +68,7 @@ curl -I http://nebula.ink
 
 ## 2. 快取與拆包
 
-目前前端是 `index.html` + `styles.css` + `themes.css` + `levels.js` + `app.js` + `studio.js`。其中 `levels.js`（約 76 KB）與 `app.js`（約 600 KB）最大，且檔名沒有內容雜湊，導致幾乎無法長期快取。
+目前前端是 `index.html` + `styles.css` + `themes.css` + `ui.css` + `levels.js` + `app.js` + `studio.js`。其中 `levels.js`（約 76 KB）與 `app.js`（約 600 KB）最大，且檔名沒有內容雜湊，導致幾乎無法長期快取。
 
 建議：
 

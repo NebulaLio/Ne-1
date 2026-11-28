@@ -248,49 +248,33 @@
         return;
       }
       const ctx = this.ctx;
-      const osc = ctx.createOscillator();
-      const filter = ctx.createBiquadFilter();
-      const gain = ctx.createGain();
+      // 譜例播放也跟隨全站音色：右上角選了哪個音色，這裡就用同一個
+      const tone = global.NebulaTone && global.NebulaTone.profile ? global.NebulaTone.profile() : null;
 
       const baseMidi = t.harmonic ? midi + 12 : midi;
       const baseFreq = midiToFreq(baseMidi);
 
-      let attack = 0.007;
-      let peakFilter = 2600;
-      let endFilter = 700;
-      let gainScale = 0.34;
+      let oscType = tone ? tone.osc : "sawtooth";
+      let attack = tone ? tone.attack : 0.007;
+      let peakFilter = tone ? tone.filter : 2400;
+      let endFilter = tone ? (tone.filterEnd || tone.filter * 0.45) : 620;
+      let gainScale = tone ? tone.velocity : 0.28;
+      let partial = tone ? tone.partial : null;
+      let drive = tone ? tone.drive : 0;
+
+      if (midi < 48) {
+        peakFilter = Math.min(peakFilter, 1600);
+        endFilter = Math.min(endFilter, 480);
+        gainScale *= 1.15;
+      }
 
       if (t.harmonic) {
-        osc.type = "sine";
+        oscType = "sine";
         peakFilter = 5200;
         endFilter = 3200;
         gainScale = 0.36;
-      } else if (instrument === "bass-4" || instrument === "bass-5") {
-        osc.type = "triangle";
-        peakFilter = 760;
-        endFilter = 260;
-        gainScale = 0.56;
-      } else if (instrument === "piano" || instrument === "piano-bass") {
-        osc.type = "triangle";
-        attack = 0.01;
-        peakFilter = 3200;
-        endFilter = 1200;
-        gainScale = 0.38;
-      } else if (instrument === "guitar-overdrive") {
-        osc.type = "sawtooth";
-        peakFilter = 2100;
-        endFilter = 900;
-        gainScale = 0.25;
-      } else if (instrument === "guitar-clean") {
-        osc.type = "triangle";
-        peakFilter = 2800;
-        endFilter = 1100;
-        gainScale = 0.36;
-      } else {
-        osc.type = "sawtooth";
-        peakFilter = 2400;
-        endFilter = 620;
-        gainScale = 0.28;
+        partial = null;
+        drive = 0;
       }
 
       if (t.palmMute) {
@@ -304,6 +288,10 @@
         gainScale *= 0.85;
       }
 
+      const mix = ctx.createGain();
+      mix.gain.value = 1;
+      const osc = ctx.createOscillator();
+      osc.type = oscType;
       osc.frequency.setValueAtTime(baseFreq, when);
       if (t.bend) {
         osc.frequency.setValueAtTime(baseFreq, when + Math.min(0.04, duration * 0.15));
@@ -314,6 +302,22 @@
       } else if (t.slideDown) {
         osc.frequency.setValueAtTime(midiToFreq(baseMidi + 2), when);
         osc.frequency.exponentialRampToValueAtTime(baseFreq, when + Math.min(0.14, duration * 0.45));
+      }
+      osc.connect(mix);
+
+      const oscs = [osc];
+      const extraNodes = [mix];
+      if (partial) {
+        const partialOsc = ctx.createOscillator();
+        partialOsc.type = partial.type || "sine";
+        partialOsc.frequency.setValueAtTime(baseFreq * (partial.ratio || 2), when);
+        if (partial.detune) partialOsc.detune.setValueAtTime(partial.detune, when);
+        const partialGain = ctx.createGain();
+        partialGain.gain.value = partial.gain == null ? 0.2 : partial.gain;
+        partialOsc.connect(partialGain);
+        partialGain.connect(mix);
+        oscs.push(partialOsc);
+        extraNodes.push(partialOsc, partialGain);
       }
 
       let lfo = null;
@@ -327,47 +331,55 @@
         lfo.start(when);
         lfo.stop(when + duration + 0.08);
         this.activeNodes.add(lfo);
+        extraNodes.push(lfo, lfoGain);
       }
 
+      const filter = ctx.createBiquadFilter();
       filter.type = "lowpass";
       filter.frequency.setValueAtTime(peakFilter, when);
       filter.frequency.exponentialRampToValueAtTime(Math.max(180, endFilter), when + Math.min(duration, 0.45));
 
+      const gain = ctx.createGain();
       const peakGain = Math.max(0.01, (volume || 0.85) * gainScale);
       gain.gain.setValueAtTime(0.0001, when);
       gain.gain.linearRampToValueAtTime(peakGain, when + attack);
       gain.gain.exponentialRampToValueAtTime(0.0001, when + Math.max(0.12, duration));
 
-      if (instrument === "guitar-overdrive" && !t.harmonic) {
+      let tail = mix;
+      if (drive) {
         const shaper = ctx.createWaveShaper();
         const curve = new Float32Array(256);
         for (let i = 0; i < 256; i++) {
           const x = (i * 2) / 256 - 1;
-          curve[i] = Math.tanh(x * 3.8);
+          curve[i] = Math.tanh(x * drive);
         }
         shaper.curve = curve;
-        osc.connect(shaper);
-        shaper.connect(filter);
-        filter.connect(gain);
-        gain.connect(this.master);
-      } else {
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(this.master);
+        shaper.oversample = "2x";
+        mix.connect(shaper);
+        tail = shaper;
+        extraNodes.push(shaper);
       }
+      tail.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.master);
+      extraNodes.push(filter, gain);
 
-      osc.start(when);
-      osc.stop(when + Math.max(0.14, duration) + 0.04);
+      const stopAt = when + Math.max(0.14, duration) + 0.04;
+      oscs.forEach(function (node) {
+        node.start(when);
+        node.stop(stopAt);
+      });
       const self = this;
       this.activeNodes.add(osc);
       osc.onended = function () {
         self.activeNodes.delete(osc);
         if (lfo) self.activeNodes.delete(lfo);
-        try {
-          osc.disconnect();
-          filter.disconnect();
-          gain.disconnect();
-        } catch { /* ignore */ }
+        oscs.forEach(function (node) {
+          try { node.disconnect(); } catch { /* ignore */ }
+        });
+        extraNodes.forEach(function (node) {
+          try { node.disconnect(); } catch { /* ignore */ }
+        });
       };
     }
   }
